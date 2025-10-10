@@ -22,6 +22,29 @@ const CreateRoom = () => {
         setPlayers(num);
     };
 
+    // Hàm gọi API backend khi tạo phòng
+    const handleCreateRoom = async () => {
+        try {
+            const res = await fetch('http://localhost:3000/api/room/create', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    min_bet: bet,
+                    max_players: players,
+                    user_id: 1, // Giả sử user_id tạm thời là 1
+                    game_type: 'poker',
+                    small_blind: bet / 2,
+                    big_blind: bet
+                })
+            });
+            const data = await res.json();
+            alert(data.message || "Tạo phòng thành công!");
+        } catch (err) {
+            alert("Lỗi tạo phòng!");
+            console.error(err);
+        }
+    };
+
     return (
         <>
             <div className="bet-section">
@@ -46,7 +69,7 @@ const CreateRoom = () => {
                     ))}
                 </div>
             </div>
-            <button className="create-btn">TẠO PHÒNG</button>
+            <button className="create-btn" onClick={handleCreateRoom}>TẠO PHÒNG</button>
         </>
     );
 };
