@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PokerRules from './components/PokerRules';
+import PokerRules from './components/RuleScreen/PokerRules';
 
 function App() {
   const [showRules, setShowRules] = useState(false);
