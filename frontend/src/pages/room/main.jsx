@@ -1,0 +1,9 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+import Room from "./Room.jsx";
+
+ReactDOM.createRoot(document.getElementById("root")).render(
+    <React.StrictMode>
+        <Room />
+    </React.StrictMode>
+);
