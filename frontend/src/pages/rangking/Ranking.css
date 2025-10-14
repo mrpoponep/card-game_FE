@@ -1,0 +1,190 @@
+/* Overlay phủ toàn màn hình */
+.ranking-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal popup */
+.ranking-modal {
+  position: relative;
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from { 
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Nút đóng ở góc trên bên phải của modal */
+.close-btn-top {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  color: #764ba2;
+  font-size: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  line-height: 1;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close-btn-top:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.close-btn-top:active {
+  transform: scale(0.95);
+}
+
+/* Header với nút đóng */
+.ranking-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 60px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.ranking-header h2 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+/* Nội dung modal */
+.ranking-content {
+  padding: 24px;
+  overflow-y: auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.ranking-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #fff;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.ranking-table th {
+  background-color: #f0f0f0;
+  color: #333;
+  font-weight: 600;
+  padding: 12px;
+  text-align: left;
+}
+
+.ranking-table td {
+  padding: 12px;
+  border-top: 1px solid #eee;
+  color: #555;
+}
+
+.ranking-table tr:hover {
+  background-color: #f5f5f5;
+}
+
+.ranking-controls {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.ranking-controls button {
+  padding: 8px 16px;
+  background-color: #0078d4;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.ranking-controls button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.ranking-controls {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center; /* căn giữa toàn bộ khối */
+}
+
+.ranking-controls span {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+}
+
+.ranking-controls label {
+  font-size: 14px;
+  color: #333;
+}
+
+.ranking-controls select {
+  margin-left: 8px;
+  padding: 6px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.loading {
+  text-align: center;
+  color: #666;
+  font-style: italic;
+  margin-bottom: 16px;
+}
+.pagination-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+}
