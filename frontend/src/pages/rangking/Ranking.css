@@ -13,9 +13,18 @@
   animation: fadeIn 0.3s ease;
 }
 
+.ranking-overlay.closing {
+  animation: fadeOut 0.3s ease;
+}
+
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 /* Modal popup */
@@ -31,6 +40,14 @@
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.ranking-modal.closing {
+  transform: translateY(-50px);
+  opacity: 0;
 }
 
 @keyframes slideIn {
@@ -41,6 +58,17 @@
   to { 
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to { 
+    transform: translateY(-50px);
+    opacity: 0;
   }
 }
 

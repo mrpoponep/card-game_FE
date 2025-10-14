@@ -6,18 +6,25 @@ import Room from './pages/room/Room';
 export default function App() {
   const [isRankingOpen, setIsRankingOpen] = useState(false);
 
+  const handleOpenRanking = () => {
+    if (!isRankingOpen) { // Chỉ mở nếu chưa mở
+      // Hủy focus trên button để tránh re-trigger do event bubbling
+      document.activeElement.blur();
+      setIsRankingOpen(true);
+    }
+  };
+
   return (
     <BrowserRouter>
       <nav style={{ padding: 12, borderBottom: '1px solid #ddd' }}>
         <Link to="/">Home</Link>
         <span style={{ margin: '0 8px' }}>|</span>
         <button 
-          onClick={() => setIsRankingOpen(true)}
+          onClick={handleOpenRanking}
           style={{ 
             background: 'none', 
             border: 'none', 
-            color: '#0078d4', 
-            cursor: 'pointer',
+            cursor: isRankingOpen ? 'not-allowed' : 'pointer',
             textDecoration: 'underline',
             fontSize: '16px',
             padding: 0
