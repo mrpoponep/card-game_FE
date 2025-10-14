@@ -1,0 +1,192 @@
+/* ========================================
+   BASE MODAL STYLES - Tái sử dụng cho mọi modal/popup
+   ======================================== */
+
+/* Overlay phủ toàn màn hình */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: modal-fadeIn 0.3s ease;
+}
+
+.modal-overlay.closing {
+  animation: modal-fadeOut 0.3s ease;
+}
+
+/* Modal container */
+.modal-container {
+  position: relative;
+  max-width: 900px;
+  width: 90%;
+  max-height: 90vh;
+  background: linear-gradient(135deg, #8B1A1A, #A52A2A);
+  border: 3px solid #FFD700;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modal-slideIn 0.3s ease;
+}
+
+.modal-container.closing {
+  animation: modal-slideOut 0.3s ease;
+}
+
+/* Nút đóng ở góc trên bên phải */
+.modal-close-btn {
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.5);
+  border: 2px solid #FFD700;
+  color: white;
+  font-size: 28px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  line-height: 1;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close-btn:hover {
+  background: rgba(255, 215, 0, 0.2);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.modal-close-btn:active {
+  transform: scale(0.95);
+}
+
+/* Header modal */
+.modal-header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 60px;
+  background: rgba(139, 26, 26, 0.9);
+  color: #FFD700;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  font-family: 'Arial', sans-serif;
+}
+
+/* Nội dung modal */
+.modal-content {
+  padding: 24px;
+  overflow-y: auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ========================================
+   ANIMATIONS
+   ======================================== */
+
+@keyframes modal-fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes modal-fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes modal-slideIn {
+  from { 
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes modal-slideOut {
+  from { 
+    transform: translateY(0);
+    opacity: 1;
+  }
+  to { 
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+}
+
+/* ========================================
+   VARIANTS - Các biến thể animation khác
+   ======================================== */
+
+/* Scale animation */
+@keyframes modal-scaleIn {
+  from { 
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  to { 
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes modal-scaleOut {
+  from { 
+    transform: scale(1);
+    opacity: 1;
+  }
+  to { 
+    transform: scale(0.8);
+    opacity: 0;
+  }
+}
+
+/* Slide from right */
+@keyframes modal-slideInRight {
+  from { 
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to { 
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes modal-slideOutRight {
+  from { 
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to { 
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+/* Để sử dụng variant, thêm class vào modal-container:
+   - .modal-container.scale-animation { animation: modal-scaleIn 0.3s ease; }
+   - .modal-container.slide-right-animation { animation: modal-slideInRight 0.3s ease; }
+*/

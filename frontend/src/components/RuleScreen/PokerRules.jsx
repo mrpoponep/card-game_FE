@@ -1,15 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useModalAnimation } from '../../hooks/useModalAnimation';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './PokerRules.css';
 
-const PokerRules = ({ onClose }) => {
+const PokerRules = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('rules');
+  
+  // Sử dụng custom hooks cho animation (290ms như Ranking)
+  const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
+  
+  // Xử lý phím ESC
+  useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
+  
+  // Đóng popup khi click vào overlay
+  const handleOverlayClick = useCallback((e) => {
+    if (e.target.classList.contains('modal-overlay')) {
+      handleClose();
+    }
+  }, [handleClose]);
+  
+  if (!shouldRender) return null;
 
   return (
-    <div className="poker-rules-overlay">
-      <div className="poker-rules-modal">
+    <div 
+      className={`modal-overlay ${isClosing ? 'closing' : ''}`}
+      onClick={handleOverlayClick}
+    >
+      <div className={`modal-container poker-rules-modal ${isClosing ? 'closing' : ''}`}>
+        <button className="modal-close-btn" onClick={handleClose}>✕</button>
+        
         <div className="modal-header">
           <h2>HƯỚNG DẪN</h2>
-          <button className="close-btn" onClick={onClose}>×</button>
         </div>
 
         <div className="tabs">

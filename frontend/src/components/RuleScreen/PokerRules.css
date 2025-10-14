@@ -1,68 +1,22 @@
-.poker-rules-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
+/* ========================================
+   IMPORT BASE MODAL STYLES
+   ======================================== */
+@import '../../styles/modal-base.css';
 
+/* ========================================
+   POKER RULES SPECIFIC STYLES
+   Base modal đã có theme đỏ-vàng, chỉ cần custom width
+   ======================================== */
+
+/* Custom width cho poker modal */
 .poker-rules-modal {
-  background: linear-gradient(135deg, #8B1A1A, #A52A2A);
-  border: 3px solid #FFD700;
-  border-radius: 12px;
   width: 800px;
   max-width: 90vw;
-  max-height: 90vh;
-  overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
-.modal-header {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
-  padding: 20px;
-  background: rgba(139, 26, 26, 0.9);
-}
-
-.modal-header h2 {
-  color: #FFD700;
-  font-size: 32px;
-  font-weight: bold;
-  margin: 0;
-  text-align: center;
-  font-family: 'Arial', sans-serif;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
-}
-
-.close-btn {
-  position: absolute;
-  right: 15px;
-  top: 15px;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
-  border: 2px solid #FFD700;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  font-size: 24px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.close-btn:hover {
-  background: rgba(255, 215, 0, 0.2);
-  transform: scale(1.1);
-}
+/* ========================================
+   TABS STYLING
+   ======================================== */
 
 .tabs {
   display: flex;
@@ -93,6 +47,10 @@
   color: white;
 }
 
+/* ========================================
+   CONTENT STYLING
+   ======================================== */
+
 .tab-content {
   padding: 25px;
   max-height: 500px;
@@ -111,6 +69,10 @@
 .rule-section {
   margin-bottom: 30px;
 }
+
+/* ========================================
+   CARD RANKING SECTION
+   ======================================== */
 
 .card-ranking-section h3,
 .card-ranking-section h4 {
@@ -305,6 +267,10 @@
   margin: 0;
   text-align: left;
 }
+
+/* ========================================
+   SCROLLBAR & RESPONSIVE
+   ======================================== */
 
 /* Scrollbar styling */
 .tab-content::-webkit-scrollbar {
