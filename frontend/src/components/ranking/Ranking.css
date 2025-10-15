@@ -13,6 +13,22 @@
    RANKING TABLE STYLES
    ======================================== */
 
+.ranking-table-wrapper {
+  max-height: none !important;
+  overflow: visible !important;
+  margin-bottom: 0 !important;
+  /* display: contents; */
+}
+
+/* Ẩn scrollbar nếu có (dự phòng) */
+.ranking-table-wrapper::-webkit-scrollbar {
+  display: none;
+}
+.ranking-table-wrapper {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 .ranking-table {
   width: 100%;
   border-collapse: collapse;
@@ -22,8 +38,14 @@
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
 }
 
+.ranking-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
 .ranking-table th {
-  background: rgba(139, 26, 26, 0.9);
+  background: rgba(139, 26, 26, 0.95);
   color: #FFD700;
   font-weight: 700;
   padding: 14px 12px;
@@ -42,9 +64,12 @@
   font-weight: 500;
 }
 
-.ranking-table tr:hover {
-  background: rgba(255, 215, 0, 0.15);
+.ranking-table tbody tr {
   transition: background 0.3s ease;
+}
+
+.ranking-table tbody tr:hover {
+  background: rgba(255, 215, 0, 0.15);
 }
 
 /* ========================================
@@ -151,4 +176,128 @@
 
 .modal-content::-webkit-scrollbar-thumb:hover {
   background: #FFA500;
+}
+
+/* ========================================
+   RANK BADGES (Hạng 1-3 nổi bật, 4-10/11-30/31-50/51-100 theo tier)
+   ======================================== */
+
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 800;
+  font-size: 14px;
+  line-height: 1;
+  user-select: none;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  border: 2px solid transparent;
+}
+
+.rank-badge .rank-icon {
+  font-size: 18px;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.4));
+}
+
+.rank-badge .rank-number {
+  display: inline-block;
+  min-width: 26px;
+  text-align: center;
+}
+
+/* Top 1-3: gold/silver/bronze nổi bật */
+.rank-badge.rank-1 {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #4a2500;
+  border-color: #FFE14A;
+  box-shadow: 0 4px 14px rgba(255, 215, 0, 0.45);
+}
+
+.rank-badge.rank-2 {
+  background: linear-gradient(135deg, #C0C0C0, #9E9E9E);
+  color: #1f1f1f;
+  border-color: #E0E0E0;
+  box-shadow: 0 4px 14px rgba(192, 192, 192, 0.35);
+}
+
+.rank-badge.rank-3 {
+  background: linear-gradient(135deg, #CD7F32, #B87333);
+  color: #2a1500;
+  border-color: #E8A15C;
+  box-shadow: 0 4px 14px rgba(205, 127, 50, 0.35);
+}
+
+/* Tiers */
+.rank-badge.tier-4-10 {
+  background: rgba(255, 215, 0, 0.15);
+  color: #FFD700;
+  border-color: rgba(255, 215, 0, 0.6);
+}
+
+.rank-badge.tier-11-30 {
+  background: rgba(52, 152, 219, 0.15);
+  color: #6EC1F2;
+  border-color: rgba(52, 152, 219, 0.6);
+}
+
+.rank-badge.tier-31-50 {
+  background: rgba(46, 204, 113, 0.15);
+  color: #2ECC71;
+  border-color: rgba(46, 204, 113, 0.6);
+}
+
+.rank-badge.tier-51-100 {
+  background: rgba(52, 73, 94, 0.25);
+  color: #B0CFEA;
+  border-color: rgba(52, 73, 94, 0.6);
+}
+
+.rank-badge.tier-default {
+  background: rgba(255, 255, 255, 0.08);
+  color: #EEE;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+/* Ensure first column fits the badge nicely */
+.ranking-table td:first-child,
+.ranking-table th:first-child {
+  width: 140px;
+}
+
+/* ========================================
+   FLEXBOX LAYOUT FOR MODAL CONTENT
+   ======================================== */
+
+.ranking-flex-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.ranking-table-flexarea {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-bottom: 12px;
+}
+
+/* Loại bỏ mọi overflow ở modal-content nếu có */
+.ranking-flex-content, .modal-content {
+  overflow: visible !important;
+}
+
+/* Ẩn scrollbar nếu trình duyệt vẫn cố hiển thị */
+.ranking-table-flexarea::-webkit-scrollbar {
+  display: none !important;
+}
+.ranking-table-flexarea {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.ranking-controls {
+  flex-shrink: 0;
 }

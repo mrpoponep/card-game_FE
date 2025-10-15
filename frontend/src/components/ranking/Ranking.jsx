@@ -13,11 +13,66 @@ export default function Ranking({ isOpen, onClose }) {
   
   const [rankings, setRankings] = useState([]);
   const [page, setPage] = useState(0);
-  const limit = 10; // mặc định 10, không cần chọn
+  const [limit, setLimit] = useState(10); // Tự động điều chỉnh theo màn hình
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
   const [hasNext, setHasNext] = useState(false);
   const [hasPrev, setHasPrev] = useState(false);
+
+  // 🎯 Tự động tính limit dựa trên chiều cao màn hình
+  useEffect(() => {
+    const calculateOptimalLimit = () => {
+      const windowHeight = window.innerHeight;
+      
+      // Chiều cao các thành phần cố định:
+      // - Header: ~80px
+      // - Padding modal: ~48px
+      // - Controls: ~70px
+      // - Table header: ~50px
+      // → Còn lại cho tbody
+      const fixedHeight = 250; // Tổng chiều cao cố định
+      const availableHeight = (windowHeight * 0.85) - fixedHeight; // 90vh - fixed
+      
+      // Mỗi row cao ~50px
+      const rowHeight = 50;
+      const optimalRows = Math.floor(availableHeight / rowHeight);
+      
+      // Giới hạn từ 8-25 items
+      const calculatedLimit = Math.max(6, Math.min(25, optimalRows));
+      
+      setLimit(calculatedLimit);
+      console.log(`📊 Màn hình: ${windowHeight}px → Hiển thị ${calculatedLimit} items`);
+    };
+
+    calculateOptimalLimit();
+    
+    // Lắng nghe resize
+    window.addEventListener('resize', calculateOptimalLimit);
+    return () => window.removeEventListener('resize', calculateOptimalLimit);
+  }, []);
+
+  // Helper: Render rank badge theo tier
+  const renderRankBadge = (rawRank) => {
+    const rank = Number(rawRank);
+    if (!Number.isFinite(rank)) return <span className="rank-badge tier-default">{String(rawRank)}</span>;
+
+    let cls = 'tier-default';
+    let icon = '';
+    if (rank === 1) { cls = 'rank-1'; icon = '🥇'; }
+    else if (rank === 2) { cls = 'rank-2'; icon = '🥈'; }
+    else if (rank === 3) { cls = 'rank-3'; icon = '🥉'; }
+    else if (rank >= 4 && rank <= 10) { cls = 'tier-4-10'; icon = '⭐'; }
+    else if (rank >= 11 && rank <= 30) { cls = 'tier-11-30'; icon = '🎖️'; }
+    else if (rank >= 31 && rank <= 50) { cls = 'tier-31-50'; icon = '🔰'; }
+    else if (rank >= 51 && rank <= 100) { cls = 'tier-51-100'; icon = '🔹'; }
+
+    return (
+      <span className={`rank-badge ${cls}`} aria-label={`Hạng ${rank}`}>
+        {icon && <span className="rank-icon" aria-hidden="true">{icon}</span>}
+        <span className="rank-number">{rank}</span>
+      </span>
+    );
+  };
 
   const fetchRankings = async (p = page) => {
     setLoading(true);
@@ -42,12 +97,14 @@ export default function Ranking({ isOpen, onClose }) {
   const lastFetchKeyRef = useRef(null);
 
   useEffect(() => {
+    if (limit === 0) return; // Chờ limit được tính toán
+    
     const key = `p0-l${limit}`;
     if (lastFetchKeyRef.current === key) return;
     lastFetchKeyRef.current = key;
     fetchRankings(0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [limit]); // Fetch lại khi limit thay đổi
 
   // Đóng popup khi click vào overlay
   const handleOverlayClick = useCallback((e) => {
@@ -71,26 +128,27 @@ export default function Ranking({ isOpen, onClose }) {
           <h2>🏆 Bảng xếp hạng</h2>
         </div>
         
-        <div className="modal-content">
-          {loading && <div className="loading">Đang tải...</div>}
-          <table className="ranking-table">
-            <thead>
-              <tr>
-                <th>Hạng</th>
-                <th>Người chơi</th>
-                <th>ELO</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rankings.map(r => (
-                <tr key={r.playerId}>
-                  <td>{r.rank}</td>
-                  <td>{r.username}</td>
-                  <td>{r.elo}</td>
+        <div className="modal-content ranking-flex-content">
+          <div className="ranking-table-flexarea">
+            <table className="ranking-table">
+              <thead>
+                <tr>
+                  <th>Hạng</th>
+                  <th>Người chơi</th>
+                  <th>ELO</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rankings.map(r => (
+                  <tr key={r.playerId}>
+                    <td>{renderRankBadge(r.rank)}</td>
+                    <td>{r.username}</td>
+                    <td>{r.elo}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className="ranking-controls">
             <div className="pagination-group">
@@ -100,7 +158,13 @@ export default function Ranking({ isOpen, onClose }) {
               >
                 ⬅️
               </button>
-              <span>Trang {page + 1}</span>
+              <span>
+                {(() => {
+                  const start = page * limit + 1;
+                  const end = Math.min((page + 1) * limit, total);
+                  return `${start}–${end}`;
+                })()}
+              </span>
               <button 
                 onClick={() => { const np = page + 1; setPage(np); fetchRankings(np); }}
                 disabled={!hasNext}

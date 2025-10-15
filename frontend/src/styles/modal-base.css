@@ -26,6 +26,7 @@
   position: relative;
   max-width: 900px;
   width: 90%;
+  height: 90vh;
   max-height: 90vh;
   background: linear-gradient(135deg, #8B1A1A, #A52A2A);
   border: 3px solid #FFD700;
