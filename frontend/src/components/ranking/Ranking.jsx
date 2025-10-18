@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { apiPost } from '../../api';
 import { useModalAnimation } from '../../hooks/useModalAnimation';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
@@ -12,44 +12,7 @@ export default function Ranking({ isOpen, onClose }) {
   useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
   
   const [rankings, setRankings] = useState([]);
-  const [page, setPage] = useState(0);
-  const [limit, setLimit] = useState(10); // Tự động điều chỉnh theo màn hình
-  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [hasNext, setHasNext] = useState(false);
-  const [hasPrev, setHasPrev] = useState(false);
-
-  // 🎯 Tự động tính limit dựa trên chiều cao màn hình
-  useEffect(() => {
-    const calculateOptimalLimit = () => {
-      const windowHeight = window.innerHeight;
-      
-      // Chiều cao các thành phần cố định:
-      // - Header: ~80px
-      // - Padding modal: ~48px
-      // - Controls: ~70px
-      // - Table header: ~50px
-      // → Còn lại cho tbody
-      const fixedHeight = 250; // Tổng chiều cao cố định
-      const availableHeight = (windowHeight * 0.85) - fixedHeight; // 90vh - fixed
-      
-      // Mỗi row cao ~50px
-      const rowHeight = 50;
-      const optimalRows = Math.floor(availableHeight / rowHeight);
-      
-      // Giới hạn từ 8-25 items
-      const calculatedLimit = Math.max(6, Math.min(25, optimalRows));
-      
-      setLimit(calculatedLimit);
-      console.log(`📊 Màn hình: ${windowHeight}px → Hiển thị ${calculatedLimit} items`);
-    };
-
-    calculateOptimalLimit();
-    
-    // Lắng nghe resize
-    window.addEventListener('resize', calculateOptimalLimit);
-    return () => window.removeEventListener('resize', calculateOptimalLimit);
-  }, []);
 
   // Helper: Render rank badge theo tier
   const renderRankBadge = (rawRank) => {
@@ -74,16 +37,12 @@ export default function Ranking({ isOpen, onClose }) {
     );
   };
 
-  const fetchRankings = async (p = page) => {
+  const fetchRankings = async () => {
     setLoading(true);
     try {
-      const payload = { page: p, limit };
-      const data = await apiPost('/api/rankings/list', payload);
+      const data = await apiPost('/api/rankings/list', {});
       if (data.success) {
         setRankings(data.data);
-        setTotal(data.pagination?.totalItems ?? 0);
-        setHasNext(data.pagination?.hasNext ?? false);
-        setHasPrev(data.pagination?.hasPrev ?? false);
       } else {
         console.error('Lỗi API', data);
       }
@@ -94,17 +53,12 @@ export default function Ranking({ isOpen, onClose }) {
     }
   };
 
-  const lastFetchKeyRef = useRef(null);
-
   useEffect(() => {
-    if (limit === 0) return; // Chờ limit được tính toán
-    
-    const key = `p0-l${limit}`;
-    if (lastFetchKeyRef.current === key) return;
-    lastFetchKeyRef.current = key;
-    fetchRankings(0);
+    if (isOpen) {
+      fetchRankings();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [limit]); // Fetch lại khi limit thay đổi
+  }, [isOpen]);
 
   // Đóng popup khi click vào overlay
   const handleOverlayClick = useCallback((e) => {
@@ -140,7 +94,7 @@ export default function Ranking({ isOpen, onClose }) {
               </thead>
               <tbody>
                 {rankings.map(r => (
-                  <tr key={r.playerId}>
+                  <tr key={r.userId}>
                     <td>{renderRankBadge(r.rank)}</td>
                     <td>{r.username}</td>
                     <td>{r.elo}</td>
@@ -149,30 +103,7 @@ export default function Ranking({ isOpen, onClose }) {
               </tbody>
             </table>
           </div>
-
-          <div className="ranking-controls">
-            <div className="pagination-group">
-              <button 
-                onClick={() => { const np = page - 1; setPage(np); fetchRankings(np); }} 
-                disabled={!hasPrev}
-              >
-                ⬅️
-              </button>
-              <span>
-                {(() => {
-                  const start = page * limit + 1;
-                  const end = Math.min((page + 1) * limit, total);
-                  return `${start}–${end}`;
-                })()}
-              </span>
-              <button 
-                onClick={() => { const np = page + 1; setPage(np); fetchRankings(np); }}
-                disabled={!hasNext}
-              >
-                ➡️
-              </button>
-            </div>
-          </div>
+          {loading && <div className="loading">Đang tải top 100...</div>}
         </div>
       </div>
     </div>

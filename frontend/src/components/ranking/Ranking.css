@@ -15,18 +15,8 @@
 
 .ranking-table-wrapper {
   max-height: none !important;
-  overflow: visible !important;
   margin-bottom: 0 !important;
   /* display: contents; */
-}
-
-/* Ẩn scrollbar nếu có (dự phòng) */
-.ranking-table-wrapper::-webkit-scrollbar {
-  display: none;
-}
-.ranking-table-wrapper {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
 .ranking-table {
@@ -72,76 +62,7 @@
   background: rgba(255, 215, 0, 0.15);
 }
 
-/* ========================================
-   PAGINATION CONTROLS
-   ======================================== */
-
-.ranking-controls {
-  margin-top: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center; /* Căn giữa thay vì space-between */
-  flex-wrap: wrap;
-  gap: 12px;
-}
-
-.ranking-controls button {
-  padding: 10px 20px;
-  background: rgba(255, 215, 0, 0.9);
-  color: #8B1A1A;
-  border: 2px solid #FFD700;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 700;
-  font-size: 18px;
-  transition: all 0.3s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.ranking-controls button:hover:not(:disabled) {
-  background: #FFD700;
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
-}
-
-.ranking-controls button:disabled {
-  background: rgba(128, 128, 128, 0.5);
-  color: rgba(255, 255, 255, 0.5);
-  border-color: rgba(128, 128, 128, 0.5);
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-.ranking-controls span {
-  font-size: 18px;
-  font-weight: 700;
-  color: #FFD700;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-  padding: 0 10px;
-}
-
-.ranking-controls label {
-  font-size: 14px;
-  color: #FFD700;
-  font-weight: 600;
-}
-
-.ranking-controls select {
-  margin-left: 8px;
-  padding: 6px 10px;
-  border-radius: 4px;
-  border: 2px solid #FFD700;
-  background: rgba(139, 26, 26, 0.8);
-  color: #FFD700;
-  font-weight: 600;
-}
-
-.pagination-group {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  justify-content: center;
-}
+/* Pagination controls removed (using fixed Top 100). */
 
 /* ========================================
    LOADING STATE
@@ -284,20 +205,8 @@
   margin-bottom: 12px;
 }
 
-/* Loại bỏ mọi overflow ở modal-content nếu có */
-.ranking-flex-content, .modal-content {
-  overflow: visible !important;
-}
+/* Allow modal to use its default scrolling behavior from modal-base.css */
 
-/* Ẩn scrollbar nếu trình duyệt vẫn cố hiển thị */
-.ranking-table-flexarea::-webkit-scrollbar {
-  display: none !important;
-}
-.ranking-table-flexarea {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+/* Ensure no scrollbar is force-hidden for ranking table area */
 
-.ranking-controls {
-  flex-shrink: 0;
-}
+/* .ranking-controls removed */
