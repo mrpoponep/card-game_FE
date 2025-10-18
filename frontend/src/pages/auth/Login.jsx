@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/AuthContext';
 import './Login.css';
 
@@ -81,7 +81,7 @@ export default function Login() {
               <input type="checkbox" name="remember" />
               <span>Ghi nhớ đăng nhập</span>
             </label>
-            <a className="link" href="#">Quên mật khẩu?</a>
+            <Link to="/forgot-password" className="link">Quên mật khẩu?</Link>
           </div>
 
           <button type="submit" className="btn-primary" disabled={loading}>
@@ -89,12 +89,6 @@ export default function Login() {
           </button>
 
           {error && <div className="error" role="alert">{error}</div>}
-
-          <div className="divider"><span>hoặc</span></div>
-
-          <button type="button" className="btn-outline" disabled>
-            Tiếp tục với tư cách Khách
-          </button>
 
           <p className="signup-text">
             Mới tham gia? <a href="#" className="link">Tạo tài khoản</a>

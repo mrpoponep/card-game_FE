@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Room from './pages/room/Room';
 import Login from './pages/auth/Login';
+import ForgotPassword from './pages/auth/ForgotPassword';
 import AppLayout from './pages/app/AppLayout';
 import Home from './pages/app/Home';
 import { AuthProvider, RequireAuth } from './hooks/AuthContext';
@@ -37,6 +38,7 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/" element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route index element={<Home />} />
             <Route path="room" element={<Room />} />
