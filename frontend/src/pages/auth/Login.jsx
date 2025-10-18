@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/AuthContext';
 import './Login.css';
@@ -6,9 +6,16 @@ import './Login.css';
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, user, ready } = useAuth();
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  // Nếu đã đăng nhập, chuyển về trang chính
+  useEffect(() => {
+    if (ready && user) {
+      navigate('/', { replace: true });
+    }
+  }, [ready, user, navigate]);
 
   return (
     <div className="login-page">
@@ -31,7 +38,7 @@ export default function Login() {
               const remember = form.get('remember') === 'on';
               const result = await login({ username, password, remember });
               if (result.ok) {
-                navigate('/app', { replace: true });
+                navigate('/', { replace: true });
               } else {
                 setError(result.error || 'Đăng nhập thất bại');
               }

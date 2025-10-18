@@ -23,7 +23,7 @@ export default function App() {
     setIsErrorOpen(false);
     if (shouldRedirectToLogin) {
       // Redirect về trang đăng nhập sau khi đóng modal
-      window.location.href = '/';
+      window.location.href = '/login';
     }
   }, [shouldRedirectToLogin]);
 
@@ -36,8 +36,8 @@ export default function App() {
     <BrowserRouter>
       <AuthProvider>
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/app" element={<RequireAuth><AppLayout /></RequireAuth>}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route index element={<Home />} />
             <Route path="room" element={<Room />} />
           </Route>

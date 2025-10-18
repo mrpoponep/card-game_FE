@@ -8,6 +8,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
+  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(true); // Flag cho auto-login
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -27,13 +28,11 @@ export function AuthProvider({ children }) {
     } catch {}
     setApiAccessToken(null);
     setUser(null);
-    // Nếu đang ở vùng /app thì đưa về trang chủ
-    if (location.pathname.startsWith('/app')) {
-      navigate('/', { replace: true });
-    }
-  }, [location.pathname, navigate]);
+    // Đưa về trang đăng nhập
+    navigate('/login', { replace: true });
+  }, [navigate]);
 
-  // Khởi tạo: thử refresh nếu có cookie refresh_token
+  // Khởi tạo: thự refresh nếu có cookie refresh_token (auto-login)
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -49,15 +48,23 @@ export function AuthProvider({ children }) {
             if (!mounted) return;
             setApiAccessToken(data.accessToken);
             setUser(data.user || null);
+            
+            // Tự động chuyển đến trang chính nếu đang ở trang login
+            if (location.pathname === '/login') {
+              navigate('/', { replace: true });
+            }
           }
         }
       } catch {}
-      if (mounted) setReady(true);
+      if (mounted) {
+        setReady(true);
+        setIsAutoLoggingIn(false);
+      }
     })();
     return () => { mounted = false; };
-  }, []);
+  }, []); // Chỉ chạy 1 lần khi mount
 
-  const value = useMemo(() => ({ user, ready, login, logout }), [user, ready, login, logout]);
+  const value = useMemo(() => ({ user, ready, isAutoLoggingIn, login, logout }), [user, ready, isAutoLoggingIn, login, logout]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
@@ -73,7 +80,7 @@ export function RequireAuth({ children }) {
   
   useEffect(() => {
     if (ready && !user) {
-      navigate('/', { replace: true });
+      navigate('/login', { replace: true });
     }
   }, [ready, user, navigate]);
   
