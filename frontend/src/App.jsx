@@ -1,73 +1,49 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import Ranking from './components/ranking/Ranking';
+import React, { useState, useCallback } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Room from './pages/room/Room';
-import PokerRules from './components/RuleScreen/PokerRules';
+import Login from './pages/auth/Login';
+import AppLayout from './pages/app/AppLayout';
+import Home from './pages/app/Home';
+import { AuthProvider, RequireAuth } from './hooks/AuthContext';
+import ErrorModal from './components/ErrorModal/ErrorModal';
+import { setErrorModalCallback } from './api';
 
 export default function App() {
-  const [isRankingOpen, setIsRankingOpen] = useState(false);
-  const [isRuleOpen, setIsRuleOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [isErrorOpen, setIsErrorOpen] = useState(false);
+  const [shouldRedirectToLogin, setShouldRedirectToLogin] = useState(false);
 
-  const handleOpenRanking = () => {
-    if (!isRankingOpen) { // Chỉ mở nếu chưa mở
-      setIsRankingOpen(true);
-    }
-  };
+  const showError = useCallback((msg, is401 = false) => {
+    setErrorMessage(msg);
+    setIsErrorOpen(true);
+    setShouldRedirectToLogin(is401);
+  }, []);
 
-  const handleOpenRule = () => {
-    if (!isRuleOpen) { // Chỉ mở nếu chưa mở
-      setIsRuleOpen(true);
+  const handleCloseError = useCallback(() => {
+    setIsErrorOpen(false);
+    if (shouldRedirectToLogin) {
+      // Redirect về trang đăng nhập sau khi đóng modal
+      window.location.href = '/';
     }
-  };
+  }, [shouldRedirectToLogin]);
+
+  // Đăng ký callback để api.js gọi khi có lỗi
+  React.useEffect(() => {
+    setErrorModalCallback(showError);
+  }, [showError]);
 
   return (
     <BrowserRouter>
-      <nav style={{ padding: 12, borderBottom: '1px solid #ddd' }}>
-        <Link to="/">Home</Link>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <button 
-          onClick={handleOpenRanking}
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            cursor: isRankingOpen ? 'not-allowed' : 'pointer',
-            textDecoration: 'underline',
-            fontSize: '16px',
-            padding: 0
-          }}
-        >
-          Ranking
-        </button>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <Link to="/room">Room</Link>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <button 
-          onClick={handleOpenRule}
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            cursor: isRuleOpen ? 'not-allowed' : 'pointer',
-            textDecoration: 'underline',
-            fontSize: '16px',
-            padding: 0
-          }}
-        >
-            View Rule Screen Example
-        </button>
-      </nav>
-
-      <div style={{ padding: 16 }}>
+      <AuthProvider>
         <Routes>
-          <Route path="/" element={<div><h1>Welcome to Card Game</h1></div>} />
-          <Route path="/room" element={<Room />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/app" element={<RequireAuth><AppLayout /></RequireAuth>}>
+            <Route index element={<Home />} />
+            <Route path="room" element={<Room />} />
+          </Route>
         </Routes>
-      </div>
-
-      {/* Ranking Modal */}
-      <Ranking isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
-      
-      {/* Rule Modal */}
-      <PokerRules isOpen={isRuleOpen} onClose={() => setIsRuleOpen(false)} />
+        <ErrorModal isOpen={isErrorOpen} onClose={handleCloseError} message={errorMessage} />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

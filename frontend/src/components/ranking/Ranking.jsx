@@ -12,7 +12,6 @@ export default function Ranking({ isOpen, onClose }) {
   useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
   
   const [rankings, setRankings] = useState([]);
-  const [loading, setLoading] = useState(false);
 
   // Helper: Render rank badge theo tier
   const renderRankBadge = (rawRank) => {
@@ -38,9 +37,8 @@ export default function Ranking({ isOpen, onClose }) {
   };
 
   const fetchRankings = async () => {
-    setLoading(true);
     try {
-      const data = await apiPost('/api/rankings/list', {});
+      const data = await apiPost('/rankings/list', {});
       if (data.success) {
         setRankings(data.data);
       } else {
@@ -48,8 +46,6 @@ export default function Ranking({ isOpen, onClose }) {
       }
     } catch (err) {
       console.error('Lỗi khi tải bảng xếp hạng', err);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -103,7 +99,6 @@ export default function Ranking({ isOpen, onClose }) {
               </tbody>
             </table>
           </div>
-          {loading && <div className="loading">Đang tải top 100...</div>}
         </div>
       </div>
     </div>
