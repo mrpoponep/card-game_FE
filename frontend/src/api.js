@@ -42,7 +42,7 @@ async function request(path, options = {}, retryOn401 = true, showErrorModal = t
   });
 
   // Không retry 401 cho các API auth (vì 401 ở đây là lỗi nghiệp vụ, không phải token hết hạn)
-  const isAuthAPI = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/logout');
+  const isAuthAPI = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/logout') || path.includes('/auth/register') || path.includes('/auth/send-email-verification-otp') || path.includes('/auth/verify-email-otp');
   
   if (res.status === 401 && retryOn401 && !isAuthAPI) {
     const refreshed = await refreshAccessToken();
@@ -89,7 +89,7 @@ async function apiGet(path, options = {}) {
 async function apiPost(path, body, options = {}) {
   const { showErrorModal = true, ...rest } = options;
   // Các API auth không hiển thị modal
-  const isAuthAPI = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/logout');
+  const isAuthAPI = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/logout') || path.includes('/auth/register') || path.includes('/auth/send-email-verification-otp') || path.includes('/auth/verify-email-otp');
   return request(
     path, 
     { method: 'POST', body: body ? JSON.stringify(body) : undefined, ...rest }, 

@@ -243,6 +243,17 @@
   text-align: center;
 }
 
+.success-message {
+  margin-top: 10px;
+  padding: 10px;
+  background: rgba(40, 167, 69, 0.2);
+  border: 1px solid #28a745;
+  border-radius: 6px;
+  color: #90ee90;
+  font-size: 13px;
+  text-align: center;
+}
+
 .divider {
   display: flex;
   align-items: center;

@@ -2,6 +2,8 @@ import React, { useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Room from './pages/room/Room';
 import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import LinkEmail from './pages/auth/LinkEmail';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import AppLayout from './pages/app/AppLayout';
 import Home from './pages/app/Home';
@@ -38,6 +40,8 @@ export default function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/link-email" element={<LinkEmail />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/" element={<RequireAuth><AppLayout /></RequireAuth>}>
             <Route index element={<Home />} />

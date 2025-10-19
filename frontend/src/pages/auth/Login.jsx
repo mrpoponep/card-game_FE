@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/AuthContext';
 import './Login.css';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, user, ready } = useAuth();
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   // Nếu đã đăng nhập, chuyển về trang chính
@@ -16,6 +18,15 @@ export default function Login() {
       navigate('/', { replace: true });
     }
   }, [ready, user, navigate]);
+
+  // Hiển thị thông báo từ trang đăng ký
+  useEffect(() => {
+    if (location.state?.message) {
+      setSuccessMessage(location.state.message);
+      // Clear state sau khi hiển thị
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   return (
     <div className="login-page">
@@ -88,10 +99,11 @@ export default function Login() {
             {loading ? 'Đang xử lý...' : 'Đăng nhập'}
           </button>
 
+          {successMessage && <div className="success-message" role="status">{successMessage}</div>}
           {error && <div className="error" role="alert">{error}</div>}
 
           <p className="signup-text">
-            Mới tham gia? <a href="#" className="link">Tạo tài khoản</a>
+            Mới tham gia? <Link to="/register" className="link">Tạo tài khoản</Link>
           </p>
         </form>
       </div>
