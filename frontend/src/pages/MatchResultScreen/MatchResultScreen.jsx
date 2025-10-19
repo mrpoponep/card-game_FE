@@ -18,20 +18,20 @@ const MatchResultScreen = () => {
         isWinner: true
       },
       {
-        id: '67890',
-        name: 'Player_Second',
+        id: '1',
+        name: 'Alice',
         avatar: null,
         isWinner: false
       },
       {
-        id: '11223',
-        name: 'Player_Third',
+        id: '2',
+        name: 'Bob',
         avatar: null,
         isWinner: false
       },
       {
-        id: '44556',
-        name: 'Player_Fourth',
+        id: '3',
+        name: 'Charlie',
         avatar: null,
         isWinner: false
       },
