@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { apiPost } from '../../api';
+import { apiPost, apiGet } from '../../api';
+import { useAuth } from '../../hooks/AuthContext';
 import { useModalAnimation } from '../../hooks/useModalAnimation';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './Ranking.css';
@@ -8,10 +9,14 @@ export default function Ranking({ isOpen, onClose }) {
   // Sử dụng custom hooks cho animation
   const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
   
+  // Lấy thông tin user hiện tại
+  const { user } = useAuth();
+  
   // Xử lý phím ESC
   useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
   
   const [rankings, setRankings] = useState([]);
+  const [myRank, setMyRank] = useState(null);
 
   // Helper: Render rank badge theo tier
   const renderRankBadge = (rawRank) => {
@@ -49,9 +54,23 @@ export default function Ranking({ isOpen, onClose }) {
     }
   };
 
+  const fetchMyRank = async () => {
+    if (!user || !user.userId) return;
+    try {
+      const data = await apiGet(`/rankings/${user.userId}`);
+      if (data.success) {
+        setMyRank(data.data);
+      }
+    } catch (err) {
+      console.error('Không tìm thấy rank của bạn', err);
+      setMyRank(null);
+    }
+  };
+
   useEffect(() => {
     if (isOpen) {
       fetchRankings();
+      fetchMyRank();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen]);
@@ -90,7 +109,10 @@ export default function Ranking({ isOpen, onClose }) {
               </thead>
               <tbody>
                 {rankings.map(r => (
-                  <tr key={r.userId}>
+                  <tr 
+                    key={r.userId}
+                    className={r.userId === user?.userId ? 'my-rank-row' : ''}
+                  >
                     <td>{renderRankBadge(r.rank)}</td>
                     <td>{r.username}</td>
                     <td>{r.elo}</td>
@@ -99,6 +121,14 @@ export default function Ranking({ isOpen, onClose }) {
               </tbody>
             </table>
           </div>
+          
+          {myRank && (
+            <div className="my-rank-info">
+              <span className="my-rank-label">Hạng của bạn:</span>
+              {renderRankBadge(myRank.rank)}
+              <span className="my-rank-label">ELO: {myRank.elo}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
