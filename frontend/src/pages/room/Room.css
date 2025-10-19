@@ -1,0 +1,220 @@
+.container {
+    width: 100%;
+    max-width: 400px;
+    background: #4a1f2a;
+    color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-sizing: border-box;
+    margin: 20px auto;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    position: relative;
+    margin-bottom: 20px;
+}
+
+.header h1 {
+    font-size: 24px;
+    margin: 0;
+}
+
+.close-btn {
+    position: absolute;
+    right: 0;
+    top: 0;
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab {
+    background: #6b2d3a;
+    border: none;
+    padding: 10px 15px;
+    margin: 0 5px;
+    color: #fff;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+    flex: 1;
+    min-width: 120px;
+}
+
+.tab.active {
+    background: #9b3e50;
+}
+
+.bet-section,
+.player-section,
+.room-code-section {
+    margin-bottom: 20px;
+}
+
+.bet-section p,
+.player-section p,
+.room-code-section p {
+    margin: 0 0 10px;
+    font-size: 16px;
+}
+
+.bet-control {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.bet-btn {
+    background: #6b2d3a;
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 20px;
+    margin: 0 5px;
+}
+
+.bet-amount {
+    background: #9b3e50;
+    padding: 10px 15px;
+    margin: 0 10px;
+    border-radius: 5px;
+    font-size: 18px;
+}
+
+.player-options {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.player-btn {
+    background: #6b2d3a;
+    border: none;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.player-btn.active {
+    background: #f4a261;
+    color: #4a1f2a;
+}
+
+.create-btn,
+.enter-btn {
+    background: #2a9d8f;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.enter-btn:disabled {
+    background: #6b2d3a;
+    cursor: not-allowed;
+}
+
+.code-display {
+    background: #6b2d3a;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    gap: 5px;
+}
+
+.code-char {
+    width: 20px;
+    height: 20px;
+    background: #9b3e50;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin: 0 auto;
+    max-width: 200px;
+}
+
+.key {
+    background: #6b2d3a;
+    border: none;
+    color: #fff;
+    padding: 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.key.special {
+    background: #9b3e50;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .container {
+        padding: 15px;
+        margin: 10px;
+    }
+
+    .header h1 {
+        font-size: 20px;
+    }
+
+    .tab {
+        padding: 8px 10px;
+        font-size: 14px;
+        min-width: 100px;
+    }
+
+    .bet-btn,
+    .player-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+
+    .bet-amount {
+        font-size: 16px;
+        padding: 8px 12px;
+    }
+
+    .key {
+        padding: 12px;
+        font-size: 16px;
+    }
+
+    .create-btn,
+    .enter-btn {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+}
