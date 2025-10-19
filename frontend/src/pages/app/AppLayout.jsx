@@ -5,12 +5,14 @@ import { useError } from '../../hooks/ErrorContext';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
 import DailyReward from '../../components/dailyReward/DailyReward';
+import EloReward from '../../components/eloReward/EloReward';
 import { apiPost } from '../../api';
 
 export default function AppLayout() {
   const [isRankingOpen, setIsRankingOpen] = useState(false);
   const [isRuleOpen, setIsRuleOpen] = useState(false);
   const [isDailyRewardOpen, setIsDailyRewardOpen] = useState(false);
+  const [isEloRewardOpen, setIsEloRewardOpen] = useState(false);
   const { logout, user } = useAuth();
   const { showError } = useError();
   const navigate = useNavigate();
@@ -56,6 +58,15 @@ export default function AppLayout() {
     if (!isDailyRewardOpen) setIsDailyRewardOpen(true);
   };
 
+  const handleOpenEloReward = () => {
+    // Kiểm tra đăng nhập trước khi mở modal
+    if (!user) {
+      showError('Vui lòng đăng nhập để xem phần thưởng ELO!', true);
+      return;
+    }
+    if (!isEloRewardOpen) setIsEloRewardOpen(true);
+  };
+
   return (
     <div>
       <nav style={{ padding: 12, borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -88,6 +99,20 @@ export default function AppLayout() {
             }}
           >
             🎁 Nhận Thưởng
+          </button>
+          <span style={{ margin: '0 8px' }}>|</span>
+          <button 
+            onClick={handleOpenEloReward}
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              cursor: isEloRewardOpen ? 'not-allowed' : 'pointer',
+              textDecoration: 'underline',
+              fontSize: '16px',
+              padding: 0
+            }}
+          >
+            🏆 ELO Rewards
           </button>
           <span style={{ margin: '0 8px' }}>|</span>
           <Link to="/room">Room</Link>
@@ -134,6 +159,7 @@ export default function AppLayout() {
       <Ranking isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
       <PokerRules isOpen={isRuleOpen} onClose={() => setIsRuleOpen(false)} />
       <DailyReward isOpen={isDailyRewardOpen} onClose={() => setIsDailyRewardOpen(false)} />
+      <EloReward isOpen={isEloRewardOpen} onClose={() => setIsEloRewardOpen(false)} />
     </div>
   );
 }

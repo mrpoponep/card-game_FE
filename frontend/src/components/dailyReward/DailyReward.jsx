@@ -15,6 +15,7 @@ export default function DailyReward({ isOpen, onClose }) {
   const [loading, setLoading] = useState(false);
   const [claiming, setClaiming] = useState(false);
   const [claimedDays, setClaimedDays] = useState(new Set());
+  const [loginDayCount, setLoginDayCount] = useState(0);
 
   // Lấy ngày hiện tại
   const today = new Date().getDate();
@@ -31,7 +32,7 @@ export default function DailyReward({ isOpen, onClose }) {
   const fetchData = async () => {
     setLoading(true);
     try {
-      // Lấy danh sách phần thưởng cả tháng
+      // Lấy danh sách phần thưởng cả tháng (31 ngày đăng nhập)
       const rewardsData = await apiGet('/daily-reward/monthly');
       if (rewardsData.success) {
         setMonthlyRewards(rewardsData.data);
@@ -41,15 +42,17 @@ export default function DailyReward({ isOpen, onClose }) {
       const statusData = await apiPost('/daily-reward/check', {});
       if (statusData.success) {
         setClaimStatus(statusData.data);
+        setLoginDayCount(statusData.data.loginDayCount || 0);
       }
 
-      // Lấy lịch sử nhận thưởng trong tháng
+      // Lấy lịch sử nhận thưởng trong tháng này
       const historyData = await apiGet('/daily-reward/history');
       if (historyData.success) {
         const claimed = new Set();
         historyData.data.forEach(record => {
           if (record.month === currentMonth && record.year === currentYear) {
-            claimed.add(record.day_of_month);
+            // Lưu login_day_count thay vì day_of_month
+            claimed.add(record.login_day_count);
           }
         });
         setClaimedDays(claimed);
@@ -80,8 +83,9 @@ export default function DailyReward({ isOpen, onClose }) {
           alreadyClaimed: true
         });
 
-        // Thêm ngày hôm nay vào danh sách đã nhận
-        setClaimedDays(prev => new Set([...prev, today]));
+        // Thêm login_day_count vào danh sách đã nhận
+        const claimedLoginDay = result.data.loginDayCount;
+        setClaimedDays(prev => new Set([...prev, claimedLoginDay]));
 
         // Animation success
         const claimButton = document.querySelector('.claim-button');
@@ -107,10 +111,10 @@ export default function DailyReward({ isOpen, onClose }) {
 
   if (!shouldRender) return null;
 
-  // Xác định ngày đặc biệt (phần thưởng cao)
-  const isSpecialDay = (day) => {
-    const reward = monthlyRewards.find(r => r.day_of_month === day);
-    return reward && reward.reward_amount >= 300;
+  // Xác định ngày đặc biệt (phần thưởng cao >= 3000 xu)
+  const isSpecialDay = (loginDay) => {
+    const reward = monthlyRewards.find(r => r.login_day_count === loginDay);
+    return reward && reward.reward_amount >= 3000;
   };
 
   return (
@@ -124,7 +128,14 @@ export default function DailyReward({ isOpen, onClose }) {
         <div className="modal-header">
           <div className="daily-reward-header">
             <h2 className="daily-reward-title">🎁 Phần Thưởng Hằng Ngày</h2>
-            <p className="daily-reward-subtitle">Đăng nhập mỗi ngày để nhận xu miễn phí!</p>
+            <p className="daily-reward-subtitle">
+              Đăng nhập mỗi ngày để nhận xu miễn phí! (Tháng {currentMonth}/{currentYear})
+            </p>
+            {loginDayCount > 0 && (
+              <p className="daily-reward-progress">
+                Bạn đã đăng nhập <strong>{claimedDays.size}</strong> ngày trong tháng này
+              </p>
+            )}
           </div>
         </div>
         
@@ -139,10 +150,10 @@ export default function DailyReward({ isOpen, onClose }) {
                   {claimStatus.canClaim ? (
                     <div className="claim-section">
                       <div className="claim-info">
-                        <div className="claim-day">Ngày {today}</div>
+                        <div className="claim-day">Ngày đăng nhập thứ {loginDayCount}</div>
                         <div className="claim-reward">
                           <span className="coin-icon">🪙</span>
-                          <span>{claimStatus.reward} xu</span>
+                          <span>{claimStatus.reward.toLocaleString()} xu</span>
                         </div>
                       </div>
                       <button 
@@ -152,6 +163,12 @@ export default function DailyReward({ isOpen, onClose }) {
                       >
                         {claiming ? 'Đang nhận...' : '✨ Nhận Thưởng'}
                       </button>
+                    </div>
+                  ) : claimStatus.maxReached ? (
+                    <div className="already-claimed">
+                      <div className="already-claimed-icon">🎉</div>
+                      <div className="already-claimed-text">Chúc mừng!</div>
+                      <div className="already-claimed-hint">Bạn đã nhận đủ 31 ngày thưởng trong tháng này!</div>
                     </div>
                   ) : (
                     <div className="already-claimed">
@@ -163,28 +180,29 @@ export default function DailyReward({ isOpen, onClose }) {
                 </>
               )}
 
-              {/* Lịch phần thưởng tháng */}
+              {/* Lịch phần thưởng - Hiển thị theo login_day_count */}
               <div className="reward-calendar">
                 {monthlyRewards.map(reward => {
-                  const day = reward.day_of_month;
-                  const isClaimed = claimedDays.has(day);
-                  const isToday = day === today;
-                  const isSpecial = isSpecialDay(day);
+                  const loginDay = reward.login_day_count;
+                  const isClaimed = claimedDays.has(loginDay);
+                  const isNextDay = loginDay === loginDayCount;
+                  const isSpecial = isSpecialDay(loginDay);
 
                   return (
                     <div 
-                      key={day}
+                      key={loginDay}
                       className={`reward-day 
                         ${isClaimed ? 'claimed' : ''} 
-                        ${isToday ? 'today' : ''}
+                        ${isNextDay ? 'today' : ''}
                         ${isSpecial ? 'special' : ''}
                       `}
                     >
-                      <div className="day-number">{day}</div>
+                      <div className="day-number">Ngày {loginDay}</div>
                       <div className="reward-amount">
                         <span className="reward-icon">🪙</span>
-                        {reward.reward_amount}
+                        {reward.reward_amount.toLocaleString()}
                       </div>
+                      {isClaimed && <div className="claimed-check">✓</div>}
                     </div>
                   );
                 })}
@@ -194,15 +212,16 @@ export default function DailyReward({ isOpen, onClose }) {
               <div className="reward-stats">
                 <div className="stat-item">
                   <div className="stat-label">Đã nhận trong tháng</div>
-                  <div className="stat-value">{claimedDays.size}/{monthlyRewards.length}</div>
+                  <div className="stat-value">{claimedDays.size}/{monthlyRewards.length} ngày</div>
                 </div>
                 <div className="stat-item">
                   <div className="stat-label">Tổng xu đã nhận</div>
                   <div className="stat-value">
                     {monthlyRewards
-                      .filter(r => claimedDays.has(r.day_of_month))
+                      .filter(r => claimedDays.has(r.login_day_count))
                       .reduce((sum, r) => sum + r.reward_amount, 0)
-                    }
+                      .toLocaleString()
+                    } xu
                   </div>
                 </div>
               </div>
