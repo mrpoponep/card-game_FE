@@ -6,6 +6,7 @@ import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
 import DailyReward from '../../components/dailyReward/DailyReward';
 import EloReward from '../../components/eloReward/EloReward';
+import GiftReward from '../../components/giftReward/GiftReward';
 import { apiPost } from '../../api';
 
 export default function AppLayout() {
@@ -13,6 +14,7 @@ export default function AppLayout() {
   const [isRuleOpen, setIsRuleOpen] = useState(false);
   const [isDailyRewardOpen, setIsDailyRewardOpen] = useState(false);
   const [isEloRewardOpen, setIsEloRewardOpen] = useState(false);
+  const [isGiftRewardOpen, setIsGiftRewardOpen] = useState(false);
   const { logout, user } = useAuth();
   const { showError } = useError();
   const navigate = useNavigate();
@@ -67,6 +69,15 @@ export default function AppLayout() {
     if (!isEloRewardOpen) setIsEloRewardOpen(true);
   };
 
+  const handleOpenGiftReward = () => {
+    // Kiểm tra đăng nhập trước khi mở modal
+    if (!user) {
+      showError('Vui lòng đăng nhập để xem quà tặng!', true);
+      return;
+    }
+    if (!isGiftRewardOpen) setIsGiftRewardOpen(true);
+  };
+
   return (
     <div>
       <nav style={{ padding: 12, borderBottom: '1px solid #ddd', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -115,6 +126,20 @@ export default function AppLayout() {
             🏆 ELO Rewards
           </button>
           <span style={{ margin: '0 8px' }}>|</span>
+          <button 
+            onClick={handleOpenGiftReward}
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              cursor: isGiftRewardOpen ? 'not-allowed' : 'pointer',
+              textDecoration: 'underline',
+              fontSize: '16px',
+              padding: 0
+            }}
+          >
+            🎁 Quà Tặng
+          </button>
+          <span style={{ margin: '0 8px' }}>|</span>
           <Link to="/room">Room</Link>
           <span style={{ margin: '0 8px' }}>|</span>
           <button 
@@ -160,6 +185,7 @@ export default function AppLayout() {
       <PokerRules isOpen={isRuleOpen} onClose={() => setIsRuleOpen(false)} />
       <DailyReward isOpen={isDailyRewardOpen} onClose={() => setIsDailyRewardOpen(false)} />
       <EloReward isOpen={isEloRewardOpen} onClose={() => setIsEloRewardOpen(false)} />
+      <GiftReward isOpen={isGiftRewardOpen} onClose={() => setIsGiftRewardOpen(false)} />
     </div>
   );
 }

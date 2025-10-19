@@ -40,6 +40,22 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
+  // Hàm cập nhật gems sau khi nhận thưởng
+  const updateGems = useCallback((newGems) => {
+    setUser(prevUser => {
+      if (!prevUser) return prevUser;
+      return { ...prevUser, gems: newGems };
+    });
+  }, []);
+
+  // Hàm cập nhật cả balance và gems
+  const updateUser = useCallback((updates) => {
+    setUser(prevUser => {
+      if (!prevUser) return prevUser;
+      return { ...prevUser, ...updates };
+    });
+  }, []);
+
   // Khởi tạo: thự refresh nếu có cookie refresh_token (auto-login)
   useEffect(() => {
     let mounted = true;
@@ -72,7 +88,16 @@ export function AuthProvider({ children }) {
     return () => { mounted = false; };
   }, []); // Chỉ chạy 1 lần khi mount
 
-  const value = useMemo(() => ({ user, ready, isAutoLoggingIn, login, logout, updateBalance }), [user, ready, isAutoLoggingIn, login, logout, updateBalance]);
+  const value = useMemo(() => ({ 
+    user, 
+    ready, 
+    isAutoLoggingIn, 
+    login, 
+    logout, 
+    updateBalance,
+    updateGems,
+    updateUser 
+  }), [user, ready, isAutoLoggingIn, login, logout, updateBalance, updateGems, updateUser]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

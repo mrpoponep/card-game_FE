@@ -9,7 +9,7 @@ export default function DailyReward({ isOpen, onClose }) {
   const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
   useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
 
-  const { user, updateBalance } = useAuth();
+  const { user, updateBalance, updateUser } = useAuth();
   const [monthlyRewards, setMonthlyRewards] = useState([]);
   const [claimStatus, setClaimStatus] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -71,9 +71,12 @@ export default function DailyReward({ isOpen, onClose }) {
     try {
       const result = await apiPost('/daily-reward/claim', {});
       if (result.success) {
-        // Cập nhật số dư
+        // Cập nhật số dư và gems
         if (updateBalance) {
           updateBalance(result.data.balance);
+        }
+        if (updateUser && result.data.gems !== undefined) {
+          updateUser({ gems: result.data.gems });
         }
 
         // Cập nhật trạng thái

@@ -151,6 +151,35 @@
   box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
 }
 
+/* Weekly bonus specific styles */
+.bonus-card.weekly.success {
+  background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(41, 128, 185, 0.1));
+  border-color: rgba(52, 152, 219, 0.5);
+}
+
+.bonus-card.weekly .bonus-type {
+  color: #3498DB;
+}
+
+/* Monthly bonus specific styles */
+.bonus-card.monthly.success {
+  background: linear-gradient(135deg, rgba(231, 76, 60, 0.2), rgba(192, 57, 43, 0.1));
+  border-color: rgba(231, 76, 60, 0.5);
+}
+
+.bonus-card.monthly .bonus-type {
+  color: #E74C3C;
+}
+
+.bonus-card.monthly .bonus-detail {
+  background: rgba(231, 76, 60, 0.2);
+  color: #E74C3C;
+}
+
+/* ========================================
+   END BONUS REWARDS SECTION
+   ======================================== */
+
 .claim-info {
   margin-bottom: 20px;
 }
@@ -190,11 +219,11 @@
   padding: 15px 40px;
   font-size: 18px;
   font-weight: 800;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
   border-radius: 50px;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
   box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
   position: relative;
   overflow: hidden;
@@ -332,5 +361,26 @@
 
   .claim-reward {
     font-size: 28px;
+  }
+
+  .bonus-rewards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .bonus-title {
+    font-size: 14px;
+  }
+
+  .bonus-reward {
+    font-size: 18px;
+  }
+
+  .bonus-icon,
+  .bonus-icon-failed {
+    font-size: 28px;
+  }
+
+  .bonus-type {
+    font-size: 12px;
   }
 }
