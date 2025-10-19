@@ -8,27 +8,12 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import AppLayout from './pages/app/AppLayout';
 import Home from './pages/app/Home';
 import { AuthProvider, RequireAuth } from './hooks/AuthContext';
+import { ErrorProvider, useError } from './hooks/ErrorContext';
 import ErrorModal from './components/ErrorModal/ErrorModal';
 import { setErrorModalCallback } from './api';
 
-export default function App() {
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isErrorOpen, setIsErrorOpen] = useState(false);
-  const [shouldRedirectToLogin, setShouldRedirectToLogin] = useState(false);
-
-  const showError = useCallback((msg, is401 = false) => {
-    setErrorMessage(msg);
-    setIsErrorOpen(true);
-    setShouldRedirectToLogin(is401);
-  }, []);
-
-  const handleCloseError = useCallback(() => {
-    setIsErrorOpen(false);
-    if (shouldRedirectToLogin) {
-      // Redirect về trang đăng nhập sau khi đóng modal
-      window.location.href = '/login';
-    }
-  }, [shouldRedirectToLogin]);
+function AppContent() {
+  const { showError, closeError, errorMessage, isErrorOpen } = useError();
 
   // Đăng ký callback để api.js gọi khi có lỗi
   React.useEffect(() => {
@@ -36,20 +21,30 @@ export default function App() {
   }, [showError]);
 
   return (
+    <>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/link-email" element={<LinkEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/" element={<RequireAuth><AppLayout /></RequireAuth>}>
+          <Route index element={<Home />} />
+          <Route path="room" element={<Room />} />
+        </Route>
+      </Routes>
+      <ErrorModal isOpen={isErrorOpen} onClose={closeError} message={errorMessage} />
+    </>
+  );
+}
+
+export default function App() {
+  return (
     <BrowserRouter>
-      <AuthProvider>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/link-email" element={<LinkEmail />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/" element={<RequireAuth><AppLayout /></RequireAuth>}>
-            <Route index element={<Home />} />
-            <Route path="room" element={<Room />} />
-          </Route>
-        </Routes>
-        <ErrorModal isOpen={isErrorOpen} onClose={handleCloseError} message={errorMessage} />
-      </AuthProvider>
+      <ErrorProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ErrorProvider>
     </BrowserRouter>
   );
 }

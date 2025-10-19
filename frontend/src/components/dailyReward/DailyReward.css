@@ -1,0 +1,318 @@
+/* DailyReward.css */
+@import '../../styles/modal-base.css';
+
+/* ========================================
+   DAILY REWARD MODAL SPECIFIC STYLES
+   ======================================== */
+
+.daily-reward-content {
+  text-align: center;
+  padding: 20px;
+}
+
+.daily-reward-header {
+  margin-bottom: 30px;
+}
+
+.daily-reward-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #FFD700;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+  margin-bottom: 10px;
+}
+
+.daily-reward-subtitle {
+  font-size: 16px;
+  color: #FFA500;
+  font-weight: 600;
+}
+
+/* Calendar Grid */
+.reward-calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 10px;
+  margin: 30px 0;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.reward-day {
+  aspect-ratio: 1;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.reward-day:hover {
+  background: rgba(255, 215, 0, 0.1);
+  border-color: rgba(255, 215, 0, 0.6);
+  transform: translateY(-2px);
+}
+
+/* Trạng thái đã nhận */
+.reward-day.claimed {
+  background: rgba(46, 204, 113, 0.15);
+  border-color: rgba(46, 204, 113, 0.6);
+}
+
+.reward-day.claimed::after {
+  content: '✓';
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  color: #2ECC71;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+/* Ngày hôm nay */
+.reward-day.today {
+  background: rgba(255, 215, 0, 0.2);
+  border-color: #FFD700;
+  border-width: 3px;
+  animation: pulse-gold 2s infinite;
+}
+
+@keyframes pulse-gold {
+  0%, 100% {
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+  }
+}
+
+/* Ngày đặc biệt (phần thưởng cao) */
+.reward-day.special {
+  border-color: rgba(255, 105, 180, 0.6);
+}
+
+.reward-day.special .reward-amount {
+  color: #FF69B4;
+  font-weight: 800;
+}
+
+.day-number {
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFD700;
+  margin-bottom: 4px;
+}
+
+.reward-amount {
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.reward-icon {
+  font-size: 14px;
+}
+
+/* Claim Section */
+.claim-section {
+  margin: 30px 0;
+  padding: 25px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.1));
+  border: 2px solid rgba(255, 215, 0, 0.5);
+  border-radius: 15px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.claim-info {
+  margin-bottom: 20px;
+}
+
+.claim-day {
+  font-size: 18px;
+  color: #FFD700;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.claim-reward {
+  font-size: 36px;
+  font-weight: 800;
+  color: #FFA500;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.claim-reward .coin-icon {
+  font-size: 40px;
+  animation: rotate-coin 3s linear infinite;
+}
+
+@keyframes rotate-coin {
+  0%, 100% { transform: rotateY(0deg); }
+  50% { transform: rotateY(180deg); }
+}
+
+.claim-button {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #4a2500;
+  border: none;
+  padding: 15px 40px;
+  font-size: 18px;
+  font-weight: 800;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+
+.claim-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+}
+
+.claim-button:active {
+  transform: translateY(0);
+}
+
+.claim-button:disabled {
+  background: rgba(100, 100, 100, 0.5);
+  color: rgba(255, 255, 255, 0.5);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.claim-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.claim-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+/* Already claimed message */
+.already-claimed {
+  padding: 20px;
+  background: rgba(46, 204, 113, 0.15);
+  border: 2px solid rgba(46, 204, 113, 0.5);
+  border-radius: 12px;
+  margin: 20px 0;
+}
+
+.already-claimed-icon {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.already-claimed-text {
+  font-size: 18px;
+  color: #2ECC71;
+  font-weight: 700;
+}
+
+.already-claimed-hint {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 8px;
+}
+
+/* Stats */
+.reward-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 10px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 5px;
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 800;
+  color: #FFD700;
+}
+
+/* Success animation */
+@keyframes claim-success {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.claim-success-animation {
+  animation: claim-success 0.5s ease;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .reward-calendar {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  .reward-day {
+    padding: 4px;
+  }
+
+  .day-number {
+    font-size: 12px;
+  }
+
+  .reward-amount {
+    font-size: 10px;
+  }
+
+  .daily-reward-title {
+    font-size: 24px;
+  }
+
+  .claim-reward {
+    font-size: 28px;
+  }
+}

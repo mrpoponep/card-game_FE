@@ -32,6 +32,14 @@ export function AuthProvider({ children }) {
     navigate('/login', { replace: true });
   }, [navigate]);
 
+  // Hàm cập nhật balance sau khi nhận thưởng
+  const updateBalance = useCallback((newBalance) => {
+    setUser(prevUser => {
+      if (!prevUser) return prevUser;
+      return { ...prevUser, balance: newBalance };
+    });
+  }, []);
+
   // Khởi tạo: thự refresh nếu có cookie refresh_token (auto-login)
   useEffect(() => {
     let mounted = true;
@@ -64,7 +72,7 @@ export function AuthProvider({ children }) {
     return () => { mounted = false; };
   }, []); // Chỉ chạy 1 lần khi mount
 
-  const value = useMemo(() => ({ user, ready, isAutoLoggingIn, login, logout }), [user, ready, isAutoLoggingIn, login, logout]);
+  const value = useMemo(() => ({ user, ready, isAutoLoggingIn, login, logout, updateBalance }), [user, ready, isAutoLoggingIn, login, logout, updateBalance]);
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

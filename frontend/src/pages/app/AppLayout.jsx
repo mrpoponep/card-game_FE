@@ -1,19 +1,59 @@
-import React, { useState } from 'react';
-import { Link, Outlet } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/AuthContext';
+import { useError } from '../../hooks/ErrorContext';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
+import DailyReward from '../../components/dailyReward/DailyReward';
+import { apiPost } from '../../api';
 
 export default function AppLayout() {
   const [isRankingOpen, setIsRankingOpen] = useState(false);
   const [isRuleOpen, setIsRuleOpen] = useState(false);
+  const [isDailyRewardOpen, setIsDailyRewardOpen] = useState(false);
   const { logout, user } = useAuth();
+  const { showError } = useError();
+  const navigate = useNavigate();
+
+  // Auto-check daily reward khi vào app
+  useEffect(() => {
+    const checkDailyReward = async () => {
+      try {
+        const result = await apiPost('/daily-reward/check', {});
+        if (result.success && result.data.canClaim) {
+          // Nếu chưa nhận thưởng hôm nay, tự động mở modal
+          setIsDailyRewardOpen(true);
+        }
+      } catch (error) {
+        console.error('Error checking daily reward:', error);
+      }
+    };
+
+    if (user) {
+      checkDailyReward();
+    }
+  }, [user]);
 
   const handleOpenRanking = () => {
+    // Kiểm tra đăng nhập trước khi mở modal
+    if (!user) {
+      showError('Vui lòng đăng nhập để xem bảng xếp hạng!', true);
+      return;
+    }
     if (!isRankingOpen) setIsRankingOpen(true);
   };
+  
   const handleOpenRule = () => {
     if (!isRuleOpen) setIsRuleOpen(true);
+  };
+
+  const handleOpenDailyReward = () => {
+    // Kiểm tra đăng nhập trước khi mở modal
+    if (!user) {
+      showError('Vui lòng đăng nhập để nhận thưởng!', true);
+      return;
+    }
+    if (!isDailyRewardOpen) setIsDailyRewardOpen(true);
   };
 
   return (
@@ -34,6 +74,20 @@ export default function AppLayout() {
             }}
           >
             Ranking
+          </button>
+          <span style={{ margin: '0 8px' }}>|</span>
+          <button 
+            onClick={handleOpenDailyReward}
+            style={{ 
+              background: 'none', 
+              border: 'none', 
+              cursor: isDailyRewardOpen ? 'not-allowed' : 'pointer',
+              textDecoration: 'underline',
+              fontSize: '16px',
+              padding: 0
+            }}
+          >
+            🎁 Nhận Thưởng
           </button>
           <span style={{ margin: '0 8px' }}>|</span>
           <Link to="/room">Room</Link>
@@ -79,6 +133,7 @@ export default function AppLayout() {
 
       <Ranking isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
       <PokerRules isOpen={isRuleOpen} onClose={() => setIsRuleOpen(false)} />
+      <DailyReward isOpen={isDailyRewardOpen} onClose={() => setIsDailyRewardOpen(false)} />
     </div>
   );
 }
