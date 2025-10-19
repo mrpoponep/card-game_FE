@@ -1,0 +1,343 @@
+/* ========================================
+   IMPORT BASE MODAL STYLES
+   ======================================== */
+@import '../../styles/modal-base.css';
+
+/* ========================================
+   POKER RULES SPECIFIC STYLES
+   Base modal đã có theme đỏ-vàng, chỉ cần custom width
+   ======================================== */
+
+/* Custom width cho poker modal */
+.poker-rules-modal {
+  width: 800px;
+  max-width: 90vw;
+}
+
+/* ========================================
+   TABS STYLING
+   ======================================== */
+
+.tabs {
+  display: flex;
+  background: rgba(139, 26, 26, 0.7);
+}
+
+.tab {
+  flex: 1;
+  padding: 15px 20px;
+  background: rgba(165, 42, 42, 0.8);
+  color: #FFD700;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+}
+
+.tab:hover {
+  background: rgba(165, 42, 42, 0.9);
+}
+
+.tab.active {
+  background: rgba(139, 26, 26, 0.9);
+  border-bottom-color: #FFD700;
+  color: white;
+}
+
+/* ========================================
+   CONTENT STYLING
+   ======================================== */
+
+.tab-content {
+  padding: 25px;
+  max-height: 500px;
+  overflow-y: auto;
+  color: white;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.rules-content p,
+.betting-content p {
+  margin: 15px 0;
+  text-align: left;
+}
+
+.rule-section {
+  margin-bottom: 30px;
+}
+
+/* ========================================
+   CARD RANKING SECTION
+   ======================================== */
+
+.card-ranking-section h3,
+.card-ranking-section h4 {
+  color: #FFD700;
+  text-align: center;
+  margin: 25px 0 15px 0;
+  font-size: 18px;
+}
+
+.card-sequence {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.card-row {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  background: white;
+  color: black;
+  border: 2px solid #333;
+  border-radius: 8px;
+  padding: 8px 6px;
+  font-size: 14px;
+  font-weight: bold;
+  text-align: center;
+  min-width: 35px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.suit-ranking {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.suit-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.suit-card span {
+  color: #FFD700;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* Màu cho các ký hiệu bài */
+.suit-spades,
+.suit-clubs {
+  color: #000 !important;
+}
+
+.suit-hearts,
+.suit-diamonds {
+  color: #dc143c !important;
+}
+
+.hand-example .suit-spades,
+.hand-example .suit-clubs {
+  color: #000;
+}
+
+.hand-example .suit-hearts,
+.hand-example .suit-diamonds {
+  color: #dc143c;
+}
+
+.betting-section {
+  text-align: left;
+}
+
+.betting-section h3 {
+  color: #FFD700;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 20px;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hand-ranking {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.hand-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+  border-left: 4px solid;
+  border-radius: 6px;
+  padding: 10px 12px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.hand-item:hover {
+  transform: translateX(3px);
+  box-shadow: 0 3px 10px rgba(255, 215, 0, 0.3);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.08));
+}
+
+.rank-1 { border-left-color: #FFD700; }
+.rank-2 { border-left-color: #C0C0C0; }
+.rank-3 { border-left-color: #CD7F32; }
+.rank-4 { border-left-color: #E74C3C; }
+.rank-5 { border-left-color: #3498DB; }
+.rank-6 { border-left-color: #9B59B6; }
+.rank-7 { border-left-color: #1ABC9C; }
+.rank-8 { border-left-color: #F39C12; }
+.rank-9 { border-left-color: #95A5A6; }
+.rank-10 { border-left-color: #7F8C8D; }
+
+.rank-badge {
+  font-size: 18px;
+  font-weight: bold;
+  min-width: 55px;
+  text-align: center;
+  padding: 6px 8px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 6px;
+  color: #FFD700;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hand-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.hand-info strong {
+  display: block;
+  color: #FFD700;
+  font-size: 14px;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.hand-example {
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+  letter-spacing: 2px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.hand-desc {
+  display: none;
+}
+
+.tip-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 215, 0, 0.1));
+  border: 2px solid #FFD700;
+  border-radius: 8px;
+  padding: 12px 15px;
+  margin-top: 20px;
+  box-shadow: 0 3px 8px rgba(255, 215, 0, 0.2);
+}
+
+.tip-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.tip-box .tip {
+  color: #FFD700;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 0;
+  text-align: left;
+}
+
+/* ========================================
+   SCROLLBAR & RESPONSIVE
+   ======================================== */
+
+/* Scrollbar styling */
+.tab-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tab-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+
+.tab-content::-webkit-scrollbar-thumb {
+  background: #FFD700;
+  border-radius: 4px;
+}
+
+.tab-content::-webkit-scrollbar-thumb:hover {
+  background: #FFA500;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .poker-rules-modal {
+    width: 95vw;
+    height: 95vh;
+  }
+
+  .modal-header h2 {
+    font-size: 24px;
+  }
+
+  .tab {
+    padding: 12px 10px;
+    font-size: 14px;
+  }
+
+  .tab-content {
+    padding: 15px;
+    font-size: 14px;
+  }
+
+  .hand-ranking {
+    grid-template-columns: 1fr;
+  }
+
+  .rank-badge {
+    font-size: 16px;
+    min-width: 50px;
+  }
+
+  .hand-info strong {
+    font-size: 13px;
+  }
+
+  .hand-example {
+    font-size: 14px;
+    letter-spacing: 1px;
+  }
+
+  .card {
+    min-width: 28px;
+    height: 40px;
+    font-size: 12px;
+    padding: 4px 2px;
+  }
+
+  .suit-ranking {
+    gap: 15px;
+  }
+}

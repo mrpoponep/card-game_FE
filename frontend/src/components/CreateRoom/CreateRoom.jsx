@@ -22,7 +22,8 @@ const CreateRoom = () => {
         setPlayers(num);
     };
 
-    // Hàm gọi API backend khi tạo phòng
+
+
     const handleCreateRoom = async () => {
         try {
             const res = await fetch('http://localhost:3000/api/room/create', {
@@ -30,24 +31,25 @@ const CreateRoom = () => {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     min_players: 2,
-                    max_players: players,
+                    max_players: 6,
                     small_blind: bet / 2,
                     max_blind: bet,
                     min_buy_in: 2000,
                     max_buy_in: 10000,
                     rake: 0.05,
                     is_private: true,
-                    user_id: 1, // Giả sử user_id tạm thời là 1
+                    user_id: 1
                 })
             });
             const data = await res.json();
-            alert(data.message || "Tạo phòng thành công!");
-            // xử lý chuyển sang phần join bàn chơi tại đây
+            alert(`Tạo phòng thành công! Mã phòng: ${data.room_code}`);
+
         } catch (err) {
             alert("Lỗi tạo phòng!");
             console.error(err);
         }
     };
+
 
     return (
         <>
