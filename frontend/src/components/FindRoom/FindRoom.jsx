@@ -13,9 +13,21 @@ const FindRoom = () => {
         setRoomCode('');
     };
 
-    const handleEnterRoom = () => {
+    const handleEnterRoom = async () => {
         if (roomCode.length === 4) {
-            alert(`Vào phòng với mã: ${roomCode}`);
+            try {
+                const res = await fetch(`http://localhost:3000/api/room/${roomCode}`);
+                if (!res.ok) {
+                    alert("Không tìm thấy phòng!");
+                    return;
+                }
+                const data = await res.json();
+                alert(`Vào phòng với mã: ${roomCode}\nThông tin phòng: ${JSON.stringify(data)}`);
+                // TODO: Chuyển sang màn chơi hoặc xử lý dữ liệu phòng tại đây
+            } catch (err) {
+                alert("Lỗi kết nối server!");
+                console.error(err);
+            }
         }
     };
 
