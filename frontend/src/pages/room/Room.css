@@ -1,220 +1,183 @@
-.container {
-    width: 100%;
-    max-width: 400px;
-    background: #4a1f2a;
-    color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    box-sizing: border-box;
-    margin: 20px auto;
-    font-family: Arial, sans-serif;
-}
-
-.header {
-    position: relative;
-    margin-bottom: 20px;
-}
-
-.header h1 {
-    font-size: 24px;
-    margin: 0;
-}
-
-.close-btn {
-    position: absolute;
-    right: 0;
-    top: 0;
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-.tabs {
+/* Trang Room.jsx mới */
+.room-page-container {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #2d1515 0%, #5a1515 50%, #2d1515 100%);
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
-}
-
-.tab {
-    background: #6b2d3a;
-    border: none;
-    padding: 10px 15px;
-    margin: 0 5px;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-    flex: 1;
-    min-width: 120px;
-}
-
-.tab.active {
-    background: #9b3e50;
-}
-
-.bet-section,
-.player-section,
-.room-code-section {
-    margin-bottom: 20px;
-}
-
-.bet-section p,
-.player-section p,
-.room-code-section p {
-    margin: 0 0 10px;
-    font-size: 16px;
-}
-
-.bet-control {
-    display: flex;
     align-items: center;
-    justify-content: center;
+    font-family: 'Arial', sans-serif;
+    color: white;
+    overflow: hidden;
+    position: relative;
 }
 
-.bet-btn {
-    background: #6b2d3a;
-    border: none;
-    color: #fff;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 20px;
-    margin: 0 5px;
+/* Bàn chơi hình bầu dục */
+.game-table {
+    width: 90vw;
+    height: 75vh;
+    max-width: 1000px;
+    max-height: 600px;
+    background: #8B1A1A;
+    /* Màu nền đỏ của bàn */
+    border: 15px solid #4a1a1a;
+    /* Viền bàn sẫm */
+    border-radius: 50% / 50%;
+    /* Hình bầu dục */
+    position: relative;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5) inset, 0 10px 30px rgba(0, 0, 0, 0.3);
 }
 
-.bet-amount {
-    background: #9b3e50;
-    padding: 10px 15px;
-    margin: 0 10px;
-    border-radius: 5px;
-    font-size: 18px;
+/* Đường viền vàng bên trong */
+.table-inner-border {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    right: 25px;
+    bottom: 25px;
+    border: 3px solid rgba(255, 215, 0, 0.4);
+    border-radius: 50% / 50%;
+    opacity: 0.8;
 }
 
-.player-options {
+/* Chỗ ngồi của người chơi */
+.player-seat {
+    position: absolute;
+    width: 100px;
+    height: 120px;
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
-}
-
-.player-btn {
-    background: #6b2d3a;
-    border: none;
-    color: #fff;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
-}
-
-.player-btn.active {
-    background: #f4a261;
-    color: #4a1f2a;
-}
-
-.create-btn,
-.enter-btn {
-    background: #2a9d8f;
-    border: none;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-.enter-btn:disabled {
-    background: #6b2d3a;
-    cursor: not-allowed;
-}
-
-.code-display {
-    background: #6b2d3a;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
     gap: 5px;
 }
 
-.code-char {
-    width: 20px;
-    height: 20px;
-    background: #9b3e50;
-    border-radius: 3px;
+.player-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #444 0%, #222 100%);
+    border: 3px solid #FFD700;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 14px;
+    overflow: hidden;
+}
+
+.player-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.player-avatar.ai {
+    background: linear-gradient(135deg, #ddd 0%, #aaa 100%);
+    color: #333;
+}
+
+.player-info {
+    text-align: center;
+    font-size: 14px;
+    font-weight: bold;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.player-balance {
+    font-size: 12px;
+    color: #FFD700;
+}
+
+/* Vị trí 4 ghế */
+/* Ghế 1: Người chơi (Bottom) */
+.seat-1 {
+    bottom: -60px;
+    /* Nửa trong nửa ngoài */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Ghế 2: Trái */
+.seat-2 {
+    top: 50%;
+    left: -50px;
+    /* Nửa trong nửa ngoài */
+    transform: translateY(-50%);
+}
+
+/* Ghế 3: Trên (AI) */
+.seat-3 {
+    top: -60px;
+    /* Nửa trong nửa ngoài */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Ghế 4: Phải */
+.seat-4 {
+    top: 50%;
+    right: -50px;
+    /* Nửa trong nửa ngoài */
+    transform: translateY(-50%);
+}
+
+/* Thông báo giữa bàn */
+.table-center-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px 40px;
+    border-radius: 10px;
+}
+
+.main-message {
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+.sub-message {
+    font-size: 16px;
+    color: white;
+    opacity: 0.8;
+}
+
+/* Header (Ping, Thoát) */
+.room-header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.ping {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 5px 10px;
+    border-radius: 5px;
     font-size: 14px;
 }
 
-.keypad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin: 0 auto;
-    max-width: 200px;
-}
-
-.key {
-    background: #6b2d3a;
-    border: none;
-    color: #fff;
-    padding: 15px;
-    border-radius: 5px;
+.exit-btn {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    width: 45px;
+    height: 45px;
+    color: white;
     cursor: pointer;
-    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.key.special {
-    background: #9b3e50;
-}
-
-/* Responsive */
-@media (max-width: 480px) {
-    .container {
-        padding: 15px;
-        margin: 10px;
-    }
-
-    .header h1 {
-        font-size: 20px;
-    }
-
-    .tab {
-        padding: 8px 10px;
-        font-size: 14px;
-        min-width: 100px;
-    }
-
-    .bet-btn,
-    .player-btn {
-        width: 35px;
-        height: 35px;
-        font-size: 18px;
-    }
-
-    .bet-amount {
-        font-size: 16px;
-        padding: 8px 12px;
-    }
-
-    .key {
-        padding: 12px;
-        font-size: 16px;
-    }
-
-    .create-btn,
-    .enter-btn {
-        font-size: 14px;
-        padding: 8px 15px;
-    }
+.exit-btn svg {
+    width: 24px;
+    height: 24px;
 }

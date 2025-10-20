@@ -1,73 +1,35 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import Ranking from './components/ranking/Ranking';
+import React from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+// Import các component
 import Room from './pages/room/Room';
-import PokerRules from './components/RuleScreen/PokerRules';
+import Home from './pages/home/Home'; 
+import AuthPage from './pages/auth/AuthPage'; 
+import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
+import HomeRedirect from './components/HomeRedirect/HomeRedirect'; // 🔹 1. IMPORT
 
 export default function App() {
-  const [isRankingOpen, setIsRankingOpen] = useState(false);
-  const [isRuleOpen, setIsRuleOpen] = useState(false);
-
-  const handleOpenRanking = () => {
-    if (!isRankingOpen) { // Chỉ mở nếu chưa mở
-      setIsRankingOpen(true);
-    }
-  };
-
-  const handleOpenRule = () => {
-    if (!isRuleOpen) { // Chỉ mở nếu chưa mở
-      setIsRuleOpen(true);
-    }
-  };
-
   return (
     <BrowserRouter>
-      <nav style={{ padding: 12, borderBottom: '1px solid #ddd' }}>
-        <Link to="/">Home</Link>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <button 
-          onClick={handleOpenRanking}
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            cursor: isRankingOpen ? 'not-allowed' : 'pointer',
-            textDecoration: 'underline',
-            fontSize: '16px',
-            padding: 0
-          }}
-        >
-          Ranking
-        </button>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <Link to="/room">Room</Link>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <button 
-          onClick={handleOpenRule}
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            cursor: isRuleOpen ? 'not-allowed' : 'pointer',
-            textDecoration: 'underline',
-            fontSize: '16px',
-            padding: 0
-          }}
-        >
-            View Rule Screen Example
-        </button>
-      </nav>
+      <Routes>
+        {/* Route công khai: Trang đăng nhập/đăng ký */}
+        <Route path="/auth" element={<AuthPage />} />
 
-      <div style={{ padding: 16 }}>
-        <Routes>
-          <Route path="/" element={<div><h1>Welcome to Card Game</h1></div>} />
-          <Route path="/room" element={<Room />} />
-        </Routes>
-      </div>
+        {/* Các route được bảo vệ */}
+        <Route element={<ProtectedRoute />}>
+          {/* 🔹 2. SỬA ROUTE NÀY */}
+          {/* Khi vào trang gốc '/', tự động chuyển đến /:userId */}
+          <Route path="/" element={<HomeRedirect />} />
+          
+          {/* 🔹 3. THÊM ROUTE NÀY */}
+          {/* Trang Home bây giờ sẽ nằm ở /:userId */}
+          <Route path="/:userId" element={<Home />} />
 
-      {/* Ranking Modal */}
-      <Ranking isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
-      
-      {/* Rule Modal */}
-      <PokerRules isOpen={isRuleOpen} onClose={() => setIsRuleOpen(false)} />
+          {/* Route phòng chơi giữ nguyên */}
+          <Route path="/room/:roomCode" element={<Room />} /> 
+        </Route>
+        
+      </Routes>
     </BrowserRouter>
   );
 }
