@@ -49,9 +49,11 @@ export default function EloReward({ isOpen, onClose }) {
   };
 
   // Fetch reward data
-  const fetchRewardData = async () => {
+  const fetchRewardData = async (showLoading = true) => {
     try {
-      setLoading(true);
+      if (showLoading) {
+        setLoading(true);
+      }
       setError('');
       const response = await apiPost('/elo-reward/check');
       
@@ -64,7 +66,9 @@ export default function EloReward({ isOpen, onClose }) {
       console.error('Error fetching reward data:', err);
       setError('Không thể tải dữ liệu phần thưởng');
     } finally {
-      setLoading(false);
+      if (showLoading) {
+        setLoading(false);
+      }
     }
   };
 
@@ -83,8 +87,8 @@ export default function EloReward({ isOpen, onClose }) {
         if (updateUser) {
           updateUser({ gems: response.data.newGemsBalance });
         }
-        // Refresh data
-        await fetchRewardData();
+        // Refresh data (không hiển thị loading)
+        await fetchRewardData(false);
       } else {
         setError(response.message);
       }
@@ -111,8 +115,8 @@ export default function EloReward({ isOpen, onClose }) {
         if (updateUser && response.data.newGemsBalance) {
           updateUser({ gems: response.data.newGemsBalance });
         }
-        // Refresh data
-        await fetchRewardData();
+        // Refresh data (không hiển thị loading)
+        await fetchRewardData(false);
       } else {
         setError(response.message);
       }

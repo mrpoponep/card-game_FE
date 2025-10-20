@@ -27,7 +27,8 @@ export default function DailyReward({ isOpen, onClose }) {
     if (isOpen && user) {
       fetchData();
     }
-  }, [isOpen, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]); // Chỉ fetch khi modal mở, không cần fetch lại khi user thay đổi
 
   const fetchData = async () => {
     setLoading(true);

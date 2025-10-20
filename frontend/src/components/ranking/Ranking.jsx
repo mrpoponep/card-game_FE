@@ -77,7 +77,7 @@ export default function Ranking({ isOpen, onClose }) {
 
   // Đóng popup khi click vào overlay
   const handleOverlayClick = useCallback((e) => {
-    if (e.target.classList.contains('ranking-overlay')) {
+    if (e.target.classList.contains('modal-overlay')) {
       handleClose();
     }
   }, [handleClose]);

@@ -20,7 +20,15 @@ export default function GiftReward({ isOpen, onClose }) {
     if (isOpen && user) {
       fetchGiftStatus();
     }
-  }, [isOpen, user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen]); // Chỉ fetch khi modal mở, không cần fetch lại khi user thay đổi
+
+  // Helper: Tạo title dựa trên rank (chỉ có rank 1 là Champion)
+  const getMonthlyTitle = (rank) => {
+    if (!rank) return '';
+    if (rank === 1) return 'Champion';
+    return ''; // Các hạng khác không có title
+  };
 
   const fetchGiftStatus = async () => {
     setLoading(true);
@@ -37,8 +45,8 @@ export default function GiftReward({ isOpen, onClose }) {
         setWeeklyStatus({
           canClaim: weekly.canClaim,
           reward: weekly.reward,
-          tierName: weekly.tierName,
-          currentElo: weekly.currentElo || user?.elo || 0,
+          tierName: weekly.title || weekly.tierName || 'N/A',
+          currentElo: weekly.eloAtEarned || user?.elo || 0,
           alreadyClaimed: weekly.alreadyClaimed || false,
           message: weekly.message
         });
@@ -56,12 +64,17 @@ export default function GiftReward({ isOpen, onClose }) {
       // Xử lý monthly status
       if (monthlyResponse.success && monthlyResponse.data) {
         const monthly = monthlyResponse.data;
+        const rank = monthly.rank || monthly.currentRank;
+        
         setMonthlyStatus({
           canClaim: monthly.canClaim,
-          reward: monthly.reward,
-          rank: monthly.rank,
-          currentElo: monthly.currentElo || user?.elo || 0,
-          alreadyClaimed: monthly.alreadyClaimed || false,
+          reward: monthly.reward || 0,
+          rank: rank,
+          currentRank: monthly.currentRank,
+          title: getMonthlyTitle(rank),
+          currentElo: monthly.eloAtEarned || user?.elo || 0,
+          claimedAt: monthly.claimedAt,
+          isOutsideTop100: rank > 100,
           message: monthly.message
         });
       } else {
@@ -69,8 +82,10 @@ export default function GiftReward({ isOpen, onClose }) {
           canClaim: false,
           reward: 0,
           rank: null,
+          currentRank: null,
+          title: '',
           currentElo: user?.elo || 0,
-          alreadyClaimed: true,
+          isOutsideTop100: true,
           message: 'Không thể kiểm tra thưởng tháng'
         });
       }
@@ -89,8 +104,10 @@ export default function GiftReward({ isOpen, onClose }) {
         canClaim: false,
         reward: 0,
         rank: null,
+        currentRank: null,
+        title: '',
         currentElo: user?.elo || 0,
-        alreadyClaimed: true
+        isOutsideTop100: true
       });
     } finally {
       setLoading(false);
@@ -219,25 +236,47 @@ export default function GiftReward({ isOpen, onClose }) {
 
                   <div className="gift-card-body">
                     <div className="gift-info">
-                      <div className="gift-rank">Hạng {monthlyStatus?.rank || 'N/A'}</div>
+                      <div className="gift-rank">
+                        {monthlyStatus?.rank ? (
+                          monthlyStatus.rank === 1 && monthlyStatus.title ? (
+                            // Rank 1 chỉ hiển thị "Champion", không hiển thị "Hạng 1:"
+                            monthlyStatus.title
+                          ) : (
+                            // Các hạng khác hiển thị "Hạng X"
+                            `Hạng ${monthlyStatus.rank}`
+                          )
+                        ) : monthlyStatus?.currentRank ? (
+                          `Hạng hiện tại: ${monthlyStatus.currentRank}`
+                        ) : (
+                          'Chưa có xếp hạng'
+                        )}
+                      </div>
                       <div className="gift-elo">ELO: {monthlyStatus?.currentElo?.toLocaleString() || 0}</div>
                     </div>
                     <div className="gift-reward">
                       <span className="gems-icon">💎</span>
                       <span className="gems-amount">{monthlyStatus?.reward?.toLocaleString() || 0}</span>
                     </div>
-                    <button 
-                      className={`gift-claim-button monthly-button ${monthlyStatus?.canClaim ? '' : 'claimed'}`}
-                      onClick={handleClaimMonthly}
-                      disabled={!monthlyStatus?.canClaim || claiming.monthly}
-                    >
-                      {claiming.monthly ? 'Đang nhận...' : monthlyStatus?.canClaim ? '✨ Nhận Thưởng' : '✅ Đã Nhận'}
-                    </button>
+                    
+                    {/* Hiển thị nút hoặc message ngoài top 100 */}
+                    {!monthlyStatus?.isOutsideTop100 ? (
+                      <button 
+                        className={`gift-claim-button monthly-button ${monthlyStatus?.canClaim ? '' : 'claimed'}`}
+                        onClick={handleClaimMonthly}
+                        disabled={!monthlyStatus?.canClaim || claiming.monthly}
+                      >
+                        {claiming.monthly ? 'Đang nhận...' : monthlyStatus?.canClaim ? '✨ Nhận Thưởng' : '✅ Đã Nhận'}
+                      </button>
+                    ) : (
+                      <div className="gift-outside-top100">
+                        <p>🎯 Cần vào Top 100 để nhận thưởng</p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="gift-card-footer">
                     <div className="gift-description">
-                      Chỉ dành cho Top 100 (dựa trên Rank)
+                      {monthlyStatus?.message || 'Chỉ dành cho Top 100 (dựa trên Rank)'}
                     </div>
                   </div>
                 </div>

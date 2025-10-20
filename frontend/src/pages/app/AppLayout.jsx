@@ -19,7 +19,7 @@ export default function AppLayout() {
   const { showError } = useError();
   const navigate = useNavigate();
 
-  // Auto-check daily reward khi vào app
+  // Auto-check daily reward khi vào app (chỉ chạy 1 lần khi mount)
   useEffect(() => {
     const checkDailyReward = async () => {
       try {
@@ -36,7 +36,8 @@ export default function AppLayout() {
     if (user) {
       checkDailyReward();
     }
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Chỉ chạy 1 lần khi component mount
 
   const handleOpenRanking = () => {
     // Kiểm tra đăng nhập trước khi mở modal

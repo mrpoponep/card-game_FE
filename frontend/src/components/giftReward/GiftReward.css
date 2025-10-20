@@ -245,6 +245,30 @@
 }
 
 /* ========================================
+   OUTSIDE TOP 100 MESSAGE (in body, thay thế nút)
+   ======================================== */
+
+.gift-outside-top100 {
+  text-align: center;
+  padding: 12px 20px;
+  margin-top: 10px;
+  background: rgba(255, 165, 0, 0.15);
+  border: 2px dashed rgba(255, 165, 0, 0.5);
+  border-radius: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gift-outside-top100 p {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 700;
+  color: #FFA500;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+/* ========================================
    GIFT CARD FOOTER
    ======================================== */
 
