@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Ranking from './components/ranking/Ranking';
 import Room from './pages/room/Room';
 import PokerRules from './components/RuleScreen/PokerRules';
+import Admin from './pages/admin/Dashboard';
 
 export default function App() {
   const [isRankingOpen, setIsRankingOpen] = useState(false);
@@ -54,12 +55,16 @@ export default function App() {
         >
             View Rule Screen Example
         </button>
+        <span style={{ margin: '0 8px' }}>|</span>
+        <Link to="/admin">Admin</Link>
       </nav>
 
       <div style={{ padding: 16 }}>
         <Routes>
           <Route path="/" element={<div><h1>Welcome to Card Game</h1></div>} />
           <Route path="/room" element={<Room />} />
+          <Route path="/admin" element={<Admin />} /> 
+
         </Routes>
       </div>
 
