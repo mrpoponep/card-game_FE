@@ -1,53 +1,71 @@
 import React from 'react';
-import './Card.css'; // We'll create this CSS file next
+import './Card.css';
 
-// Define mapping from full suit names to single letters if needed
+// Map suit từ server (S, H, D, C) sang CSS class và ký tự Unicode
 const suitMap = {
-  Spades: 'S',
-  Hearts: 'H',
-  Diamonds: 'D',
-  Clubs: 'C',
+  'S': { symbol: '♠', class: 'spades' },   // Bích
+  'H': { symbol: '♥', class: 'hearts' },   // Cơ
+  'D': { symbol: '♦', class: 'diamonds' }, // Rô
+  'C': { symbol: '♣', class: 'clubs' },    // Chuồn
 };
 
-// Define mapping for ranks (optional, if your images use '10' instead of 'T')
+// Map rank từ server (T, J, Q, K, A) sang giá trị hiển thị
 const rankMap = {
-  T: 'T', // Or '10' if your image is named 10S.svg
-  J: 'J',
-  Q: 'Q',
-  K: 'K',
-  A: 'A',
-  // Numbers 2-9 are usually the same
+  '2': '2', '3': '3', '4': '4', '5': '5', '6': '6', '7': '7', '8': '8', '9': '9',
+  'T': '10', // Hiển thị 10 thay vì T
+  'J': 'J',
+  'Q': 'Q',
+  'K': 'K',
+  'A': 'A',
 };
 
 /**
- * Component to display a single playing card.
+ * Component Card được vẽ bằng CSS.
  * Props:
- * - suit: 'Spades', 'Hearts', 'Diamonds', 'Clubs' (only needed if faceUp is true)
- * - rank: '2'...'9', 'T', 'J', 'Q', 'K', 'A' (only needed if faceUp is true)
- * - faceUp: boolean (true to show face, false to show back)
+ * - suit: 'S', 'H', 'D', 'C'
+ * - rank: '2'...'9', 'T', 'J', 'Q', 'K', 'A'
+ * - faceUp: boolean (true để lật ngửa, false để lật úp)
  */
 function Card({ suit, rank, faceUp = true }) {
-  let imageName = 'back.svg'; // Default to card back
-
-  if (faceUp) {
-    // Ensure rank and suit are valid before creating filename
-    const displayRank = rankMap[rank] || rank; // Use rank directly if not in map (2-9)
-    const displaySuit = suitMap[suit];
-
-    if (displayRank && displaySuit) {
-      imageName = `${displayRank}${displaySuit}.svg`; // e.g., AS.svg, KH.svg, TC.svg
-    } else {
-      console.warn(`Invalid card data: Rank=${rank}, Suit=${suit}`);
-      // Keep imageName as 'back.svg' or use a placeholder error image
-      imageName = 'back.svg'; // Or maybe an error placeholder
-    }
+  
+  // 1. RENDER MẶT SAU (LÁ BÀI ÚP)
+  if (!faceUp) {
+    return (
+      <div className="card card-back">
+        {/* Họa tiết mặt sau được định nghĩa trong CSS */}
+        <div className="card-back-pattern"></div>
+      </div>
+    );
   }
 
-  const imagePath = `/cards/${imageName}`; // Path relative to the /public folder
+  // 2. RENDER MẶT TRƯỚC (LÁ BÀI NGỬA)
+  const displayRank = rankMap[rank] || rank;
+  const suitInfo = suitMap[suit] || { symbol: '?', class: 'default' };
+  const cardClass = suitInfo.class; // hearts, diamonds, spades, clubs
 
   return (
-    <div className="card">
-      <img src={imagePath} alt={faceUp ? `${rank} of ${suit}` : 'Card Back'} />
+    <div className={`card card-face ${cardClass}`}>
+      
+      {/* Góc trên bên trái */}
+      <div className="card-corner top-left">
+        <div className="card-rank">{displayRank}</div>
+        <div className="card-suit-small">{suitInfo.symbol}</div>
+      </div>
+      
+      {/* Họa tiết chính giữa */}
+      <div className="card-pattern-center">
+         {/* Để đơn giản và đẹp mắt, chúng ta sẽ hiển thị 1 ký tự lớn ở giữa
+           cho tất cả các lá bài (bao gồm cả J, Q, K, A và số).
+           Tạo layout 10 con cơ (♥) bằng CSS rất phức tạp.
+         */}
+         <div className="card-pattern-symbol main">{suitInfo.symbol}</div>
+      </div>
+
+      {/* Góc dưới bên phải (xoay 180 độ) */}
+      <div className="card-corner bottom-right">
+        <div className="card-rank">{displayRank}</div>
+        <div className="card-suit-small">{suitInfo.symbol}</div>
+      </div>
     </div>
   );
 }

@@ -12,187 +12,184 @@
     position: relative;
 }
 
-/* Bàn chơi hình bầu dục */
+/* Bàn chơi hình bầu dục - Giảm kích thước tối đa xuống 90% */
 .game-table {
-    width: 90vw;
-    height: 75vh;
-    max-width: 1000px;
-    max-height: 600px;
+    width: 85.5vw;
+    /* 95vw * 0.9 */
+    height: 72vh;
+    /* 80vh * 0.9 */
+    max-width: 1170px;
+    /* 1300px * 0.9 */
+    max-height: 675px;
+    /* 750px * 0.9 */
     background: #8B1A1A;
-    /* Màu nền đỏ của bàn */
-    border: 15px solid #4a1a1a;
-    /* Viền bàn sẫm */
+    border: 18px solid #4a1a1a;
+    /* Giảm nhẹ độ dày viền (từ 20px) để cân đối */
     border-radius: 50% / 50%;
-    /* Hình bầu dục */
     position: relative;
-    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5) inset, 0 10px 30px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 0 35px rgba(0, 0, 0, 0.55) inset, 0 12px 35px rgba(0, 0, 0, 0.35);
+    /* Giảm nhẹ bóng đổ */
 }
 
 /* Đường viền vàng bên trong */
 .table-inner-border {
     position: absolute;
-    top: 25px;
-    left: 25px;
-    right: 25px;
-    bottom: 25px;
-    border: 3px solid rgba(255, 215, 0, 0.4);
+    top: 32px;
+    /* Gần viền hơn chút (từ 35px) */
+    left: 32px;
+    right: 32px;
+    bottom: 32px;
+    border: 4px solid rgba(255, 215, 0, 0.45);
     border-radius: 50% / 50%;
-    opacity: 0.8;
+    opacity: 0.85;
 }
 
-/* Chỗ ngồi của người chơi */
+/* Chỗ ngồi của người chơi - Giữ nguyên kích thước lớn */
 .player-seat {
     position: absolute;
-    width: 100px;
-    /* Chiều rộng tổng thể của khu vực ghế */
-    height: 140px;
-    /* Chiều cao tổng thể (bao gồm cả bài) */
+    width: 180px;
+    height: 240px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    /* background-color: rgba(0, 255, 0, 0.1); */
-    /* Để debug vị trí */
 }
 
-/* Vị trí 4 ghế */
-/* Ghế 1: Người chơi (Bottom) */
+/* Vị trí 4 ghế - Điều chỉnh lại một chút cho bàn nhỏ hơn */
 .seat-1 {
-    bottom: -70px;
-    /* Nửa avatar và bài ở ngoài */
+    bottom: -115px;
+    /* Gần bàn hơn chút (từ -120px) */
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Ghế 2: Trái */
 .seat-2 {
     top: 50%;
-    left: -50px;
-    /* Nửa avatar ở ngoài */
+    left: -85px;
+    /* Gần bàn hơn chút (từ -90px) */
     transform: translateY(-50%);
 }
 
-/* Ghế 3: Trên */
 .seat-3 {
-    top: -70px;
-    /* Nửa avatar và bài ở ngoài */
+    top: -115px;
+    /* Gần bàn hơn chút (từ -120px) */
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Ghế 4: Phải */
 .seat-4 {
     top: 50%;
-    right: -50px;
-    /* Nửa avatar ở ngoài */
+    right: -85px;
+    /* Gần bàn hơn chút (từ -90px) */
     transform: translateY(-50%);
 }
 
 
-/* Khu vực hiển thị bài */
+/* Khu vực hiển thị bài - Giữ nguyên kích thước lớn */
 .player-hand {
     position: absolute;
     display: flex;
+    left: 50%;
     transform: translateX(-50%);
-    /* Canh giữa theo chiều ngang */
     z-index: 5;
-    /* Nằm trên avatar */
-    height: 50px;
-    /* Chiều cao khu vực bài */
-    /* background-color: rgba(0, 0, 255, 0.1); */
-    /* Để debug vị trí */
+    height: 113px;
+    gap: 8px;
 }
 
-/* Định vị bài cho từng ghế */
+/* Định vị bài cho từng ghế - Giữ nguyên */
 .seat-1 .player-hand {
-    /* Dưới */
-    top: 0;
-    /* Ngay phía trên avatar */
+    top: -15px;
     left: 50%;
+    transform: translateX(-50%);
 }
 
 .seat-2 .player-hand {
-    /* Trái */
     top: 50%;
     left: 100%;
-    /* Bên phải avatar */
-    transform: translate(5px, -50%) rotate(90deg);
-    /* Dịch nhẹ và xoay */
+    transform: translate(22px, -50%) rotate(90deg);
     transform-origin: center left;
+    gap: 8px;
 }
 
 .seat-3 .player-hand {
-    /* Trên */
-    bottom: 0;
-    /* Ngay phía dưới avatar */
+    bottom: -15px;
     left: 50%;
     transform: translateX(-50%) scaleY(-1);
-    /* Lật ngược để thấy số đúng chiều */
+    gap: 8px;
 }
 
 .seat-4 .player-hand {
-    /* Phải */
     top: 50%;
     right: 100%;
-    /* Bên trái avatar */
-    transform: translate(-5px, -50%) rotate(-90deg);
-    /* Dịch nhẹ và xoay */
+    transform: translate(-22px, -50%) rotate(-90deg);
     transform-origin: center right;
+    gap: 8px;
 }
 
-/* Style cho các lá bài trong tay */
+/* Style cho các lá bài trong tay - Giữ nguyên kích thước lớn */
 .player-hand .card {
-    width: 35px;
-    /* Kích thước lá bài nhỏ hơn */
-    height: 50px;
-    margin: 0 -8px;
-    /* Chồng lên nhau nhiều hơn */
-    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    width: 75px;
+    height: 113px;
+    margin: 0;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    border-radius: 6px;
+    font-size: 14px;
 }
 
-.player-hand .card:first-child {
-    margin-left: 0;
+.player-hand .card .card-corner {
+    width: 21px;
+    top: 6px;
+    left: 6px;
 }
 
-.player-hand .card:last-child {
-    margin-right: 0;
+.player-hand .card .card-corner.bottom-right {
+    bottom: 6px;
+    right: 6px;
 }
 
-/* Bài úp (placeholder) */
+.player-hand .card .card-rank {
+    font-size: 21px;
+}
+
+.player-hand .card .card-suit-small {
+    font-size: 15px;
+    margin-top: 2px;
+}
+
+.player-hand .card .card-pattern-symbol.main {
+    font-size: 48px;
+}
+
+.player-hand .card.card-back {
+    background-image: none;
+    background-color: #a52a2a;
+    border-width: 6px;
+}
+
+/* Bài úp (placeholder) - Giữ nguyên kích thước lớn */
 .card-placeholder {
-    width: 35px;
-    height: 50px;
-    background-color: rgba(0, 0, 0, 0.2);
-    border: 1px dashed rgba(255, 255, 255, 0.2);
-    border-radius: 3px;
-    margin: 0 -8px;
+    width: 75px;
+    height: 113px;
+    background-color: rgba(0, 0, 0, 0.25);
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 6px;
+    margin: 0;
 }
 
-.player-hand .card-placeholder:first-child {
-    margin-left: 0;
-}
-
-.player-hand .card-placeholder:last-child {
-    margin-right: 0;
-}
-
-
-/* Avatar người chơi */
+/* Avatar người chơi - Giữ nguyên kích thước lớn */
 .player-avatar {
-    width: 70px;
-    height: 70px;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     background: linear-gradient(135deg, #444 0%, #222 100%);
-    border: 3px solid #FFD700;
+    border: 5px solid #FFD700;
     display: flex;
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 20px;
     overflow: hidden;
     position: absolute;
-    /* Để định vị chính xác */
     z-index: 1;
-    /* Nằm dưới bài */
 }
 
 .player-avatar img {
@@ -202,158 +199,172 @@
 }
 
 .player-avatar.empty {
-    background: rgba(0, 0, 0, 0.3);
-    border: 3px solid #555;
+    background: rgba(0, 0, 0, 0.35);
+    border: 5px solid #555;
 }
 
-/* Định vị avatar cho từng ghế */
+/* Định vị avatar cho từng ghế - Giữ nguyên */
 .seat-1 .player-avatar {
-    bottom: 0;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Dưới */
 .seat-2 .player-avatar {
     top: 50%;
     left: 0;
     transform: translateY(-50%);
 }
 
-/* Trái */
 .seat-3 .player-avatar {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Trên */
 .seat-4 .player-avatar {
     top: 50%;
     right: 0;
     transform: translateY(-50%);
 }
 
-/* Phải */
 
-
-/* Thông tin người chơi (tên, tiền) */
+/* Thông tin người chơi (tên, tiền) - Giữ nguyên kích thước lớn */
 .player-info {
     position: absolute;
     text-align: center;
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
-    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-    width: 100px;
-    /* Đảm bảo đủ rộng */
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9);
+    width: 140px;
 }
 
 .player-balance {
-    font-size: 12px;
+    font-size: 14px;
     color: #FFD700;
+    margin-top: 5px;
 }
 
-/* Định vị thông tin cho từng ghế */
+/* Định vị thông tin cho từng ghế - Giữ nguyên */
 .seat-1 .player-info {
-    bottom: -20px;
+    bottom: -30px;
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Dưới avatar */
 .seat-2 .player-info {
-    top: calc(50% + 40px);
-    left: 0;
+    top: calc(50% + 55px);
+    left: -10px;
 }
 
-/* Dưới avatar */
 .seat-3 .player-info {
-    top: calc(100% + 5px);
+    top: calc(100% + 10px);
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Dưới avatar */
 .seat-4 .player-info {
-    top: calc(50% + 40px);
-    right: 0;
+    top: calc(50% + 55px);
+    right: -10px;
 }
 
-/* Dưới avatar */
 
-
-/* Thông báo giữa bàn */
+/* Thông báo giữa bàn - Giữ nguyên kích thước lớn */
 .table-center-message {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    background: rgba(0, 0, 0, 0.4);
-    padding: 15px 30px;
-    border-radius: 10px;
+    background: rgba(0, 0, 0, 0.55);
+    padding: 22px 40px;
+    border-radius: 15px;
     z-index: 20;
 }
 
 .main-message {
-    font-size: 20px;
+    font-size: 26px;
     font-weight: bold;
     color: #FFD700;
-    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
 }
 
 .sub-message {
-    font-size: 14px;
+    font-size: 17px;
     color: white;
-    opacity: 0.8;
-    margin-top: 5px;
+    opacity: 0.85;
+    margin-top: 8px;
 }
 
-/* Khu vực bài chung (Community Cards) - Tạm ẩn */
+/* Khu vực bài chung (Community Cards) - Giữ nguyên kích thước lớn */
 .community-cards {
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, calc(-50% + 50px));
-    /* Dịch xuống dưới thông báo */
+    transform: translate(-50%, calc(-50% + 90px));
     display: flex;
-    gap: 5px;
+    gap: 12px;
     z-index: 10;
 }
 
-/* Style cho bài chung nếu cần */
+/* Style cho bài chung (sử dụng kích thước 75x113) - Giữ nguyên */
 .community-cards .card {
-    width: 45px;
-    height: 65px;
+    width: 75px;
+    height: 113px;
+    font-size: 14px;
+    border-radius: 6px;
+}
+
+.community-cards .card .card-corner {
+    width: 21px;
+    top: 6px;
+    left: 6px;
+}
+
+.community-cards .card .card-corner.bottom-right {
+    bottom: 6px;
+    right: 6px;
+}
+
+.community-cards .card .card-rank {
+    font-size: 21px;
+}
+
+.community-cards .card .card-suit-small {
+    font-size: 15px;
+    margin-top: 2px;
+}
+
+.community-cards .card .card-pattern-symbol.main {
+    font-size: 48px;
 }
 
 
-/* Header (Ping, Thoát) */
+/* Header (Ping, Thoát) - Giữ nguyên kích thước lớn */
 .room-header {
     position: absolute;
-    top: 20px;
-    left: 20px;
-    right: 20px;
+    top: 25px;
+    left: 25px;
+    right: 25px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 100;
-    /* Nằm trên cùng */
 }
 
 .ping {
-    background: rgba(0, 0, 0, 0.3);
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 14px;
+    background: rgba(0, 0, 0, 0.45);
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 17px;
 }
 
 .exit-btn {
-    background: rgba(0, 0, 0, 0.3);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-    border-radius: 8px;
-    width: 45px;
-    height: 45px;
+    background: rgba(0, 0, 0, 0.45);
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+    width: 60px;
+    height: 60px;
     color: white;
     cursor: pointer;
     display: flex;
@@ -363,11 +374,11 @@
 }
 
 .exit-btn:hover {
-    background: rgba(255, 0, 0, 0.3);
-    border-color: rgba(255, 0, 0, 0.5);
+    background: rgba(255, 0, 0, 0.45);
+    border-color: rgba(255, 0, 0, 0.65);
 }
 
 .exit-btn svg {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
 }
