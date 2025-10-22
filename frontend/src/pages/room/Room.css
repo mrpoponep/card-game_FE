@@ -44,13 +44,139 @@
 .player-seat {
     position: absolute;
     width: 100px;
-    height: 120px;
+    /* Chiều rộng tổng thể của khu vực ghế */
+    height: 140px;
+    /* Chiều cao tổng thể (bao gồm cả bài) */
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5px;
+    /* background-color: rgba(0, 255, 0, 0.1); */
+    /* Để debug vị trí */
 }
 
+/* Vị trí 4 ghế */
+/* Ghế 1: Người chơi (Bottom) */
+.seat-1 {
+    bottom: -70px;
+    /* Nửa avatar và bài ở ngoài */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Ghế 2: Trái */
+.seat-2 {
+    top: 50%;
+    left: -50px;
+    /* Nửa avatar ở ngoài */
+    transform: translateY(-50%);
+}
+
+/* Ghế 3: Trên */
+.seat-3 {
+    top: -70px;
+    /* Nửa avatar và bài ở ngoài */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Ghế 4: Phải */
+.seat-4 {
+    top: 50%;
+    right: -50px;
+    /* Nửa avatar ở ngoài */
+    transform: translateY(-50%);
+}
+
+
+/* Khu vực hiển thị bài */
+.player-hand {
+    position: absolute;
+    display: flex;
+    transform: translateX(-50%);
+    /* Canh giữa theo chiều ngang */
+    z-index: 5;
+    /* Nằm trên avatar */
+    height: 50px;
+    /* Chiều cao khu vực bài */
+    /* background-color: rgba(0, 0, 255, 0.1); */
+    /* Để debug vị trí */
+}
+
+/* Định vị bài cho từng ghế */
+.seat-1 .player-hand {
+    /* Dưới */
+    top: 0;
+    /* Ngay phía trên avatar */
+    left: 50%;
+}
+
+.seat-2 .player-hand {
+    /* Trái */
+    top: 50%;
+    left: 100%;
+    /* Bên phải avatar */
+    transform: translate(5px, -50%) rotate(90deg);
+    /* Dịch nhẹ và xoay */
+    transform-origin: center left;
+}
+
+.seat-3 .player-hand {
+    /* Trên */
+    bottom: 0;
+    /* Ngay phía dưới avatar */
+    left: 50%;
+    transform: translateX(-50%) scaleY(-1);
+    /* Lật ngược để thấy số đúng chiều */
+}
+
+.seat-4 .player-hand {
+    /* Phải */
+    top: 50%;
+    right: 100%;
+    /* Bên trái avatar */
+    transform: translate(-5px, -50%) rotate(-90deg);
+    /* Dịch nhẹ và xoay */
+    transform-origin: center right;
+}
+
+/* Style cho các lá bài trong tay */
+.player-hand .card {
+    width: 35px;
+    /* Kích thước lá bài nhỏ hơn */
+    height: 50px;
+    margin: 0 -8px;
+    /* Chồng lên nhau nhiều hơn */
+    box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+}
+
+.player-hand .card:first-child {
+    margin-left: 0;
+}
+
+.player-hand .card:last-child {
+    margin-right: 0;
+}
+
+/* Bài úp (placeholder) */
+.card-placeholder {
+    width: 35px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border: 1px dashed rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+    margin: 0 -8px;
+}
+
+.player-hand .card-placeholder:first-child {
+    margin-left: 0;
+}
+
+.player-hand .card-placeholder:last-child {
+    margin-right: 0;
+}
+
+
+/* Avatar người chơi */
 .player-avatar {
     width: 70px;
     height: 70px;
@@ -63,6 +189,10 @@
     font-weight: bold;
     font-size: 14px;
     overflow: hidden;
+    position: absolute;
+    /* Để định vị chính xác */
+    z-index: 1;
+    /* Nằm dưới bài */
 }
 
 .player-avatar img {
@@ -71,16 +201,51 @@
     object-fit: cover;
 }
 
-.player-avatar.ai {
-    background: linear-gradient(135deg, #ddd 0%, #aaa 100%);
-    color: #333;
+.player-avatar.empty {
+    background: rgba(0, 0, 0, 0.3);
+    border: 3px solid #555;
 }
 
+/* Định vị avatar cho từng ghế */
+.seat-1 .player-avatar {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Dưới */
+.seat-2 .player-avatar {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+/* Trái */
+.seat-3 .player-avatar {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Trên */
+.seat-4 .player-avatar {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+}
+
+/* Phải */
+
+
+/* Thông tin người chơi (tên, tiền) */
 .player-info {
+    position: absolute;
     text-align: center;
     font-size: 14px;
     font-weight: bold;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
+    width: 100px;
+    /* Đảm bảo đủ rộng */
 }
 
 .player-balance {
@@ -88,38 +253,34 @@
     color: #FFD700;
 }
 
-/* Vị trí 4 ghế */
-/* Ghế 1: Người chơi (Bottom) */
-.seat-1 {
-    bottom: -60px;
-    /* Nửa trong nửa ngoài */
+/* Định vị thông tin cho từng ghế */
+.seat-1 .player-info {
+    bottom: -20px;
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Ghế 2: Trái */
-.seat-2 {
-    top: 50%;
-    left: -50px;
-    /* Nửa trong nửa ngoài */
-    transform: translateY(-50%);
+/* Dưới avatar */
+.seat-2 .player-info {
+    top: calc(50% + 40px);
+    left: 0;
 }
 
-/* Ghế 3: Trên (AI) */
-.seat-3 {
-    top: -60px;
-    /* Nửa trong nửa ngoài */
+/* Dưới avatar */
+.seat-3 .player-info {
+    top: calc(100% + 5px);
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Ghế 4: Phải */
-.seat-4 {
-    top: 50%;
-    right: -50px;
-    /* Nửa trong nửa ngoài */
-    transform: translateY(-50%);
+/* Dưới avatar */
+.seat-4 .player-info {
+    top: calc(50% + 40px);
+    right: 0;
 }
+
+/* Dưới avatar */
+
 
 /* Thông báo giữa bàn */
 .table-center-message {
@@ -128,23 +289,44 @@
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 20px 40px;
+    background: rgba(0, 0, 0, 0.4);
+    padding: 15px 30px;
     border-radius: 10px;
+    z-index: 20;
 }
 
 .main-message {
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     color: #FFD700;
     text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
 }
 
 .sub-message {
-    font-size: 16px;
+    font-size: 14px;
     color: white;
     opacity: 0.8;
+    margin-top: 5px;
 }
+
+/* Khu vực bài chung (Community Cards) - Tạm ẩn */
+.community-cards {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, calc(-50% + 50px));
+    /* Dịch xuống dưới thông báo */
+    display: flex;
+    gap: 5px;
+    z-index: 10;
+}
+
+/* Style cho bài chung nếu cần */
+.community-cards .card {
+    width: 45px;
+    height: 65px;
+}
+
 
 /* Header (Ping, Thoát) */
 .room-header {
@@ -155,6 +337,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    z-index: 100;
+    /* Nằm trên cùng */
 }
 
 .ping {
@@ -175,6 +359,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: all 0.2s ease;
+}
+
+.exit-btn:hover {
+    background: rgba(255, 0, 0, 0.3);
+    border-color: rgba(255, 0, 0, 0.5);
 }
 
 .exit-btn svg {
