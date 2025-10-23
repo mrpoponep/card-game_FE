@@ -28,3 +28,16 @@ export async function fetchTotalBannedPlayers() {
   const data = await apiGet('/api/admin/total-banned-players');
   return data.totalBannedPlayers; // Chỉ trả về con số
 }
+
+/**
+ * @param {string} type - "public" hoặc "private"
+ */
+export async function fetchTables(type = "public") {
+  const data = await apiGet(`/api/room/list?type=${type}`);
+  return data.tables; // Trả về mảng các phòng
+}
+
+export async function fetchTableMetrics() {
+  const data = await apiGet('/api/room/table-metrics');
+  return data; // Trả về đối tượng metrics
+}

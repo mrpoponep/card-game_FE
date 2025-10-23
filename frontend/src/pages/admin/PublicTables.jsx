@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect, useCallback } from "react";
+import { fetchTables, fetchTableMetrics } from "../../api";
 import {
   SignalIcon,
   BoltIcon,
@@ -86,35 +87,83 @@ function EditRow({ row, onCancel }) {
 }
 
 export default function PublicTables({ from, to }) {
-  // metrics khối trên (giữ UI, chưa nối API)
-  const [wm, setWm] = useState(60);
-  const mt = {
+  // metrics bàn
+  const [metrics, setMetrics] = useState({
     totalTables: 0,
     publicTables: 0,
     privateTables: 0,
-    activeTablesRealtime: 0,
-    activeTablesDbWindow: 0,
-  };
-  const mErr = null;
+    activeTablesRealtime: 0, // API của chúng ta chưa hỗ trợ
+    activeTablesDbWindow: 0,   // API của chúng ta chưa hỗ trợ
+  });
+  const [metricsLoading, setMetricsLoading] = useState(true);
+  const [metricsError, setMetricsError] = useState(null);
+  const [wm, setWm] = useState(60);
 
   // list bàn (giữ trống, chưa nối API)
   const [rows, setRows] = useState([]);
+  const [loadingList, setLoadingList] = useState(true); // Bắt đầu ở trạng thái loading
+  const [lErr, setLErr] = useState(null); // Quản lý lỗi
+  const [tableType, setTableType] = useState('public'); // State để theo dõi tab (tạm thời)
+
   const [hideStopped, setHideStopped] = useState(false);
   const [editingId, setEditingId] = useState(null);
   const [creating, setCreating] = useState(false);
   const [newVisibility, setNewVisibility] = useState('public');
-
-  const loadingList = false;
-  const lErr = null;
 
   const filtered = useMemo(() => {
     if (!hideStopped) return rows;
     return rows.filter(r => r.activeRealtime);
   }, [rows, hideStopped]);
 
-  const loadList = () => {
-    // Chưa nối API → không làm gì
-  };
+  const loadList = useCallback(async () => {
+    try {
+      setLoadingList(true);
+      setLErr(null);
+      const tablesData = await fetchTables(tableType);
+      setRows(tablesData);
+      } catch (err) {
+        console.error('Error fetching tables:', err);
+        setLErr('Lỗi khi tải danh sách bàn.');
+        } finally {
+          setLoadingList(false);
+          }
+          }, [tableType]);
+
+  useEffect(() => {
+    loadList();
+  }, [loadList]);
+
+  useEffect(() => {
+    const loadMetrics = async () => {
+      try {
+        setMetricsLoading(true);
+        setMetricsError(null);
+        
+        // Gọi API metrics
+        const data = await fetchTableMetrics();
+        
+        // Cập nhật state với dữ liệu từ API
+        // (Chúng ta giữ lại prev để không mất các giá trị 0)
+        setMetrics(prev => ({
+          ...prev,
+          totalTables: data.totalTables,
+          publicTables: data.publicTables,
+          privateTables: data.privateTables,
+          activeTablesRealtime: data.activeTables,
+          // khi hoạt động bàn phải lưu vào database với status = playing
+        }));
+
+      } catch (err) {
+        console.error("Lỗi tải metrics:", err);
+        setMetricsError("Không thể tải số liệu bàn.");
+      } finally {
+        setMetricsLoading(false);
+      }
+    };
+    
+    loadMetrics(); // 👈 Chạy hàm này
+  }, []);
+
   const startCreate = () => setCreating(true);
   const doCreate = () => {
     // Chưa nối API → vô hiệu hoá
@@ -136,17 +185,18 @@ export default function PublicTables({ from, to }) {
         </div>
       </div>
 
-      {mErr ? (
-        <div className="p-4 text-red-600">{mErr}</div>
-      ) : !mt ? (
+      {metricsError ? (
+        <div className="p-4 text-red-600">{metricsError}</div>
+      ) : metricsLoading ? (
         <div className="p-4">Đang tải số liệu bàn...</div>
       ) : (
         <div className="grid gap-4 md:grid-cols-5">
-          <Card title="Tổng số bàn" value={mt.totalTables ?? 0} icon={<TableCellsIcon className="icon-16 text-gray-400" />} />
-          <Card title="Bàn Public" value={mt.publicTables ?? 0} icon={<BoltIcon className="icon-16 text-gray-400" />} />
-          <Card title="Bàn Private" value={mt.privateTables ?? 0} icon={<BoltIcon className="icon-16 text-gray-400" />} />
-          <Card title="Đang hoạt động (realtime)" value={mt.activeTablesRealtime ?? 0} icon={<SignalIcon className="icon-16 text-gray-400" />} />
-          <Card title={`Hoạt động (DB ${wm}p)`} value={mt.activeTablesDbWindow ?? 0} icon={<ClockIcon className="icon-16 text-gray-400" />} />
+          <Card title="Tổng số bàn" value={metrics.totalTables ?? 0} icon={<TableCellsIcon className="icon-16 text-gray-400" />} />
+          <Card title="Bàn Public" value={metrics.publicTables ?? 0} icon={<BoltIcon className="icon-16 text-gray-400" />} />
+          <Card title="Bàn Private" value={metrics.privateTables ?? 0} icon={<BoltIcon className="icon-16 text-gray-400" />} />
+          <Card title="Đang hoạt động" value={metrics.activeTablesRealtime ?? 0} icon={<SignalIcon className="icon-16 text-gray-400" />} />
+           {/* 2 thẻ này API chưa hỗ trợ, sẽ hiển thị số 0 */}
+          <Card title={`Hoạt động (DB ${wm}p)`} value={metrics.activeTablesDbWindow ?? 0} icon={<ClockIcon className="icon-16 text-gray-400" />} />
         </div>
       )}
 
@@ -161,11 +211,10 @@ export default function PublicTables({ from, to }) {
           </label>
           <button
             onClick={loadList}
-            className="rounded-xl border px-3 py-1.5 text-sm bg-gray-200 text-gray-500 cursor-not-allowed"
-            title="Chưa kết nối API"
-            disabled
+            className="rounded-xl border px-3 py-1.5 text-sm hover:bg-gray-100 disabled:opacity-50"
+            disabled={loadingList} // 👈 Vô hiệu hóa khi đang tải
           >
-            Làm mới
+            {loadingList ? "Đang tải..." : "Làm mới"}
           </button>
         </div>
 
