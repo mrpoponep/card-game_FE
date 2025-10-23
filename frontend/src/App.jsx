@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Ranking from './components/ranking/Ranking';
 import Room from './pages/room/Room';
 import PokerRules from './components/RuleScreen/PokerRules';
+import MatchResultScreen from './pages/MatchResultScreen/MatchResultScreen';
 
 export default function App() {
   const [isRankingOpen, setIsRankingOpen] = useState(false);
@@ -41,7 +42,9 @@ export default function App() {
         <span style={{ margin: '0 8px' }}>|</span>
         <Link to="/room">Room</Link>
         <span style={{ margin: '0 8px' }}>|</span>
-        <button 
+        <Link to="/match-result">Match Result</Link>
+        <span style={{ margin: '0 8px' }}>|</span>
+        <button
           onClick={handleOpenRule}
           style={{ 
             background: 'none', 
@@ -60,6 +63,7 @@ export default function App() {
         <Routes>
           <Route path="/" element={<div><h1>Welcome to Card Game</h1></div>} />
           <Route path="/room" element={<Room />} />
+          <Route path="/match-result" element={<MatchResultScreen />} />
         </Routes>
       </div>
 
