@@ -49,3 +49,30 @@ export async function fetchOnlinePlayers() {
   const data = await apiGet('/api/admin/online-players');
   return data.onlinePlayers; // Chỉ trả về con số
 }
+
+// ... (các hàm fetch cũ: fetchTotalPlayers, fetchTableMetrics...)
+
+/**
+ * Lấy thống kê Coin theo khoảng thời gian
+ * @param {string} fromDate - 'YYYY-MM-DD'
+ * @param {string} toDate - 'YYYY-MM-DD'
+ * @returns {Promise<object>} Object chứa totalVolume, transactionCount, averageTransaction
+ */
+export async function fetchCoinStats(fromDate, toDate) {
+  // Gọi API: GET /api/admin/coin-stats?from=YYYY-MM-DD&to=YYYY-MM-DD
+  // API trả về: { success: true, stats: { totalVolume: ..., ... } }
+  const data = await apiGet(`/api/admin/coin-stats?from=${fromDate}&to=${toDate}`);
+  return data.stats; // Trả về object stats
+}
+
+/**
+ * Lấy thống kê Người chơi theo khoảng thời gian
+ * @param {string} fromDate - 'YYYY-MM-DD'
+ * @param {string} toDate - 'YYYY-MM-DD'
+ * @returns {Promise<object>} Object chứa totalRegistered, activeByTx, ...
+ */
+export async function fetchPlayerStats(fromDate, toDate) {
+  // Gọi API: GET /api/admin/player-stats?from=...&to=...
+  const data = await apiGet(`/api/admin/player-stats?from=${fromDate}&to=${toDate}`);
+  return data.stats; // Trả về object stats
+}

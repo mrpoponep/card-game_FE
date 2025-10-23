@@ -15,18 +15,17 @@ const fmt = new Intl.NumberFormat("vi-VN");
 
 function Card({ title, value, icon }) {
   return (
-    <div className="rounded-2xl border bg-white p-5 shadow-sm">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm text-gray-500">{title}</span>
-        {icon}
+    <div className="stat-card">
+      <div className="stat-card__header">
+        <span className="stat-card__label">{title}</span>
+        <div className="stat-card__icon">{icon}</div>
       </div>
-      <div className="text-2xl font-bold">{fmt.format(value)}</div>
+      <div className="stat-card__value">{fmt.format(value)}</div>
     </div>
   );
 }
 
 function EditRow({ row, onCancel }) {
-  // Giữ form UI, chưa nối API
   const [form, setForm] = useState({
     min_players: row.min_players,
     max_players: row.max_players,
@@ -39,71 +38,52 @@ function EditRow({ row, onCancel }) {
   const set = (k, v) => setForm(s => ({ ...s, [k]: v }));
 
   return (
-    <tr className="bg-yellow-50">
+    <tr className="edit-row">
       <td className="p-2">{row.table_id}</td>
       <td className="p-2">{row.visibility}</td>
       <td className="p-2">
-        <input type="number" className="input w-24"
-          value={form.min_players} onChange={e=>set('min_players', Number(e.target.value))}/>
+        <input type="number" className="input w-24" value={form.min_players} onChange={e=>set('min_players', Number(e.target.value))}/>
         <span className="px-1">/</span>
-        <input type="number" className="input w-24"
-          value={form.max_players} onChange={e=>set('max_players', Number(e.target.value))}/>
+        <input type="number" className="input w-24" value={form.max_players} onChange={e=>set('max_players', Number(e.target.value))}/>
       </td>
       <td className="p-2">
-        <input type="number" className="input w-24"
-          value={form.small_blind} onChange={e=>set('small_blind', Number(e.target.value))}/>
+        <input type="number" className="input w-24" value={form.small_blind} onChange={e=>set('small_blind', Number(e.target.value))}/>
         <span className="px-1">-</span>
-        <input type="number" className="input w-24"
-          value={form.max_blind} onChange={e=>set('max_blind', Number(e.target.value))}/>
+        <input type="number" className="input w-24" value={form.max_blind} onChange={e=>set('max_blind', Number(e.target.value))}/>
       </td>
       <td className="p-2">
-        <input type="number" className="input w-28"
-          value={form.min_buy_in ?? ''} placeholder="null=private"
-          onChange={e=>set('min_buy_in', e.target.value===''? null : Number(e.target.value))}/>
+        <input type="number" className="input w-28" value={form.min_buy_in ?? ''} placeholder="null=private" onChange={e=>set('min_buy_in', e.target.value===''? null : Number(e.target.value))}/>
         <span className="px-1">-</span>
-        <input type="number" className="input w-28"
-          value={form.max_buy_in ?? ''} placeholder="null"
-          onChange={e=>set('max_buy_in', e.target.value===''? null : Number(e.target.value))}/>
+        <input type="number" className="input w-28" value={form.max_buy_in ?? ''} placeholder="null" onChange={e=>set('max_buy_in', e.target.value===''? null : Number(e.target.value))}/>
       </td>
       <td className="p-2">
-        <input type="number" className="input w-24"
-          value={form.rake} step="0.01" onChange={e=>set('rake', Number(e.target.value))}/>
+        <input type="number" className="input w-24" value={form.rake} step="0.01" onChange={e=>set('rake', Number(e.target.value))}/>
       </td>
       <td className="p-2" colSpan={3}>
-        <div className="flex gap-2">
-          <button
-            className="rounded-xl bg-gray-300 text-white px-3 py-1.5 cursor-not-allowed"
-            title="Chưa kết nối API"
-            disabled
-          >
-            Lưu
-          </button>
-          <button onClick={onCancel}
-            className="rounded-xl border px-3 py-1.5 hover:bg-gray-50">Hủy</button>
+        <div style={{ display: "flex", gap: 8 }}>
+          <button className="button button--secondary" disabled title="Chưa kết nối API">Lưu</button>
+          <button className="btn-table" onClick={onCancel}>Hủy</button>
         </div>
       </td>
     </tr>
   );
 }
 
-export default function PublicTables({ from, to }) {
-  // metrics bàn
+export default function PublicTables() {
   const [metrics, setMetrics] = useState({
     totalTables: 0,
     publicTables: 0,
     privateTables: 0,
-    activeTablesRealtime: 0, // API của chúng ta chưa hỗ trợ
-    activeTablesDbWindow: 0,   // API của chúng ta chưa hỗ trợ
+    activeTablesRealtime: 0,
+    activeTablesDbWindow: 0,
   });
   const [metricsLoading, setMetricsLoading] = useState(true);
   const [metricsError, setMetricsError] = useState(null);
   const [wm, setWm] = useState(60);
 
-  // list bàn (giữ trống, chưa nối API)
   const [rows, setRows] = useState([]);
-  const [loadingList, setLoadingList] = useState(true); // Bắt đầu ở trạng thái loading
-  const [lErr, setLErr] = useState(null); // Quản lý lỗi
-  const [tableType, setTableType] = useState('public'); // State để theo dõi tab (tạm thời)
+  const [loadingList, setLoadingList] = useState(true);
+  const [lErr, setLErr] = useState(null);
 
   const [hideStopped, setHideStopped] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -119,40 +99,31 @@ export default function PublicTables({ from, to }) {
     try {
       setLoadingList(true);
       setLErr(null);
-      const tablesData = await fetchTables(tableType);
+      const tablesData = await fetchTables('public');
       setRows(tablesData);
-      } catch (err) {
-        console.error('Error fetching tables:', err);
-        setLErr('Lỗi khi tải danh sách bàn.');
-        } finally {
-          setLoadingList(false);
-          }
-          }, [tableType]);
+    } catch (err) {
+      console.error('Error fetching tables:', err);
+      setLErr('Lỗi khi tải danh sách bàn.');
+    } finally {
+      setLoadingList(false);
+    }
+  }, []);
 
-  useEffect(() => {
-    loadList();
-  }, [loadList]);
+  useEffect(() => { loadList(); }, [loadList]);
 
   useEffect(() => {
     const loadMetrics = async () => {
       try {
         setMetricsLoading(true);
         setMetricsError(null);
-        
-        // Gọi API metrics
         const data = await fetchTableMetrics();
-        
-        // Cập nhật state với dữ liệu từ API
-        // (Chúng ta giữ lại prev để không mất các giá trị 0)
         setMetrics(prev => ({
           ...prev,
           totalTables: data.totalTables,
           publicTables: data.publicTables,
           privateTables: data.privateTables,
           activeTablesRealtime: data.activeTables,
-          // khi hoạt động bàn phải lưu vào database với status = playing
         }));
-
       } catch (err) {
         console.error("Lỗi tải metrics:", err);
         setMetricsError("Không thể tải số liệu bàn.");
@@ -160,25 +131,23 @@ export default function PublicTables({ from, to }) {
         setMetricsLoading(false);
       }
     };
-    
-    loadMetrics(); // 👈 Chạy hàm này
+    loadMetrics();
   }, []);
 
   const startCreate = () => setCreating(true);
-  const doCreate = () => {
-    // Chưa nối API → vô hiệu hoá
-  };
+  const doCreate = () => {};
 
   return (
-    <div className="space-y-6">
-      {/* Khối metrics */}
-      <div className="flex items-center justify-between">
+    <div className="public-tables">
+      {/* Title + window */}
+      <div className="public-metrics-title">
         <h3 className="text-lg font-semibold">Số liệu bàn (Public / Private / Active)</h3>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-600">Window (phút):</span>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <span className="text-sm" style={{ color: "#4b5563" }}>Window (phút):</span>
           <input
             type="number" min={5}
-            className="h-9 w-24 rounded-xl border px-3 text-sm"
+            className="form-input"
+            style={{ width: 96, height: 36 }}
             value={wm}
             onChange={(e) => setWm(Math.max(5, Number(e.target.value || 60)))}
           />
@@ -186,42 +155,37 @@ export default function PublicTables({ from, to }) {
       </div>
 
       {metricsError ? (
-        <div className="p-4 text-red-600">{metricsError}</div>
+        <div className="error-message">{metricsError}</div>
       ) : metricsLoading ? (
-        <div className="p-4">Đang tải số liệu bàn...</div>
+        <div className="loading-placeholder">Đang tải số liệu bàn...</div>
       ) : (
-        <div className="grid gap-4 md:grid-cols-5">
-          <Card title="Tổng số bàn" value={metrics.totalTables ?? 0} icon={<TableCellsIcon className="icon-16 text-gray-400" />} />
-          <Card title="Bàn Public" value={metrics.publicTables ?? 0} icon={<BoltIcon className="icon-16 text-gray-400" />} />
-          <Card title="Bàn Private" value={metrics.privateTables ?? 0} icon={<BoltIcon className="icon-16 text-gray-400" />} />
-          <Card title="Đang hoạt động" value={metrics.activeTablesRealtime ?? 0} icon={<SignalIcon className="icon-16 text-gray-400" />} />
-           {/* 2 thẻ này API chưa hỗ trợ, sẽ hiển thị số 0 */}
-          <Card title={`Hoạt động (DB ${wm}p)`} value={metrics.activeTablesDbWindow ?? 0} icon={<ClockIcon className="icon-16 text-gray-400" />} />
+        <div className="public-cards">
+          <Card title="Tổng số bàn" value={metrics.totalTables ?? 0} icon={<TableCellsIcon className="icon-16" />} />
+          <Card title="Bàn Public" value={metrics.publicTables ?? 0} icon={<BoltIcon className="icon-16" />} />
+          <Card title="Bàn Private" value={metrics.privateTables ?? 0} icon={<BoltIcon className="icon-16" />} />
+          <Card title="Đang hoạt động" value={metrics.activeTablesRealtime ?? 0} icon={<SignalIcon className="icon-16" />} />
+          <Card title={`Hoạt động (DB ${wm}p)`} value={metrics.activeTablesDbWindow ?? 0} icon={<ClockIcon className="icon-16" />} />
         </div>
       )}
 
-      {/* Toolbar list */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 text-sm">
+      {/* Toolbar */}
+      <div className="table-toolbar">
+        <div className="toolbar__left">
+          <label className="toolbar__filter">
             <input type="checkbox" checked={hideStopped} onChange={e=>setHideStopped(e.target.checked)} />
             <span className="inline-flex items-center gap-1">
               <EyeSlashIcon className="icon-16" /> Ẩn bàn đã dừng
             </span>
           </label>
-          <button
-            onClick={loadList}
-            className="rounded-xl border px-3 py-1.5 text-sm hover:bg-gray-100 disabled:opacity-50"
-            disabled={loadingList} // 👈 Vô hiệu hóa khi đang tải
-          >
+          <button onClick={loadList} className="button button--secondary" disabled={loadingList}>
             {loadingList ? "Đang tải..." : "Làm mới"}
           </button>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="toolbar__right">
           {!creating ? (
             <button
-              className="inline-flex items-center gap-2 h-10 rounded-xl bg-gray-300 px-4 text-sm font-medium text-white cursor-not-allowed"
+              className="button button--secondary"
               onClick={startCreate}
               title="Chưa kết nối API"
               disabled
@@ -230,86 +194,83 @@ export default function PublicTables({ from, to }) {
               Tạo bàn mới
             </button>
           ) : (
-            <div className="flex items-center gap-2">
-              <select className="input h-10" value={newVisibility} onChange={e=>setNewVisibility(e.target.value)}>
+            <div className="create-form">
+              <select className="form-select" value={newVisibility} onChange={e=>setNewVisibility(e.target.value)}>
                 <option value="public">public</option>
                 <option value="private">private</option>
               </select>
-              <button className="rounded-xl bg-gray-300 text-white px-3 py-2 text-sm cursor-not-allowed" onClick={doCreate} disabled title="Chưa kết nối API">Tạo</button>
-              <button className="rounded-xl border px-3 py-2 text-sm" onClick={()=>setCreating(false)}>Hủy</button>
+              <button className="button button--primary" onClick={doCreate} disabled title="Chưa kết nối API">Tạo</button>
+              <button className="button button--secondary" onClick={()=>setCreating(false)}>Hủy</button>
             </div>
           )}
         </div>
       </div>
 
-      {/* List bàn */}
-      <div className="rounded-2xl border bg-white overflow-x-auto">
-        {lErr ? (
-          <div className="p-4 text-red-600">{lErr}</div>
-        ) : loadingList ? (
-          <div className="p-4">Đang tải danh sách...</div>
-        ) : (
-          <table className="min-w-[1000px] w-full text-sm">
-            <thead className="text-left text-gray-500 border-b">
-              <tr>
-                <th className="p-2">ID</th>
-                <th className="p-2">Loại</th>
-                <th className="p-2">Min/Max</th>
-                <th className="p-2">Blind</th>
-                <th className="p-2">Buy-in</th>
-                <th className="p-2">Rake</th>
-                <th className="p-2">Presence</th>
-                <th className="p-2">Realtime</th>
-                <th className="p-2">Last played</th>
-                <th className="p-2">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map(row => (
-                row.table_id === editingId ? (
-                  <EditRow key={row.table_id} row={row} onCancel={() => setEditingId(null)} />
-                ) : (
-                  <tr key={row.table_id} className="border-b last:border-0">
-                    <td className="p-2 font-medium text-gray-900">{row.table_id}</td>
-                    <td className="p-2">{row.visibility}</td>
-                    <td className="p-2">{row.min_players}/{row.max_players}</td>
-                    <td className="p-2">{fmt.format(row.small_blind)} - {fmt.format(row.max_blind)}</td>
-                    <td className="p-2">
-                      {row.min_buy_in === null ? 'null' : fmt.format(row.min_buy_in)}
-                      {' - '}
-                      {row.max_buy_in === null ? 'null' : fmt.format(row.max_buy_in)}
-                    </td>
-                    <td className="p-2">{row.rake}</td>
-                    <td className="p-2 inline-flex items-center gap-1">
-                      <UsersIcon className="icon-16 text-gray-500" />
-                      <span>{row.presence?.length ?? 0}</span>
-                    </td>
-                    <td className="p-2">
-                      {row.activeRealtime ? (
-                        <span className="rounded-full border px-2 py-0.5 text-xs text-green-700 border-green-300 bg-green-50">playing</span>
-                      ) : (
-                        <span className="rounded-full border px-2 py-0.5 text-xs text-gray-700">idle</span>
-                      )}
-                    </td>
-                    <td className="p-2">{row.lastPlayedAt ? new Date(row.lastPlayedAt).toLocaleString() : '-'}</td>
-                    <td className="p-2">
-                      <button
-                        className="inline-flex items-center gap-1 rounded-xl border px-3 py-1.5 hover:bg-gray-50"
-                        onClick={() => setEditingId(row.table_id)}
-                      >
-                        <PencilSquareIcon className="icon-16" />
-                        <span>Sửa</span>
-                      </button>
-                    </td>
-                  </tr>
-                )
-              ))}
-              {filtered.length === 0 && (
-                <tr><td colSpan={10} className="p-6 text-center text-gray-500">Không có bàn phù hợp.</td></tr>
-              )}
-            </tbody>
-          </table>
-        )}
+      {/* Table */}
+      <div className="table-container">
+        <div className="table-scroll-wrapper">
+          {lErr ? (
+            <div className="error-message">{lErr}</div>
+          ) : loadingList ? (
+            <div className="loading-placeholder">Đang tải danh sách...</div>
+          ) : (
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Loại</th>
+                  <th>Min/Max</th>
+                  <th>Blind</th>
+                  <th>Buy-in</th>
+                  <th>Rake</th>
+                  <th>Presence</th>
+                  <th>Realtime</th>
+                  <th>Last played</th>
+                  <th>Thao tác</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((row) =>
+                  row.table_id === editingId ? (
+                    <EditRow key={row.table_id} row={row} onCancel={() => setEditingId(null)} />
+                  ) : (
+                    <tr key={row.table_id}>
+                      <td className="p-2" style={{ fontWeight: 600, color: "#111827" }}>{row.table_id}</td>
+                      <td className="p-2">{row.visibility}</td>
+                      <td className="p-2">{row.min_players}/{row.max_players}</td>
+                      <td className="p-2">{fmt.format(row.small_blind)} - {fmt.format(row.max_blind)}</td>
+                      <td className="p-2">
+                        {row.min_buy_in === null ? 'null' : fmt.format(row.min_buy_in)}
+                        {" - "}
+                        {row.max_buy_in === null ? 'null' : fmt.format(row.max_buy_in)}
+                      </td>
+                      <td className="p-2">{row.rake}</td>
+                      <td className="p-2" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                        <UsersIcon className="icon-16" />
+                        <span>{row.presence?.length ?? 0}</span>
+                      </td>
+                      <td className="p-2">
+                        <span className={`badge-rt ${row.activeRealtime ? "playing" : "idle"}`}>
+                          {row.activeRealtime ? "playing" : "idle"}
+                        </span>
+                      </td>
+                      <td className="p-2">{row.lastPlayedAt ? new Date(row.lastPlayedAt).toLocaleString() : '-'}</td>
+                      <td className="p-2">
+                        <button className="btn-table" onClick={() => setEditingId(row.table_id)}>
+                          <PencilSquareIcon className="icon-16" />
+                          <span>Sửa</span>
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                )}
+                {filtered.length === 0 && (
+                  <tr><td colSpan={10} className="p-6" style={{ textAlign: "center", color: "#6b7280" }}>Không có bàn phù hợp.</td></tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
       </div>
     </div>
   );
