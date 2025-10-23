@@ -41,3 +41,11 @@ export async function fetchTableMetrics() {
   const data = await apiGet('/api/room/table-metrics');
   return data; // Trả về đối tượng metrics
 }
+
+
+ // Lấy số người chơi đang online (real-time)
+export async function fetchOnlinePlayers() {
+  // Gọi API: GET /api/admin/online-players
+  const data = await apiGet('/api/admin/online-players');
+  return data.onlinePlayers; // Chỉ trả về con số
+}

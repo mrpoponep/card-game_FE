@@ -4,6 +4,7 @@ import Ranking from './components/ranking/Ranking';
 import Room from './pages/room/Room';
 import PokerRules from './components/RuleScreen/PokerRules';
 import Admin from './pages/admin/Dashboard';
+import RoomPoker from './pages/room/RoomPoker_FE.jsx';
 
 export default function App() {
   const [isRankingOpen, setIsRankingOpen] = useState(false);
@@ -57,6 +58,9 @@ export default function App() {
         </button>
         <span style={{ margin: '0 8px' }}>|</span>
         <Link to="/admin">Admin</Link>
+        <span style={{ margin: '0 8px' }}>|</span>
+        <Link to="/game-preview" style={{ color: 'red' }}>Game (Preview)</Link>
+        {/* (Tôi để màu đỏ để bạn dễ thấy) */}
       </nav>
 
       <div style={{ padding: 16 }}>
@@ -64,7 +68,7 @@ export default function App() {
           <Route path="/" element={<div><h1>Welcome to Card Game</h1></div>} />
           <Route path="/room" element={<Room />} />
           <Route path="/admin" element={<Admin />} /> 
-
+          <Route path="/game-preview" element={<RoomPoker />} />
         </Routes>
       </div>
 

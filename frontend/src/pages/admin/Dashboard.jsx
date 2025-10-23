@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useEffect} from "react";
-import { fetchTotalBannedPlayers, fetchTotalPlayers } from "../../api";
+import { fetchTotalBannedPlayers, fetchTotalPlayers, fetchOnlinePlayers } from "../../api";
 import "./Dashboard.css";
 
 import Select from "../../components/admin/Select";
@@ -75,15 +75,17 @@ export default function Dashboard() {
           setLoading(true); 
           setError(null);  
           
-          const [total, banned] = await Promise.all([
+          const [total, banned, online] = await Promise.all([
             fetchTotalPlayers(),
             fetchTotalBannedPlayers(),
+            fetchOnlinePlayers()
           ]);
 
           setKpi(prevKpi => ({
             ...prevKpi, 
             totalPlayers: total,
             bannedPlayers: banned,
+            online: online
           }));
 
         } catch (err) {

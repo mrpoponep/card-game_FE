@@ -5,9 +5,10 @@ const MAX_BET = 100;
 const BET_STEP = 5;
 const PLAYER_OPTIONS = [2, 3, 4];
 
-const CreateRoom = () => {
+const CreateRoom = ({ onRoomJoined }) => {
     const [bet, setBet] = useState(MIN_BET);
     const [players, setPlayers] = useState(4);
+    const [username, setUsername] = useState("");
 
     const handleBetChange = (delta) => {
         setBet(prev => {
@@ -22,37 +23,38 @@ const CreateRoom = () => {
         setPlayers(num);
     };
 
+    // Gọi API backend khi tạo phòng
+const handleCreateRoom = async () => {
+    if (!username.trim()) {
+        alert("Vui lòng nhập tên người chơi!");
+        return;
+    }
 
+    // ⚡️ Demo: tạo ID phòng ngẫu nhiên thay vì gọi BE
+    const fakeRoomId = Math.floor(Math.random() * 90000) + 10000;
 
-    const handleCreateRoom = async () => {
-        try {
-            const res = await fetch('http://localhost:3000/api/room/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    min_players: 2,
-                    max_players: 6,
-                    small_blind: bet / 2,
-                    max_blind: bet,
-                    min_buy_in: 2000,
-                    max_buy_in: 10000,
-                    rake: 0.05,
-                    is_private: true,
-                    user_id: 1
-                })
-            });
-            const data = await res.json();
-            alert(`Tạo phòng thành công! Mã phòng: ${data.room_code}`);
+    // Giả lập delay như khi gọi API thật
+    await new Promise(resolve => setTimeout(resolve, 500));
 
-        } catch (err) {
-            alert("Lỗi tạo phòng!");
-            console.error(err);
-        }
-    };
-
+    // Gọi callback để chuyển sang giao diện chơi bài
+    onRoomJoined({
+        roomId: fakeRoomId,
+        username: username.trim()
+    });
+};
 
     return (
-        <>
+        <div className="create-room-container">
+            <div className="input-section">
+                <label>Tên người chơi:</label>
+                <input
+                    type="text"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    placeholder="Nhập tên..."
+                />
+            </div>
+
             <div className="bet-section">
                 <p>Mức cược:</p>
                 <div className="bet-control">
@@ -61,6 +63,7 @@ const CreateRoom = () => {
                     <button className="bet-btn" onClick={() => handleBetChange(1)}>+</button>
                 </div>
             </div>
+
             <div className="player-section">
                 <p>Số người:</p>
                 <div className="player-options">
@@ -75,8 +78,11 @@ const CreateRoom = () => {
                     ))}
                 </div>
             </div>
-            <button className="create-btn" onClick={handleCreateRoom}>TẠO PHÒNG</button>
-        </>
+
+            <button className="create-btn" onClick={handleCreateRoom}>
+                TẠO PHÒNG
+            </button>
+        </div>
     );
 };
 
