@@ -98,16 +98,6 @@ async function apiPost(path, body, options = {}) {
   );
 }
 
-// 🔹 HÀM MỚI CHO ĐĂNG KÝ
-async function apiRegister(username, password) {
-  return apiPost('/api/auth/register', { username, password });
-}
-
-// 🔹 HÀM MỚI CHO ĐĂNG NHẬP (sẽ dùng sau)
-async function apiLogin(username, password) {
-  return apiPost('/api/auth/login', { username, password });
-}
-
 async function apiCreateRoom(roomData) {
   // route 'create' này là từ file 'createRoomRoute.js'
   return apiPost('/api/room/create', roomData); 
@@ -123,8 +113,6 @@ async function apiFindAndJoinRoom(code, userId) {
 export { 
   apiGet, 
   apiPost, 
-  apiRegister, 
-  apiLogin, 
   apiCreateRoom, 
   apiFindAndJoinRoom 
 };
