@@ -1,0 +1,58 @@
+/* ========================================
+   IMPORT BASE MODAL STYLES
+   ======================================== */
+@import '../../styles/modal-base.css';
+
+/* ========================================
+   ERROR MODAL SPECIFIC STYLES
+   ======================================== */
+
+.error-modal-container {
+  max-width: 500px;
+  height: auto;
+  max-height: 300px;
+}
+
+.error-modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.error-message {
+  color: white;
+  font-size: 18px;
+  font-weight: 500;
+  margin: 0 0 24px 0;
+  line-height: 1.5;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.error-ok-btn {
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  color: #4a2500;
+  border: 2px solid #FFE14A;
+  padding: 12px 32px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(255, 215, 0, 0.35);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.error-ok-btn:hover {
+  background: linear-gradient(135deg, #FFA500, #FFD700);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 215, 0, 0.45);
+}
+
+.error-ok-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+}

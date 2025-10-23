@@ -1,23 +1,34 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-
-// Import các component
 import Room from './pages/room/Room';
-import Home from './pages/home/Home'; 
-import AuthPage from './pages/auth/AuthPage'; 
-import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
-import HomeRedirect from './components/HomeRedirect/HomeRedirect'; // 🔹 1. IMPORT
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import LinkEmail from './pages/auth/LinkEmail';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import AppLayout from './pages/app/AppLayout';
+import Home from './pages/app/Home';
+import Room from './pages/room/Room';
+import { AuthProvider, RequireAuth } from './hooks/AuthContext';
+import { ErrorProvider, useError } from './hooks/ErrorContext';
+import ErrorModal from './components/ErrorModal/ErrorModal';
+import { setErrorModalCallback } from './api';
 
-export default function App() {
+function AppContent() {
+  const { showError, closeError, errorMessage, isErrorOpen } = useError();
+
+  // Đăng ký callback để api.js gọi khi có lỗi
+  React.useEffect(() => {
+    setErrorModalCallback(showError);
+  }, [showError]);
+
   return (
-    <BrowserRouter>
+    <>
       <Routes>
-        {/* Route công khai: Trang đăng nhập/đăng ký */}
-        <Route path="/auth" element={<AuthPage />} />
-
-        {/* Các route được bảo vệ */}
-        <Route element={<ProtectedRoute />}>
-          {/* 🔹 2. SỬA ROUTE NÀY */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/link-email" element={<LinkEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/" element={<RequireAuth><AppLayout /></RequireAuth>}>
           {/* Khi vào trang gốc '/', tự động chuyển đến /:userId */}
           <Route path="/" element={<HomeRedirect />} />
           
@@ -28,8 +39,20 @@ export default function App() {
           {/* Route phòng chơi giữ nguyên */}
           <Route path="/room/:roomCode" element={<Room />} /> 
         </Route>
-        
       </Routes>
+      <ErrorModal isOpen={isErrorOpen} onClose={closeError} message={errorMessage} />
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ErrorProvider>
+        <AuthProvider>
+          <AppContent />
+        </AuthProvider>
+      </ErrorProvider>
     </BrowserRouter>
   );
 }
