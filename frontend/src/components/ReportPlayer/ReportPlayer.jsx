@@ -13,7 +13,6 @@ const ReportPlayer = ({ playerName, playerId, onClose, onSubmit }) => {
     { value: 'Cheating', label: 'Gian lận' },
     { value: 'Toxic Behavior', label: 'Lăng mạ' },
     { value: 'Spam', label: 'Spam tin nhắn' },
-    { value: 'AFK/Leaving', label: 'AFK/Bỏ cuộc' },
     { value: 'Other', label: 'Khác' }
   ];
 
