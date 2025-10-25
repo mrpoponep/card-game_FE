@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useRef } from 'react';
 import { io } from 'socket.io-client';
+import { useAuth } from '../hooks/AuthContext';
+import { getAccessToken } from '../api';
 
 // 1. Khởi tạo socket
 // (Đảm bảo trỏ đúng port 3000 của server)
@@ -16,14 +18,37 @@ export const useSocket = () => {
 };
 
 // 3. Tạo Provider
+// - Chỉ kết nối khi auth đã hoàn tất và có access token
 export const SocketProvider = ({ children }) => {
+  const { user, ready } = useAuth();
   const [isConnected, setIsConnected] = useState(socket.connected);
+  const listenersAdded = useRef(false);
 
   useEffect(() => {
-    // Kết nối socket
-    socket.connect();
+    const tryConnect = () => {
+      const token = getAccessToken();
+      if (!token) return;
 
-    // Lắng nghe các sự kiện (ví dụ)
+      // Gán token vào handshake auth trước khi connect
+      socket.auth = { token };
+      socket.connect();
+    };
+
+    // Only connect when AuthProvider finished initial check and we have a user
+    if (ready && user) {
+      tryConnect();
+    }
+
+    // Handle when user logs out: disconnect socket
+    if (ready && !user) {
+      socket.disconnect();
+      setIsConnected(false);
+    }
+  }, [ready, user]);
+
+  useEffect(() => {
+    if (listenersAdded.current) return;
+
     socket.on('connect', () => {
       console.log('Socket connected:', socket.id);
       setIsConnected(true);
@@ -34,11 +59,13 @@ export const SocketProvider = ({ children }) => {
       setIsConnected(false);
     });
 
-    // Dọn dẹp khi unmount
+    listenersAdded.current = true;
+
     return () => {
       socket.off('connect');
       socket.off('disconnect');
       socket.disconnect();
+      listenersAdded.current = false;
     };
   }, []);
 

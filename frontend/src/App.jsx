@@ -10,6 +10,7 @@ import { AuthProvider, RequireAuth } from './hooks/AuthContext';
 import { ErrorProvider, useError } from './hooks/ErrorContext';
 import ErrorModal from './components/ErrorModal/ErrorModal';
 import { setErrorModalCallback } from './api';
+import { SocketProvider } from './context/SocketContext';
 
 function AppContent() {
   const { showError, closeError, errorMessage, isErrorOpen } = useError();
@@ -40,7 +41,9 @@ export default function App() {
     <BrowserRouter>
       <ErrorProvider>
         <AuthProvider>
-          <AppContent />
+          <SocketProvider>
+            <AppContent />
+          </SocketProvider>
         </AuthProvider>
       </ErrorProvider>
     </BrowserRouter>

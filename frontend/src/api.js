@@ -7,6 +7,10 @@ export function setAccessToken(token) {
   accessToken = token || null;
 }
 
+export function getAccessToken() {
+  return accessToken;
+}
+
 export function setErrorModalCallback(callback) {
   showErrorModalCallback = callback;
 }
