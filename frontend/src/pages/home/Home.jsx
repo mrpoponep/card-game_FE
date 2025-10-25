@@ -1,44 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-// 🔹 1. IMPORT THÊM 'useParams'
-import { useNavigate, useParams } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom'; 
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
 import RoomModal from '../../components/RoomModal/RoomModal'; 
-import { useAuth } from '../../context/AuthContext'; 
+import { useAuth } from '../../hooks/AuthContext'; // Đường dẫn đúng từ Home.jsx
 import './Home.css';
 
 function Home() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [showRanking, setShowRanking] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [showRoomModal, setShowRoomModal] = useState(false); 
   const rankingOverlayRef = useRef(null);
-
-  // 🔹 2. LẤY DỮ LIỆU
-  const { userId } = useParams(); // Lấy 'userId' từ URL (vd: "1")
-  const { user, logout } = useAuth(); // Lấy 'user' từ Context (vd: { user_id: 1, ... })
-
-  // 🔹 3. THÊM BƯỚC KIỂM TRA
-  if (!user) {
-    // Chờ AuthContext load
-    return null; 
-  }
-
-  // ⚠️ Kiểm tra bảo mật/nhất quán
-  // So sánh ID từ URL (string) với ID từ Context (number)
-  if (user.user_id.toString() !== userId) {
-    // Nếu không khớp (vd: user 1 xem trang /2),
-    // tự động chuyển hướng họ về trang của CHÍNH HỌ
-    navigate(`/${user.user_id}`, { replace: true });
-    return null; // Dừng render trang này
-  }
   
-  // --- Từ đây, code của bạn giữ nguyên ---
-
   // 🔹 HÀM XỬ LÝ ĐĂNG XUẤT
   const handleLogout = () => {
-    logout();
-    navigate('/auth'); // Quay về trang đăng nhập
+    logout(); // Từ useAuth - đã gửi API và navigate
   };
 
   // --- Các hàm xử lý sự kiện của bạn ---
@@ -62,24 +40,17 @@ function Home() {
     setShowRules(true);
   };
 
-  // 🔹 4. ĐẢM BẢO BẠN CÓ ĐẦY ĐỦ PHẦN JSX BÊN DƯỚI
   return (
     <div className="home-container">
       {/* User Info Section */}
       <div className="user-info">
         <div className="user-avatar">
-          {user.avatar_url ? (
             <img 
-              src={`http://localhost:3000/avatars/${user.avatar_url}`}
+              src={`http://localhost:3000/avatar/${user.user_id}`}
               alt="Avatar"
               className="avatar-placeholder"
               style={{ objectFit: 'cover' }}
             />
-          ) : (
-            <div className="avatar-placeholder">
-              {user.username.charAt(0).toUpperCase()}
-            </div>
-          )}
         </div>
 
         <div className="user-details">

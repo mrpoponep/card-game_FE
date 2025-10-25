@@ -181,7 +181,11 @@ export default function AppLayout() {
       <div style={{ padding: 16 }}>
         <Outlet />
       </div>
-
+      
+      <div>
+        <h1>Welcome to Card Game</h1>
+        <p>Use the navigation above to explore rooms, rankings, and rules.</p>
+      </div>
       <Ranking isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
       <PokerRules isOpen={isRuleOpen} onClose={() => setIsRuleOpen(false)} />
       <DailyReward isOpen={isDailyRewardOpen} onClose={() => setIsDailyRewardOpen(false)} />

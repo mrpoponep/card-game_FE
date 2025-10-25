@@ -5,7 +5,6 @@ import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import LinkEmail from './pages/auth/LinkEmail';
 import ForgotPassword from './pages/auth/ForgotPassword';
-import AppLayout from './pages/app/AppLayout';
 import Home from './pages/home/Home';
 import { AuthProvider, RequireAuth } from './hooks/AuthContext';
 import { ErrorProvider, useError } from './hooks/ErrorContext';
@@ -27,8 +26,7 @@ function AppContent() {
         <Route path="/register" element={<Register />} />
         <Route path="/link-email" element={<LinkEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/" element={<RequireAuth><AppLayout /></RequireAuth>}>
-          <Route path="/" element={<Home />} />
+        <Route path="/" element={<RequireAuth><Home /></RequireAuth>}>
           <Route path="/room/:roomCode" element={<Room />} /> 
         </Route>
       </Routes>
