@@ -1,10 +1,28 @@
 const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
 
+// Use sessionStorage to keep access token per-tab (not shared across tabs).
+// sessionStorage is preferable here to keep per-tab tokens while still
+// using httpOnly refresh cookie for secure refresh flows.
+const TOKEN_KEY = 'access_token';
 let accessToken = null;
+try {
+  accessToken = sessionStorage.getItem(TOKEN_KEY) || null;
+} catch (e) {
+  accessToken = null;
+}
 let showErrorModalCallback = null;
 
 export function setAccessToken(token) {
   accessToken = token || null;
+  try {
+    if (accessToken) {
+      sessionStorage.setItem(TOKEN_KEY, accessToken);
+    } else {
+      sessionStorage.removeItem(TOKEN_KEY);
+    }
+  } catch (e) {
+    // ignore sessionStorage errors (e.g., disabled storage)
+  }
 }
 
 export function getAccessToken() {
