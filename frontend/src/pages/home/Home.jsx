@@ -13,8 +13,9 @@ function Home() {
   const [showRules, setShowRules] = useState(false);
   const [showRoomModal, setShowRoomModal] = useState(false); 
   const rankingOverlayRef = useRef(null);
-  
-  // 🔹 HÀM XỬ LÝ ĐĂNG XUẤT
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
+
+  // HÀM XỬ LÝ ĐĂNG XUẤT
   const handleLogout = () => {
     logout(); // Từ useAuth - đã gửi API và navigate
   };
@@ -46,7 +47,7 @@ function Home() {
       <div className="user-info">
         <div className="user-avatar">
             <img 
-              src={`http://localhost:3000/avatar/${user.user_id}`}
+              src={`${SERVER_URL}/avatar/${user.user_id}`}
               alt="Avatar"
               className="avatar-placeholder"
               style={{ objectFit: 'cover' }}

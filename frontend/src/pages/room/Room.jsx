@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
-import Card from '../../components/Card/Card'; // 🔹 Import component Card
+import Card from '../../components/Card/Card';
 import './Room.css'; // Import CSS
 
 // Hàm helper để định dạng tiền tệ
@@ -16,6 +16,7 @@ const formatMoney = (amount) => {
 const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false }) => {
   // Chỉ hiển thị bài ngửa cho người chơi hiện tại
   const showCardsFaceUp = isLocalPlayer;
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
   return (
     <div className={`player-seat ${seatPosition}`}>
       {/* Hiển thị bài của người chơi */}
@@ -41,7 +42,7 @@ const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false }) 
       {/* Avatar và thông tin */}
       <div className={`player-avatar ${!player ? 'empty' : ''}`}>
         {player ? (
-          <img src={`http://localhost:3000/avatar/${player.user_id}`} alt="Avatar" />
+          <img src={`${SERVER_URL}/avatar/${player.user_id}`} alt="Avatar" />
         ) : null}
       </div>
       <div className="player-info">
@@ -64,7 +65,6 @@ function Room() {
   const navigate = useNavigate();
   const location = useLocation();
   console.log('Vào phòng với mã:', roomCode);
-  // 🔹 State quản lý trạng thái game
   const [players, setPlayers] = useState([]); // Danh sách người chơi trong phòng
   const [roomSettings, setRoomSettings] = useState(location.state?.roomSettings || null); // Cài đặt phòng
   const [gameState, setGameState] = useState({ status: 'waiting' }); // Trạng thái game từ server

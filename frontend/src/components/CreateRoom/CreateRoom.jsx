@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiCreateRoom } from '../../api';
 
 const MIN_BET = 5;
 const MAX_BET = 100;
@@ -26,10 +27,7 @@ const CreateRoom = () => {
 
     const handleCreateRoom = async () => {
         try {
-            const res = await fetch('http://localhost:3000/api/room/create', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
+                const payload = {
                     min_players: 2,
                     max_players: 6,
                     small_blind: bet / 2,
@@ -37,17 +35,14 @@ const CreateRoom = () => {
                     min_buy_in: 2000,
                     max_buy_in: 10000,
                     rake: 0.05,
-                    is_private: true,
-                    user_id: 1
-                })
-            });
-            const data = await res.json();
-            alert(`Tạo phòng thành công! Mã phòng: ${data.room_code}`);
-
-        } catch (err) {
-            alert("Lỗi tạo phòng!");
-            console.error(err);
-        }
+                    is_private: true
+                };
+                const data = await apiCreateRoom(payload);
+                alert(`Tạo phòng thành công! Mã phòng: ${data.room_code}`);
+            } catch (err) {
+                alert("Lỗi tạo phòng!");
+                console.error(err);
+            }
     };
 
 
