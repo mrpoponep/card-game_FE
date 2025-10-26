@@ -1,52 +1,123 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { apiPost } from '../api';
+import { setAccessToken as setApiAccessToken } from '../api';
 
-// Tạo Context
 const AuthContext = createContext(null);
 
-// Tạo Provider Component
-export const AuthProvider = ({ children }) => {
+export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
-  const [isLoading, setIsLoading] = useState(true); // Thêm cờ loading
+  const [ready, setReady] = useState(false);
+  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(true); // Flag cho auto-login
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Kiểm tra localStorage khi app khởi động
-  useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem('poker_user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
-      }
-    } catch (error) {
-      console.error("Failed to parse user from localStorage", error);
-      localStorage.removeItem('poker_user');
+  const login = useCallback(async ({ username, password, remember }) => {
+    const res = await apiPost('/auth/login', { username, password, remember: !!remember });
+    if (res?.success) {
+      setApiAccessToken(res.accessToken);
+      setUser(res.user);
+      return { ok: true };
     }
-    setIsLoading(false); // Hoàn tất kiểm tra ban đầu
+    return { ok: false, error: res?.message || 'Đăng nhập thất bại' };
   }, []);
 
-  // Hàm đăng nhập: lưu vào state và localStorage
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('poker_user', JSON.stringify(userData));
-  };
-
-  // Hàm đăng xuất: xóa khỏi state và localStorage
-  const logout = () => {
+  const logout = useCallback(async () => {
+    try {
+      await apiPost('/auth/logout');
+    } catch {}
+    setApiAccessToken(null);
     setUser(null);
-    localStorage.removeItem('poker_user');
-  };
+    // Đưa về trang đăng nhập
+    navigate('/login', { replace: true });
+  }, [navigate]);
 
-  // Chỉ render children khi đã kiểm tra xong (tránh "giật" trang)
-  if (isLoading) {
-    return null; // Hoặc một màn hình loading toàn trang
-  }
+  // Hàm cập nhật balance sau khi nhận thưởng
+  const updateBalance = useCallback((newBalance) => {
+    setUser(prevUser => {
+      if (!prevUser) return prevUser;
+      return { ...prevUser, balance: newBalance };
+    });
+  }, []);
 
-  return (
-    <AuthContext.Provider value={{ user, login, logout, isLoading }}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  // Hàm cập nhật gems sau khi nhận thưởng
+  const updateGems = useCallback((newGems) => {
+    setUser(prevUser => {
+      if (!prevUser) return prevUser;
+      return { ...prevUser, gems: newGems };
+    });
+  }, []);
 
-// Hook tùy chỉnh để dễ dàng sử dụng context
-export const useAuth = () => {
-  return useContext(AuthContext);
-};
+  // Hàm cập nhật cả balance và gems
+  const updateUser = useCallback((updates) => {
+    setUser(prevUser => {
+      if (!prevUser) return prevUser;
+      return { ...prevUser, ...updates };
+    });
+  }, []);
+
+  // Khởi tạo: thự refresh nếu có cookie refresh_token (auto-login)
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
+        const res = await fetch(`${API_BASE}/auth/refresh`, {
+          method: 'POST',
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.success && data?.accessToken) {
+            if (!mounted) return;
+            setApiAccessToken(data.accessToken);
+            setUser(data.user || null);
+            
+            // Tự động chuyển đến trang chính nếu đang ở trang login
+            if (location.pathname === '/login') {
+              navigate('/', { replace: true });
+            }
+          }
+        }
+      } catch {}
+      if (mounted) {
+        setReady(true);
+        setIsAutoLoggingIn(false);
+      }
+    })();
+    return () => { mounted = false; };
+  }, []); // Chỉ chạy 1 lần khi mount
+
+  const value = useMemo(() => ({ 
+    user, 
+    ready, 
+    isAutoLoggingIn, 
+    login, 
+    logout, 
+    updateBalance,
+    updateGems,
+    updateUser 
+  }), [user, ready, isAutoLoggingIn, login, logout, updateBalance, updateGems, updateUser]);
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  return ctx;
+}
+
+export function RequireAuth({ children }) {
+  const { user, ready } = useAuth();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (ready && !user) {
+      navigate('/login', { replace: true });
+    }
+  }, [ready, user, navigate]);
+  
+  if (!ready) return null; // hoặc spinner
+  if (!user) return null;
+  return children;
+}

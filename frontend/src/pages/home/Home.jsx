@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
 import RoomModal from '../../components/RoomModal/RoomModal'; 
-import { useAuth } from '../../hooks/AuthContext'; // Đường dẫn đúng từ Home.jsx
+import { useAuth } from '../../context/AuthContext';
 import './Home.css';
 
 function Home() {

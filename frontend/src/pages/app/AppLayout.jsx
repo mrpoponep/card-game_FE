@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, Outlet, useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/AuthContext';
-import { useError } from '../../hooks/ErrorContext';
+import { useAuth } from '../../context/AuthContext';
+import { useError } from '../../context/ErrorContext';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
 import DailyReward from '../../components/dailyReward/DailyReward';

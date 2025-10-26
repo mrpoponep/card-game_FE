@@ -16,7 +16,6 @@ const formatMoney = (amount) => {
 const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false }) => {
   // Chỉ hiển thị bài ngửa cho người chơi hiện tại
   const showCardsFaceUp = isLocalPlayer;
-
   return (
     <div className={`player-seat ${seatPosition}`}>
       {/* Hiển thị bài của người chơi */}
@@ -42,7 +41,7 @@ const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false }) 
       {/* Avatar và thông tin */}
       <div className={`player-avatar ${!player ? 'empty' : ''}`}>
         {player ? (
-          <img src={`http://localhost:3000/avatars/${player.avatar_url}`} alt="Avatar" />
+          <img src={`http://localhost:3000/avatar/${player.user_id}`} alt="Avatar" />
         ) : null}
       </div>
       <div className="player-info">
@@ -64,7 +63,7 @@ function Room() {
   const { socket } = useSocket(); // Kết nối Socket
   const navigate = useNavigate();
   const location = useLocation();
-
+  console.log('Vào phòng với mã:', roomCode);
   // 🔹 State quản lý trạng thái game
   const [players, setPlayers] = useState([]); // Danh sách người chơi trong phòng
   const [roomSettings, setRoomSettings] = useState(location.state?.roomSettings || null); // Cài đặt phòng
@@ -80,13 +79,12 @@ function Room() {
     // Lấy cài đặt ban đầu từ location state (chỉ dùng 1 lần khi mới vào)
     const initialSettings = location.state?.roomSettings || null;
 
-    // 1. Gửi sự kiện: "Tôi đã vào phòng"
+    // 1. Gửi sự kiện: "Tôi đã vào phòng" (không gửi đối tượng user nữa; server dùng socket.user)
     socket.emit('joinRoom', {
       roomCode,
-      user,
       settings: initialSettings // Gửi cài đặt ban đầu (hoặc null nếu là người vào sau)
     });
-    console.log(`Gửi joinRoom cho ${user.username} trong phòng ${roomCode}`);
+    console.log(`Gửi joinRoom (no user) cho ${user.username} trong phòng ${roomCode}`);
 
     // --- Lắng nghe các sự kiện từ server ---
 

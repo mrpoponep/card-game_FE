@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { apiPost } from '../../api';
-import { useAuth } from '../../hooks/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import './LinkEmail.css';
 
 function LinkEmail() {

@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { apiCreateRoom, apiFindAndJoinRoom } from '../../api';
 import './RoomModal.css';
 
@@ -41,7 +41,6 @@ function RoomModal({ isOpen, onClose }) {
     const roomData = {
       small_blind: BET_LEVELS[betIndex],
       max_players: playerCount, // The selected number of players (e.g., 3)
-      user_id: user.user_id
     };
 
     // Client-side quick check for balance (server validates again)
@@ -57,13 +56,20 @@ function RoomModal({ isOpen, onClose }) {
       const response = await apiCreateRoom(roomData);
       setLoading(false);
 
-      // --- **THE FIX IS HERE** ---
+      console.log('createRoom response:', response);
+
+      // Validate response contains room_code
+      if (!response || !response.room_code) { 
+        const msg = response?.message || 'Không nhận được mã phòng từ server.';
+        setError(msg);
+        return;
+      }
+
       // Navigate to the room URL and pass the full 'table' object
       // (which includes max_players) via location state.
       navigate(`/room/${response.room_code}`, {
-        state: { roomSettings: response.table } // Send the entire table info
+        state: { roomSettings: response.table }
       });
-      // --- **END OF FIX** ---
 
     } catch (err) {
       // Handle API errors
@@ -104,7 +110,7 @@ function RoomModal({ isOpen, onClose }) {
   const handleFindRoom = async () => {
     setLoading(true);
     setError('');
-
+    console.log(user);
     const roomCode = pin.join('');
     // Validate pin length
     if (roomCode.length !== 4) {
@@ -115,7 +121,7 @@ function RoomModal({ isOpen, onClose }) {
 
     try {
       // Call the find room API (server checks balance)
-      const response = await apiFindAndJoinRoom(roomCode, user.user_id);
+      const response = await apiFindAndJoinRoom(roomCode);
       setLoading(false);
 
       // Navigate to the room and pass the room settings

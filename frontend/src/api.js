@@ -103,13 +103,13 @@ async function apiPost(path, body, options = {}) {
 
 async function apiCreateRoom(roomData) {
   // route 'create' này là từ file 'createRoomRoute.js'
-  return apiPost('/api/room/create', roomData); 
+  return apiPost('/room/create', roomData); 
 }
 
 // 🔹 HÀM MỚI CHO TÌM PHÒNG
-async function apiFindAndJoinRoom(code, userId) {
+async function apiFindAndJoinRoom(code) {
   // route 'find/:code' này là từ file 'findRoomRoute.js'
-  return apiGet(`/api/room/find/${code}?userId=${userId}`);
+  return apiGet(`/room/find/${code}`);
 }
 
 // 🔹 CẬP NHẬT EXPORT

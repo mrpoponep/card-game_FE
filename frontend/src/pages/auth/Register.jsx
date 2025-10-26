@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { apiPost } from '../../api';
-import { useAuth } from '../../hooks/AuthContext';
+import { useAuth } from '../../context/AuthContext';
 import './Register.css';
 
 function Register() {

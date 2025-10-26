@@ -6,8 +6,8 @@ import Register from './pages/auth/Register';
 import LinkEmail from './pages/auth/LinkEmail';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import Home from './pages/home/Home';
-import { AuthProvider, RequireAuth } from './hooks/AuthContext';
-import { ErrorProvider, useError } from './hooks/ErrorContext';
+import { AuthProvider, RequireAuth } from './context/AuthContext';
+import { ErrorProvider, useError } from './context/ErrorContext';
 import ErrorModal from './components/ErrorModal/ErrorModal';
 import { setErrorModalCallback } from './api';
 import { SocketProvider } from './context/SocketContext';
@@ -27,9 +27,10 @@ function AppContent() {
         <Route path="/register" element={<Register />} />
         <Route path="/link-email" element={<LinkEmail />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
-        <Route path="/" element={<RequireAuth><Home /></RequireAuth>}>
-          <Route path="/room/:roomCode" element={<Room />} /> 
-        </Route>
+        {/* Home is the authenticated landing page */}
+        <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+        {/* Room is a standalone page that replaces Home */}
+        <Route path="/room/:roomCode" element={<RequireAuth><Room /></RequireAuth>} />
       </Routes>
       <ErrorModal isOpen={isErrorOpen} onClose={closeError} message={errorMessage} />
     </>
