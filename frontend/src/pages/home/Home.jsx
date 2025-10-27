@@ -40,14 +40,14 @@ function Home() {
   const handleShowRules = () => {
     setShowRules(true);
   };
-
+  console.log('User data in Home.jsx:', user);
   return (
     <div className="home-container">
       {/* User Info Section */}
       <div className="user-info">
         <div className="user-avatar">
             <img 
-              src={`${SERVER_URL}/avatar/${user.user_id}`}
+              src={`${SERVER_URL}/avatar/${user.userId}`}
               alt="Avatar"
               className="avatar-placeholder"
               style={{ objectFit: 'cover' }}

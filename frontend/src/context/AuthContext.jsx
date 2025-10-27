@@ -17,6 +17,13 @@ export function AuthProvider({ children }) {
     if (res?.success) {
       setApiAccessToken(res.accessToken);
       setUser(res.user);
+      try {
+        if (res.sessionId) {
+          sessionStorage.setItem('session_id', res.sessionId);
+        } else {
+          try { sessionStorage.removeItem('session_id'); } catch (e) { }
+        }
+      } catch (e) { /* ignore */ }
       return { ok: true };
     }
     return { ok: false, error: res?.message || 'Đăng nhập thất bại' };
@@ -24,10 +31,11 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     try {
-      await apiPost('/auth/logout');
+      await apiPost('/auth/logout', {}, {sessionId: (() => { try { return sessionStorage.getItem('session_id'); } catch (e) { return null; } })() });
     } catch {}
     setApiAccessToken(null);
     setUser(null);
+  try { sessionStorage.removeItem('session_id'); } catch (e) { /* ignore */ }
     // Đưa về trang đăng nhập
     navigate('/login', { replace: true });
   }, [navigate]);

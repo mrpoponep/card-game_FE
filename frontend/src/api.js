@@ -4,29 +4,25 @@ const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
 // sessionStorage is preferable here to keep per-tab tokens while still
 // using httpOnly refresh cookie for secure refresh flows.
 const TOKEN_KEY = 'access_token';
-let accessToken = null;
-try {
-  accessToken = sessionStorage.getItem(TOKEN_KEY) || null;
-} catch (e) {
-  accessToken = null;
-}
 let showErrorModalCallback = null;
 
 export function setAccessToken(token) {
-  accessToken = token || null;
   try {
-    if (accessToken) {
-      sessionStorage.setItem(TOKEN_KEY, accessToken);
-    } else {
-      sessionStorage.removeItem(TOKEN_KEY);
-    }
+    if (token) sessionStorage.setItem(TOKEN_KEY, token);
+    else sessionStorage.removeItem(TOKEN_KEY);
   } catch (e) {
     // ignore sessionStorage errors (e.g., disabled storage)
   }
 }
 
 export function getAccessToken() {
-  return accessToken;
+  // Prefer reading from sessionStorage to avoid stale module variable
+  try {
+    const stored = sessionStorage.getItem(TOKEN_KEY);
+    if (stored) return stored;
+  } catch (e) {
+    return null;
+  }
 }
 
 export function setErrorModalCallback(callback) {
@@ -35,9 +31,13 @@ export function setErrorModalCallback(callback) {
 
 async function refreshAccessToken() {
   try {
+    // Include X-Session-Id header when available so server can select per-session cookie
+  const sid = (() => { try { return sessionStorage.getItem('session_id') || localStorage.getItem('session_id'); } catch (e) { return null; } })();
+    const headers = sid ? { 'X-Session-Id': sid } : undefined;
     const res = await fetch(`${API_BASE}/auth/refresh`, {
       method: 'POST',
-      credentials: 'include'
+      credentials: 'include',
+      headers
     });
     if (!res.ok) return null;
     const data = await res.json();
@@ -54,7 +54,8 @@ async function refreshAccessToken() {
 async function request(path, options = {}, retryOn401 = true, showErrorModal = true) {
   const headers = new Headers(options.headers || {});
   if (!headers.has('Content-Type') && options.body) headers.set('Content-Type', 'application/json');
-  if (accessToken) headers.set('Authorization', `Bearer ${accessToken}`);
+  const tokenForRequest = getAccessToken();
+  if (tokenForRequest) headers.set('Authorization', `Bearer ${tokenForRequest}`);
 
   const res = await fetch(`${API_BASE}${path}`, {
     credentials: 'include',
@@ -103,11 +104,13 @@ async function request(path, options = {}, retryOn401 = true, showErrorModal = t
 }
 
 async function apiGet(path, options = {}) {
+  console.log(getAccessToken());
   const { showErrorModal = true, ...rest } = options;
   return request(path, { method: 'GET', ...rest }, true, showErrorModal);
 }
 
 async function apiPost(path, body, options = {}) {
+  console.log(getAccessToken());
   const { showErrorModal = true, ...rest } = options;
   // Các API auth không hiển thị modal
   const isAuthAPI = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/logout') || path.includes('/auth/register') || path.includes('/auth/send-email-verification-otp') || path.includes('/auth/verify-email-otp');

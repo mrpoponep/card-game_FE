@@ -110,7 +110,6 @@ function RoomModal({ isOpen, onClose }) {
   const handleFindRoom = async () => {
     setLoading(true);
     setError('');
-    console.log(user);
     const roomCode = pin.join('');
     // Validate pin length
     if (roomCode.length !== 4) {
