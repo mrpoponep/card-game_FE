@@ -243,66 +243,62 @@
   transform: none;
 }
 
-/* Success Message Styles */
-.success-message {
-  text-align: center;
-  padding: 30px 20px;
-  animation: successFadeIn 0.5s ease;
+/* Toast Notification Styles (Bottom-Right Corner) */
+.success-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: linear-gradient(135deg, rgba(81, 207, 102, 0.95) 0%, rgba(55, 178, 77, 0.98) 100%);
+  border: 2px solid #51cf66;
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 8px 32px rgba(81, 207, 102, 0.4);
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  max-width: 400px;
+  z-index: 10000;
+  transform: translateX(500px);
+  opacity: 0;
+  transition: all 0.3s ease;
 }
 
-@keyframes successFadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.9);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.success-toast.show {
+  transform: translateX(0);
+  opacity: 1;
 }
 
-.success-icon {
-  width: 80px;
-  height: 80px;
-  background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
+.toast-icon {
+  width: 48px;
+  height: 48px;
+  background: white;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
-  color: white;
-  margin: 0 auto 20px;
-  box-shadow: 0 4px 20px rgba(81, 207, 102, 0.5);
-  animation: successIconPop 0.6s ease;
-}
-
-@keyframes successIconPop {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  50% {
-    transform: scale(1.1);
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-.success-message p {
+  font-size: 28px;
   color: #51cf66;
-  font-size: 18px;
+  flex-shrink: 0;
   font-weight: bold;
-  margin: 10px 0;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.success-message .success-sub {
-  color: #fff;
-  font-size: 14px;
-  font-weight: normal;
-  opacity: 0.9;
+.toast-content {
+  flex: 1;
+}
+
+.toast-title {
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 4px;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.toast-message {
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 13px;
+  line-height: 1.4;
 }
 
 /* Error Message Styles */
@@ -365,14 +361,25 @@
     width: 100%;
   }
 
-  .success-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 36px;
+  .success-toast {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
   }
 
-  .success-message p {
-    font-size: 16px;
+  .toast-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+  }
+
+  .toast-title {
+    font-size: 14px;
+  }
+
+  .toast-message {
+    font-size: 12px;
   }
 }
 

@@ -7,6 +7,9 @@ const MatchResultScreen = () => {
   const [showReportModal, setShowReportModal] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
+  // Current user ID (TODO: Get from authentication context/state)
+  const currentUserId = '1'; // This should come from your auth system
+
   // Sample match data
   const matchData = {
     matchId: 'MTH-2025-001234',
@@ -80,8 +83,7 @@ const MatchResultScreen = () => {
 
   const handleSubmitReport = (reportData) => {
     console.log('Report submitted:', reportData);
-    // TODO: Send to server API
-    alert('Tố cáo đã được gửi thành công!');
+    // The success toast will be shown by the ReportPlayer component
     setShowReportModal(false);
     setSelectedPlayer(null);
   };
@@ -104,7 +106,7 @@ const MatchResultScreen = () => {
 
       <div className="match-result-content">
         <div className="players-grid">
-          {matchData.players.map((player, index) => (
+          {matchData.players.map((player) => (
             <PlayerCard
               key={player.id}
               player={player}
@@ -131,6 +133,7 @@ const MatchResultScreen = () => {
         <ReportPlayer
           playerName={selectedPlayer.name}
           playerId={selectedPlayer.id}
+          reporterId={currentUserId}
           onClose={handleCloseReport}
           onSubmit={handleSubmitReport}
         />
