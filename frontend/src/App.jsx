@@ -7,15 +7,13 @@ import LinkEmail from './pages/auth/LinkEmail';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import Home from './pages/home/Home';
 import { AuthProvider, RequireAuth } from './context/AuthContext';
-import { ErrorProvider, useError } from './context/ErrorContext';
+import { ErrorProvider, useError } from './context/ErrorContext'; 
 import ErrorModal from './components/ErrorModal/ErrorModal';
 import { setErrorModalCallback } from './api';
 import { SocketProvider } from './context/SocketContext';
 
 function AppContent() {
   const { showError, closeError, errorMessage, isErrorOpen } = useError();
-
-  // Đăng ký callback để api.js gọi khi có lỗi
   React.useEffect(() => {
     setErrorModalCallback(showError);
   }, [showError]);
@@ -33,10 +31,6 @@ function AppContent() {
         <Route path="/room/:roomCode" element={<RequireAuth><Room /></RequireAuth>} />
       </Routes>
       <ErrorModal isOpen={isErrorOpen} onClose={closeError} message={errorMessage} />
-      <Ranking isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
-      
-      {/* Rule Modal */}
-      <PokerRules isOpen={isRuleOpen} onClose={() => setIsRuleOpen(false)} />
     </>
   );
 }
