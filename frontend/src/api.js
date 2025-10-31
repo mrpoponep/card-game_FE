@@ -76,3 +76,30 @@ export async function fetchPlayerStats(fromDate, toDate) {
   const data = await apiGet(`/api/admin/player-stats?from=${fromDate}&to=${toDate}`);
   return data.stats; // Trả về object stats
 }
+
+/**
+ * Lấy tổng số ván chơi trong khoảng thời gian
+ * @param {string} fromDate - 'YYYY-MM-DD'
+ * @param {string} toDate - 'YYYY-MM-DD'
+ * @returns {Promise<number>} Tổng số ván chơi
+ */
+export async function fetchTotalGames(fromDate, toDate) {
+  // Gọi API: GET /api/admin/total-games?from=YYYY-MM-DD&to=YYYY-MM-DD
+  const data = await apiGet(`/api/admin/total-games?from=${fromDate}&to=${toDate}`);
+  return data.totalGames; // Chỉ trả về con số
+}
+// === Timeseries cho biểu đồ ===
+export async function fetchCoinSeries(fromDate, toDate) {
+  const data = await apiGet(`/api/admin/series/coin?from=${fromDate}&to=${toDate}`);
+  return data.series; // [{date, totalVolume, transactionCount, averageTransaction}]
+}
+
+export async function fetchActivePlayersSeries(fromDate, toDate) {
+  const data = await apiGet(`/api/admin/series/active-players?from=${fromDate}&to=${toDate}`);
+  return data.series; // [{date, activeByTx}]
+}
+
+export async function fetchMatchesSeries(fromDate, toDate) {
+  const data = await apiGet(`/api/admin/series/matches?from=${fromDate}&to=${toDate}`);
+  return data.series; // [{date, totalGames}]
+}

@@ -3,7 +3,6 @@ import { fetchTables, fetchTableMetrics } from "../../api";
 import {
   SignalIcon,
   BoltIcon,
-  ClockIcon,
   TableCellsIcon,
   PencilSquareIcon,
   PlusIcon,
@@ -75,11 +74,9 @@ export default function PublicTables() {
     publicTables: 0,
     privateTables: 0,
     activeTablesRealtime: 0,
-    activeTablesDbWindow: 0,
   });
   const [metricsLoading, setMetricsLoading] = useState(true);
   const [metricsError, setMetricsError] = useState(null);
-  const [wm, setWm] = useState(60);
 
   const [rows, setRows] = useState([]);
   const [loadingList, setLoadingList] = useState(true);
@@ -139,19 +136,8 @@ export default function PublicTables() {
 
   return (
     <div className="public-tables">
-      {/* Title + window */}
       <div className="public-metrics-title">
         <h3 className="text-lg font-semibold">Số liệu bàn (Public / Private / Active)</h3>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <span className="text-sm" style={{ color: "#4b5563" }}>Window (phút):</span>
-          <input
-            type="number" min={5}
-            className="form-input"
-            style={{ width: 96, height: 36 }}
-            value={wm}
-            onChange={(e) => setWm(Math.max(5, Number(e.target.value || 60)))}
-          />
-        </div>
       </div>
 
       {metricsError ? (
@@ -164,11 +150,9 @@ export default function PublicTables() {
           <Card title="Bàn Public" value={metrics.publicTables ?? 0} icon={<BoltIcon className="icon-16" />} />
           <Card title="Bàn Private" value={metrics.privateTables ?? 0} icon={<BoltIcon className="icon-16" />} />
           <Card title="Đang hoạt động" value={metrics.activeTablesRealtime ?? 0} icon={<SignalIcon className="icon-16" />} />
-          <Card title={`Hoạt động (DB ${wm}p)`} value={metrics.activeTablesDbWindow ?? 0} icon={<ClockIcon className="icon-16" />} />
         </div>
       )}
 
-      {/* Toolbar */}
       <div className="table-toolbar">
         <div className="toolbar__left">
           <label className="toolbar__filter">
@@ -206,7 +190,6 @@ export default function PublicTables() {
         </div>
       </div>
 
-      {/* Table */}
       <div className="table-container">
         <div className="table-scroll-wrapper">
           {lErr ? (
