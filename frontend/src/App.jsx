@@ -1,38 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Ranking from './components/ranking/Ranking';
 import Room from './pages/room/Room';
-import PokerRules from './components/RuleScreen/PokerRules';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import LinkEmail from './pages/auth/LinkEmail';
+import ForgotPassword from './pages/auth/ForgotPassword';
 import Home from './pages/home/Home';
+import { AuthProvider, RequireAuth } from './context/AuthContext';
+import { ErrorProvider, useError } from './context/ErrorContext';
+import ErrorModal from './components/ErrorModal/ErrorModal';
+import { setErrorModalCallback } from './api';
+import { SocketProvider } from './context/SocketContext';
 
-export default function App() {
-  const [isRankingOpen, setIsRankingOpen] = useState(false);
-  const [isRuleOpen, setIsRuleOpen] = useState(false);
+function AppContent() {
+  const { showError, closeError, errorMessage, isErrorOpen } = useError();
 
-  const handleOpenRanking = () => {
-    if (!isRankingOpen) { // Chỉ mở nếu chưa mở
-      setIsRankingOpen(true);
-    }
-  };
-
-  const handleOpenRule = () => {
-    if (!isRuleOpen) { // Chỉ mở nếu chưa mở
-      setIsRuleOpen(true);
-    }
-  };
+  // Đăng ký callback để api.js gọi khi có lỗi
+  React.useEffect(() => {
+    setErrorModalCallback(showError);
+  }, [showError]);
 
   return (
-    <BrowserRouter>
+    <>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/room" element={<Room />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/link-email" element={<LinkEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* Home is the authenticated landing page */}
+        <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+        {/* Room is a standalone page that replaces Home */}
+        <Route path="/room/:roomCode" element={<RequireAuth><Room /></RequireAuth>} />
       </Routes>
-
-      {/* Ranking Modal */}
+      <ErrorModal isOpen={isErrorOpen} onClose={closeError} message={errorMessage} />
       <Ranking isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
       
       {/* Rule Modal */}
       <PokerRules isOpen={isRuleOpen} onClose={() => setIsRuleOpen(false)} />
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <ErrorProvider>
+        <AuthProvider>
+          <SocketProvider>
+            <AppContent />
+          </SocketProvider>
+        </AuthProvider>
+      </ErrorProvider>
     </BrowserRouter>
   );
 }

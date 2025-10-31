@@ -1,34 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom'; 
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
+import RoomModal from '../../components/RoomModal/RoomModal'; 
+import { useAuth } from '../../context/AuthContext';
 import './Home.css';
 
 function Home() {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [showRanking, setShowRanking] = useState(false);
   const [showRules, setShowRules] = useState(false);
+  const [showRoomModal, setShowRoomModal] = useState(false); 
   const rankingOverlayRef = useRef(null);
+  const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
 
-  // Mock data - replace with actual user data from API/context
-  const userData = {
-    username: 'Alice',
-    balance: 15805782,
-    elo: 1025
+  // HÀM XỬ LÝ ĐĂNG XUẤT
+  const handleLogout = () => {
+    logout(); // Từ useAuth - đã gửi API và navigate
   };
 
+  // --- Các hàm xử lý sự kiện của bạn ---
   const handlePlayWithAI = () => {
-    // TODO: Implement AI game functionality
     console.log('Play with AI clicked');
   };
 
   const handlePlayNow = () => {
-    // TODO: Implement quick play functionality
     console.log('Play now clicked');
   };
 
   const handlePlayWithFriend = () => {
-    navigate('/room');
+    setShowRoomModal(true); // Mở modal
   };
 
   const handleShowRanking = () => {
@@ -38,26 +40,31 @@ function Home() {
   const handleShowRules = () => {
     setShowRules(true);
   };
-
+  console.log('User data in Home.jsx:', user);
   return (
     <div className="home-container">
       {/* User Info Section */}
       <div className="user-info">
         <div className="user-avatar">
-          <div className="avatar-placeholder">
-            {userData.username.charAt(0).toUpperCase()}
-          </div>
+            <img 
+              src={`${SERVER_URL}/avatar/${user.userId}`}
+              alt="Avatar"
+              className="avatar-placeholder"
+              style={{ objectFit: 'cover' }}
+            />
         </div>
+
         <div className="user-details">
-          <div className="username">{userData.username}</div>
+          <div className="username">{user.username}</div>
           <div className="user-stats">
-            <span className="elo-badge">Elo: {userData.elo}</span>
+            <span className="elo-badge">Elo: {user.elo}</span>
           </div>
         </div>
+        
         <div className="top-right-icons">
-          <button className="icon-btn notes-btn">
+          <button className="icon-btn notes-btn" onClick={handleLogout} title="Đăng xuất">
             <svg viewBox="0 0 24 24" fill="currentColor">
-              <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+              <path d="M16,17V14H9V10H16V7L21,12L16,17M14,2A2,2 0 0,1 16,4V6H14V4H5V20H14V18H16V20A2,2 0 0,1 14,22H5A2,2 0 0,1 3,20V4A2,2 0 0,1 5,2H14Z" />
             </svg>
           </button>
           <button className="icon-btn rules-btn" onClick={handleShowRules}>
@@ -80,7 +87,7 @@ function Home() {
             <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
           </svg>
         </div>
-        <span className="balance-amount">Coin: {userData.balance.toLocaleString()}</span>
+        <span className="balance-amount">Coin: {user.balance.toLocaleString()}</span>
       </div>
 
       {/* Main Action Buttons */}
@@ -134,16 +141,19 @@ function Home() {
         </button>
       </div>
 
-      {/* Ranking Modal */}
+      {/* Modals */}
       <div ref={rankingOverlayRef}>
         <Ranking isOpen={showRanking} onClose={() => setShowRanking(false)} />
       </div>
 
-      {/* Rules Modal */}
       <PokerRules isOpen={showRules} onClose={() => setShowRules(false)} />
+
+      <RoomModal 
+        isOpen={showRoomModal} 
+        onClose={() => setShowRoomModal(false)} 
+      />
     </div>
   );
 }
 
 export default Home;
-
