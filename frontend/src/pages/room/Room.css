@@ -119,6 +119,7 @@
 
 .seat-4 .player-hand {
     top: 50%;
+    left: auto;
     right: 100%;
     transform: translate(-22px, -50%) rotate(-90deg);
     transform-origin: center right;

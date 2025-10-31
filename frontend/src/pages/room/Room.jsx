@@ -63,9 +63,9 @@ function Room() {
   const { user } = useAuth(); // Người chơi hiện tại
   const { socket } = useSocket(); // Kết nối Socket
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation(); 
   console.log('Vào phòng với mã:', roomCode);
-  const [players, setPlayers] = useState([]); // Danh sách người chơi trong phòng
+  const [seats, setSeats] = useState([]); // Danh sách seat trong phòng
   const [roomSettings, setRoomSettings] = useState(location.state?.roomSettings || null); // Cài đặt phòng
   const [gameState, setGameState] = useState({ status: 'waiting' }); // Trạng thái game từ server
   const [myHand, setMyHand] = useState([]); // Bài của người chơi hiện tại
@@ -91,7 +91,7 @@ function Room() {
     // Cập nhật toàn bộ trạng thái phòng
     const handleRoomUpdate = (data) => {
       console.log('Nhận cập nhật trạng thái phòng:', data);
-      setPlayers(data.players); // Cập nhật danh sách người chơi công khai
+      setSeats(data.seats || []); // Cập nhật danh sách seat công khai
       setRoomSettings(data.settings); // Cập nhật cài đặt phòng
       setGameState(data.gameState); // Cập nhật trạng thái game (status, countdown, bài chung, pot)
       setIsSpectator(false); // Reset trạng thái xem, trừ khi server bảo khác
@@ -135,15 +135,15 @@ function Room() {
 
   // --- Logic Render ---
   // Tìm người chơi hiện tại và những người khác
-  const localUser = players.find(p => p.user_id === user.user_id);
-  const otherPlayers = players.filter(p => p.user_id !== user.user_id);
+  // const localUser = players.find(p => p.user_id === user.user_id);
+  // const otherPlayers = players.filter(p => p.user_id !== user.user_id);
 
   // Hàm lấy bài cho người chơi (để hiển thị bài úp của đối thủ)
   const getHandForPlayer = (playerId) => {
       // Nếu đang chia bài hoặc đang chơi
       if (gameState.status === 'dealing' || gameState.status === 'playing') {
           // Nếu là người chơi hiện tại, trả về bài thật
-          if (playerId === user.user_id) {
+          if (playerId === user.userId) {
               return myHand;
           }
           // Với người khác, trả về 2 lá bài úp (dùng dữ liệu giả)
@@ -155,54 +155,62 @@ function Room() {
 
   // Hàm render các ghế ngồi dựa trên số người tối đa
   const renderSeats = () => {
-    const seats = [];
-    const localPlayerId = user?.user_id; // Lấy ID người chơi hiện tại
-
-    // Ghế 1 (Bạn) luôn ở dưới cùng
-    seats.push(
-      <PlayerSeat
-        key="seat-1"
-        seatPosition="seat-1"
-        player={localUser} // Dữ liệu người chơi hiện tại
-        hand={myHand} // Bài của người chơi hiện tại
-        isLocalPlayer={true} // Đánh dấu là người chơi hiện tại (để ngửa bài)
-      />
-    );
-
-    // Chờ cho đến khi có cài đặt phòng
-    if (!roomSettings) return seats;
-
-    // Lấy số người tối đa và đảm bảo là số nguyên
+    if(!roomSettings || !seats.length) return null;
+    const renderedSeats = [];
     const max = parseInt(roomSettings.max_players, 10);
-
-    // Xác định vị trí các ghế còn lại dựa trên max_players
-    const seatPositions = {
-        4: ["seat-2", "seat-3", "seat-4"], // 4 người: trái, trên, phải
-        3: ["seat-2", "seat-4"],         // 3 người: trái, phải
-        2: ["seat-3"],                 // 2 người: chỉ có ghế trên
-    };
-    const positions = seatPositions[max] || []; // Lấy mảng vị trí tương ứng
-
-    // Render các ghế còn lại (người chơi khác hoặc ghế trống)
-    for (let i = 0; i < positions.length; i++) {
-        const player = otherPlayers[i] || null; // Lấy người chơi khác tiếp theo, hoặc null nếu trống
-        const handData = player ? getHandForPlayer(player.user_id) : []; // Lấy bài (úp) cho người khác
-        seats.push(
+    const localPlayerId = user?.userId;
+    const mySeatIndex = seats.findIndex(p => p?.user_id === localPlayerId);
+    if(isSpectator || mySeatIndex === -1){
+      const visualMap = {
+        4: ["seat-1", "seat-2", "seat-3", "seat-4"],
+        3: ["seat-1", "seat-2", "seat-4"],
+        2: ["seat-1", "seat-3"],
+      };
+      const positions = visualMap[max] || visualMap[4];
+      for(let i = 0; i < max; i++){
+        const player = seats[i] || null;
+        if(positions[i]){
+          renderedSeats.push(
             <PlayerSeat
-                key={positions[i]} // Dùng vị trí làm key
-                seatPosition={positions[i]} // Vị trí ghế (CSS class)
-                player={player} // Dữ liệu người chơi (hoặc null)
-                hand={handData} // Bài (thật hoặc úp)
-                isLocalPlayer={false} // Không phải người chơi hiện tại
+              key={`seat-${i}`}
+              seatPosition={positions[i]}
+              player={player}
+              hand={player ? getHandForPlayer(player.user_id) : []}
+              isLocalPlayer={player?.user_id === localPlayerId}
             />
-        );
+          );
+        }
+      }
+      return renderedSeats;
     }
-
-    return seats;
+    const visualPositionMap = {
+      4: ["seat-1", "seat-2", "seat-3", "seat-4"],
+      3: ["seat-1", "seat-2", "seat-4"],
+      2: ["seat-1", "seat-3"],
+    };
+    const visualPositions = visualPositionMap[max] || visualPositionMap[4];
+    for(let i = 0; i < max; i++){
+      const player = seats[i];
+      const visualOffset = (i - mySeatIndex + max) % max;
+      const cssClass = visualPositions[visualOffset];
+      if(cssClass){
+        renderedSeats.push(
+          <PlayerSeat
+            key={`seat-${i}`}
+            seatPosition={cssClass}
+            player={player}
+            hand={player ? getHandForPlayer(player.user_id) : []}
+            isLocalPlayer={i === mySeatIndex}
+          />
+        );
+      }
+    }
+    return renderedSeats;
   };
 
   // Xác định thông báo hiển thị ở giữa bàn
   const getCenterMessage = () => {
+    const playerCount = seats.filter(p => p).length;
       if (isSpectator) {
           return { main: "Đang xem...", sub: `Vui lòng chờ ván sau` };
       }
@@ -219,7 +227,7 @@ function Room() {
           case 'waiting':
           default:
               // Chờ đủ người hoặc chờ ván mới
-              return { main: players.length >= 2 ? "Chuẩn bị ván mới..." : "Chờ người chơi...", sub: `Mã phòng: ${roomCode}` };
+              return { main: playerCount >= 2 ? "Chuẩn bị ván mới..." : "Chờ người chơi...", sub: `Mã phòng: ${roomCode}` };
       }
   };
   const centerMsg = getCenterMessage();
