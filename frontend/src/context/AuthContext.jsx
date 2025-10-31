@@ -4,6 +4,9 @@ import { apiPost } from '../api';
 import { setAccessToken as setApiAccessToken } from '../api';
 
 const AuthContext = createContext(null);
+// Module-level shared promise to deduplicate automatic refresh calls across
+// component remounts (React StrictMode may mount/unmount twice in dev).
+let _autoRefreshPromise = null;
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -36,6 +39,8 @@ export function AuthProvider({ children }) {
     setApiAccessToken(null);
     setUser(null);
   try { sessionStorage.removeItem('session_id'); } catch (e) { /* ignore */ }
+    // Clear any pending auto-refresh so future mounts can attempt refresh again
+    try { _autoRefreshPromise = null; } catch (e) { /* ignore */ }
     // Đưa về trang đăng nhập
     navigate('/login', { replace: true });
   }, [navigate]);
@@ -68,26 +73,41 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      try {
-        const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
-        const res = await fetch(`${API_BASE}/auth/refresh`, {
-          method: 'POST',
-          credentials: 'include'
-        });
-        if (res.ok) {
-          const data = await res.json();
-          if (data?.success && data?.accessToken) {
-            if (!mounted) return;
-            setApiAccessToken(data.accessToken);
-            setUser(data.user || null);
-            
-            // Tự động chuyển đến trang chính nếu đang ở trang login
-            if (location.pathname === '/login') {
-              navigate('/', { replace: true });
+      // Deduplicate across remounts by using a shared module-level promise.
+      if (!_autoRefreshPromise) {
+        _autoRefreshPromise = (async () => {
+          try {
+            const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
+            const res = await fetch(`${API_BASE}/auth/refresh`, {
+              method: 'POST',
+              credentials: 'include'
+            });
+            if (res.ok) {
+              const data = await res.json();
+              return data;
             }
+          } catch (err) {
+            return null;
+          }
+          return null;
+        })();
+      }
+
+      try {
+        const data = await _autoRefreshPromise;
+        if (data?.success && data?.accessToken) {
+          if (!mounted) return;
+          setApiAccessToken(data.accessToken);
+          setUser(data.user || null);
+          // Tự động chuyển đến trang chính nếu đang ở trang login
+          if (location.pathname === '/login') {
+            navigate('/', { replace: true });
           }
         }
-      } catch {}
+      } catch (e) {
+        // ignore
+      }
+
       if (mounted) {
         setReady(true);
         setIsAutoLoggingIn(false);
