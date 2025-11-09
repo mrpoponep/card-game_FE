@@ -1,82 +1,51 @@
-import React, { useState } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import Ranking from './components/ranking/Ranking';
+import React, { useState, useCallback } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Room from './pages/room/Room';
-import PokerRules from './components/RuleScreen/PokerRules';
+import Login from './pages/auth/Login';
+import Register from './pages/auth/Register';
+import LinkEmail from './pages/auth/LinkEmail';
+import ForgotPassword from './pages/auth/ForgotPassword';
+import Home from './pages/home/Home';
+import { AuthProvider, RequireAuth } from './context/AuthContext';
+import { ErrorProvider, useError } from './context/ErrorContext'; 
+import ErrorModal from './components/ErrorModal/ErrorModal';
+import { setErrorModalCallback } from './api';
+import { SocketProvider } from './context/SocketContext';
 import Admin from './pages/admin/Dashboard';
-import RoomPoker from './pages/room/RoomPoker_FE.jsx';
-
-export default function App() {
-  const [isRankingOpen, setIsRankingOpen] = useState(false);
-  const [isRuleOpen, setIsRuleOpen] = useState(false);
-
-  const handleOpenRanking = () => {
-    if (!isRankingOpen) { // Chỉ mở nếu chưa mở
-      setIsRankingOpen(true);
-    }
-  };
-
-  const handleOpenRule = () => {
-    if (!isRuleOpen) { // Chỉ mở nếu chưa mở
-      setIsRuleOpen(true);
-    }
-  };
+function AppContent() {
+  const { showError, closeError, errorMessage, isErrorOpen } = useError();
+  React.useEffect(() => {
+    setErrorModalCallback(showError);
+  }, [showError]);
 
   return (
+    <>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/link-email" element={<LinkEmail />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        {/* Home is the authenticated landing page */}
+        <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+        {/* Room is a standalone page that replaces Home */}
+        <Route path="/room/:roomCode" element={<RequireAuth><Room /></RequireAuth>} />
+        <Route path="/admin/*" element={<RequireAuth><Admin /></RequireAuth>} />
+      </Routes>
+      <ErrorModal isOpen={isErrorOpen} onClose={closeError} message={errorMessage} />
+    </>
+  );
+}
+
+export default function App() {
+  return (
     <BrowserRouter>
-      <nav style={{ padding: 12, borderBottom: '1px solid #ddd' }}>
-        <Link to="/">Home</Link>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <button 
-          onClick={handleOpenRanking}
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            cursor: isRankingOpen ? 'not-allowed' : 'pointer',
-            textDecoration: 'underline',
-            fontSize: '16px',
-            padding: 0
-          }}
-        >
-          Ranking
-        </button>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <Link to="/room">Room</Link>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <button 
-          onClick={handleOpenRule}
-          style={{ 
-            background: 'none', 
-            border: 'none', 
-            cursor: isRuleOpen ? 'not-allowed' : 'pointer',
-            textDecoration: 'underline',
-            fontSize: '16px',
-            padding: 0
-          }}
-        >
-            View Rule Screen Example
-        </button>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <Link to="/admin">Admin</Link>
-        <span style={{ margin: '0 8px' }}>|</span>
-        <Link to="/game-preview" style={{ color: 'red' }}>Game (Preview)</Link>
-        {/* (Tôi để màu đỏ để bạn dễ thấy) */}
-      </nav>
-
-      <div style={{ padding: 16 }}>
-        <Routes>
-          <Route path="/" element={<div><h1>Welcome to Card Game</h1></div>} />
-          <Route path="/room" element={<Room />} />
-          <Route path="/admin" element={<Admin />} /> 
-          <Route path="/game-preview" element={<RoomPoker />} />
-        </Routes>
-      </div>
-
-      {/* Ranking Modal */}
-      <Ranking isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
-      
-      {/* Rule Modal */}
-      <PokerRules isOpen={isRuleOpen} onClose={() => setIsRuleOpen(false)} />
+      <ErrorProvider>
+        <AuthProvider>
+          <SocketProvider>
+            <AppContent />
+          </SocketProvider>
+        </AuthProvider>
+      </ErrorProvider>
     </BrowserRouter>
   );
 }
