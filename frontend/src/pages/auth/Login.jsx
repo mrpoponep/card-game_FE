@@ -49,7 +49,11 @@ export default function Login() {
               const remember = form.get('remember') === 'on';
               const result = await login({ username, password, remember });
               if (result.ok) {
-                navigate('/', { replace: true });
+                if (result.user?.role === 'Admin') {
+                  navigate('/admin', { replace: true });
+                } else {
+                  navigate('/', { replace: true });        
+                }
               } else {
                 setError(result.error || 'Đăng nhập thất bại');
               }

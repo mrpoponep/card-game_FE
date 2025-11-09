@@ -104,37 +104,51 @@ async function request(path, options = {}, retryOn401 = true, showErrorModal = t
 }
 
 export async function fetchTotalPlayers() {
-  const data = await apiGet('/api/admin/total-players');
-  return data.totalPlayers; // Chỉ trả về con số
+  const data = await apiGet('/admin/total-players');
+  return data.totalPlayers; 
 }
 
 export async function fetchTotalBannedPlayers() {
-  const data = await apiGet('/api/admin/total-banned-players');
-  return data.totalBannedPlayers; // Chỉ trả về con số
+  const data = await apiGet('/admin/total-banned-players');
+  return data.totalBannedPlayers; 
 }
 
-/**
- * @param {string} type - "public" hoặc "private"
- */
+/** @param {"public"|"private"} type */
 export async function fetchTables(type = "public") {
-  const data = await apiGet(`/api/room/list?type=${type}`);
-  return data.tables; // Trả về mảng các phòng
+  const data = await apiGet(`/listRoom/list?type=${type}`);
+  return data.tables;
 }
 
 export async function fetchTableMetrics() {
-  const data = await apiGet('/api/room/table-metrics');
-  return data; // Trả về đối tượng metrics
+  const data = await apiGet('/listRoom/table-metrics');
+  return data; 
+}
+export async function fetchTableDetail(tableId) {
+  const data = await apiGet(`/listRoom/table/${tableId}`);
+  return data.table;
 }
 
+async function apiPatch(path, body, options = {}) {
+  const { showErrorModal = true, ...rest } = options;
+  return request(
+    path, 
+    { method: 'PATCH', body: body ? JSON.stringify(body) : undefined, ...rest }, 
+    true, 
+    showErrorModal
+  );
+}
 
- // Lấy số người chơi đang online (real-time)
+export async function updateTable(tableId, payload) {
+  const data = await apiPatch(`/listRoom/table/${tableId}`, payload);
+  return data.table;
+}
+
 export async function fetchOnlinePlayers() {
-  // Gọi API: GET /api/admin/online-players
-  const data = await apiGet('/api/admin/online-players');
-  return data.onlinePlayers; // Chỉ trả về con số
+  const data = await apiGet('/admin/online-players');
+  return typeof data.online === 'number' 
+     ? data.online 
+     : (typeof data.onlinePlayers === 'number' ? data.onlinePlayers : 0);
 }
-
-// ... (các hàm fetch cũ: fetchTotalPlayers, fetchTableMetrics...)
 
 /**
  * Lấy thống kê Coin theo khoảng thời gian
@@ -144,8 +158,7 @@ export async function fetchOnlinePlayers() {
  */
 export async function fetchCoinStats(fromDate, toDate) {
   // Gọi API: GET /api/admin/coin-stats?from=YYYY-MM-DD&to=YYYY-MM-DD
-  // API trả về: { success: true, stats: { totalVolume: ..., ... } }
-  const data = await apiGet(`/api/admin/coin-stats?from=${fromDate}&to=${toDate}`);
+  const data = await apiGet(`/admin/coin-stats?from=${fromDate}&to=${toDate}`);
   return data.stats; // Trả về object stats
 }
 
@@ -157,7 +170,7 @@ export async function fetchCoinStats(fromDate, toDate) {
  */
 export async function fetchPlayerStats(fromDate, toDate) {
   // Gọi API: GET /api/admin/player-stats?from=...&to=...
-  const data = await apiGet(`/api/admin/player-stats?from=${fromDate}&to=${toDate}`);
+  const data = await apiGet(`/admin/player-stats?from=${fromDate}&to=${toDate}`);
   return data.stats; // Trả về object stats
 }
 
@@ -169,23 +182,28 @@ export async function fetchPlayerStats(fromDate, toDate) {
  */
 export async function fetchTotalGames(fromDate, toDate) {
   // Gọi API: GET /api/admin/total-games?from=YYYY-MM-DD&to=YYYY-MM-DD
-  const data = await apiGet(`/api/admin/total-games?from=${fromDate}&to=${toDate}`);
-  return data.totalGames; // Chỉ trả về con số
+  const data = await apiGet(`/admin/total-games?from=${fromDate}&to=${toDate}`);
+  return data.totalGames; 
 }
 // === Timeseries cho biểu đồ ===
 export async function fetchCoinSeries(fromDate, toDate) {
-  const data = await apiGet(`/api/admin/series/coin?from=${fromDate}&to=${toDate}`);
-  return data.series; // [{date, totalVolume, transactionCount, averageTransaction}]
+  const data = await apiGet(`/admin/series/coin?from=${fromDate}&to=${toDate}`);
+  return data.series; 
 }
 
 export async function fetchActivePlayersSeries(fromDate, toDate) {
-  const data = await apiGet(`/api/admin/series/active-players?from=${fromDate}&to=${toDate}`);
-  return data.series; // [{date, activeByTx}]
+  const data = await apiGet(`/admin/series/active-players?from=${fromDate}&to=${toDate}`);
+  return data.series; 
+}
+
+export async function fetchTotalActivePlayers(fromDate, toDate) {
+  const data = await apiGet(`/admin/total-active-players?from=${fromDate}&to=${toDate}`);
+  return data.totalActivePlayers; 
 }
 
 export async function fetchMatchesSeries(fromDate, toDate) {
-  const data = await apiGet(`/api/admin/series/matches?from=${fromDate}&to=${toDate}`);
-  return data.series; // [{date, totalGames}]
+  const data = await apiGet(`/admin/series/matches?from=${fromDate}&to=${toDate}`);
+  return data.series; 
 }
 async function apiGet(path, options = {}) {
   console.log(getAccessToken());
@@ -196,7 +214,6 @@ async function apiGet(path, options = {}) {
 async function apiPost(path, body, options = {}) {
   console.log(getAccessToken());
   const { showErrorModal = true, ...rest } = options;
-  // Các API auth không hiển thị modal
   const isAuthAPI = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/logout') || path.includes('/auth/register') || path.includes('/auth/send-email-verification-otp') || path.includes('/auth/verify-email-otp');
   return request(
     path, 
@@ -218,9 +235,22 @@ async function apiFindAndJoinRoom(code) {
   return apiGet(`/room/${code}`);
 }
 
+async function fetchActiveTablesSeries(fromDate, toDate) {
+  const data = await apiGet(`/admin/series/table-usage?from=${fromDate}&to=${toDate}`);
+  return data.series;
+}
+
+async function fetchTotalActiveTables(fromDate, toDate) {
+  const data = await apiGet(`/admin/total-active-tables?from=${fromDate}&to=${toDate}`);
+  return data.totalActiveTables;
+}
+
 export { 
   apiGet, 
   apiPost, 
   apiCreateRoom, 
-  apiFindAndJoinRoom 
+  apiFindAndJoinRoom,
+  apiPatch,
+  fetchActiveTablesSeries,
+  fetchTotalActiveTables
 };

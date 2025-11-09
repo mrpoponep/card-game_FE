@@ -12,6 +12,8 @@ import ErrorModal from './components/ErrorModal/ErrorModal';
 import { setErrorModalCallback } from './api';
 import { SocketProvider } from './context/SocketContext';
 import Admin from './pages/admin/Dashboard';
+import RequireAdmin from './context/RequireAdmin';
+
 function AppContent() {
   const { showError, closeError, errorMessage, isErrorOpen } = useError();
   React.useEffect(() => {
@@ -29,7 +31,7 @@ function AppContent() {
         <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
         {/* Room is a standalone page that replaces Home */}
         <Route path="/room/:roomCode" element={<RequireAuth><Room /></RequireAuth>} />
-        <Route path="/admin/*" element={<RequireAuth><Admin /></RequireAuth>} />
+        <Route path="/admin/*" element={<RequireAuth><RequireAdmin><Admin /></RequireAdmin></RequireAuth>} />
       </Routes>
       <ErrorModal isOpen={isErrorOpen} onClose={closeError} message={errorMessage} />
     </>
