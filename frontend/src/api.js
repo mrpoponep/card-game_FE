@@ -32,7 +32,7 @@ export function setErrorModalCallback(callback) {
 async function refreshAccessToken() {
   try {
     // Include X-Session-Id header when available so server can select per-session cookie
-  const sid = (() => { try { return sessionStorage.getItem('session_id') || localStorage.getItem('session_id'); } catch (e) { return null; } })();
+    const sid = (() => { try { return sessionStorage.getItem('session_id') || localStorage.getItem('session_id'); } catch (e) { return null; } })();
     const headers = sid ? { 'X-Session-Id': sid } : undefined;
     const res = await fetch(`${API_BASE}/auth/refresh`, {
       method: 'POST',
@@ -65,7 +65,7 @@ async function request(path, options = {}, retryOn401 = true, showErrorModal = t
 
   // Không retry 401 cho các API auth (vì 401 ở đây là lỗi nghiệp vụ, không phải token hết hạn)
   const isAuthAPI = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/logout') || path.includes('/auth/register') || path.includes('/auth/send-email-verification-otp') || path.includes('/auth/verify-email-otp');
-  
+
   if (res.status === 401 && retryOn401 && !isAuthAPI) {
     const refreshed = await refreshAccessToken();
     if (refreshed?.accessToken) {
@@ -115,9 +115,9 @@ async function apiPost(path, body, options = {}) {
   // Các API auth không hiển thị modal
   const isAuthAPI = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/logout') || path.includes('/auth/register') || path.includes('/auth/send-email-verification-otp') || path.includes('/auth/verify-email-otp');
   return request(
-    path, 
-    { method: 'POST', body: body ? JSON.stringify(body) : undefined, ...rest }, 
-    true, 
+    path,
+    { method: 'POST', body: body ? JSON.stringify(body) : undefined, ...rest },
+    true,
     isAuthAPI ? false : showErrorModal
   );
 }
@@ -125,7 +125,7 @@ async function apiPost(path, body, options = {}) {
 async function apiCreateRoom(roomData) {
   // route 'create' này là từ file 'createRoomRoute.js'
   // REST-style: POST /api/room
-  return apiPost('/room', roomData); 
+  return apiPost('/room', roomData);
 }
 
 async function apiFindAndJoinRoom(code) {
@@ -134,9 +134,15 @@ async function apiFindAndJoinRoom(code) {
   return apiGet(`/room/${code}`);
 }
 
-export { 
-  apiGet, 
-  apiPost, 
-  apiCreateRoom, 
-  apiFindAndJoinRoom 
+async function apiCreatePaymentUrl({ amount, orderDescription, bankCode }) {
+  // Avoid global modal here; UI will handle local error
+  return apiPost('/payment/create_payment_url', { amount, orderDescription, bankCode }, { showErrorModal: false });
+}
+
+export {
+  apiGet,
+  apiPost,
+  apiCreateRoom,
+  apiFindAndJoinRoom,
+  apiCreatePaymentUrl
 };
