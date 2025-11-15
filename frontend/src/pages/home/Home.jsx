@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
 import RoomModal from '../../components/RoomModal/RoomModal'; 
+import GlobalChat from '../../components/GlobalChat/GlobalChat';
 import { useAuth } from '../../context/AuthContext';
 import './Home.css';
 
@@ -12,6 +13,7 @@ function Home() {
   const [showRanking, setShowRanking] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [showRoomModal, setShowRoomModal] = useState(false); 
+  const [isChatOpen, setIsChatOpen] = useState(false);
   const rankingOverlayRef = useRef(null);
   const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
 
@@ -119,7 +121,7 @@ function Home() {
 
       {/* Bottom Actions */}
       <div className="bottom-actions">
-        <button className="bottom-btn chat-btn">
+        <button className="bottom-btn chat-btn" onClick={() => setIsChatOpen(true)}>
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M12,3C6.5,3 2,6.58 2,11C2.05,13.15 3.06,15.17 4.75,16.5C4.75,17.1 4.33,18.67 2,21C4.37,20.89 6.64,20 8.47,18.5C9.61,18.83 10.81,19 12,19C17.5,19 22,15.42 22,11C22,6.58 17.5,3 12,3M12,17C7.58,17 4,14.31 4,11C4,7.69 7.58,5 12,5C16.42,5 20,7.69 20,11C20,14.31 16.42,17 12,17Z"/>
           </svg>
@@ -152,6 +154,7 @@ function Home() {
         isOpen={showRoomModal} 
         onClose={() => setShowRoomModal(false)} 
       />
+      <GlobalChat isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} />
     </div>
   );
 }
