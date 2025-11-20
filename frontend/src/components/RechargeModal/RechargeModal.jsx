@@ -42,6 +42,7 @@ const PokerRechargeModal = ({ onClose }) => {
     const [activeTab, setActiveTab] = useState('Nạp Chip');
     const [loadingId, setLoadingId] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
+    const [fallbackUrl, setFallbackUrl] = useState('');
 
     async function handleBuy(pkg) {
         setErrorMsg(null);
@@ -53,14 +54,33 @@ const PokerRechargeModal = ({ onClose }) => {
                 bankCode: 'NCB',
                 orderType: 'other',
                 language: 'vn',
-
             });
-            if (!data?.success || !data?.paymentUrl) {
-                setErrorMsg(data?.message || 'Tạo URL thanh toán thất bại');
-            } else {
-                window.location.href = data.paymentUrl;
+
+            console.log('Payment response raw:', JSON.stringify(data));
+
+            const paymentUrl = typeof data?.paymentUrl === 'string'
+                ? data.paymentUrl
+                : data?.paymentUrl?.paymentUrl;
+
+            if (!paymentUrl || typeof paymentUrl !== 'string' || !/^https?:\/\//.test(paymentUrl)) {
+                setErrorMsg('URL thanh toán không hợp lệ');
+                console.error('Invalid payment URL:', paymentUrl);
+                return;
             }
+
+            console.log('Redirecting to:', paymentUrl);
+
+            // Thử điều hướng mạnh
+            try {
+                window.location.assign(paymentUrl);
+            } catch {
+                window.open(paymentUrl, '_self');
+            }
+
+            // Fallback nếu trình duyệt chặn
+            setFallbackUrl(paymentUrl);
         } catch (e) {
+            console.error('Payment error:', e);
             setErrorMsg(e?.message || 'Lỗi kết nối server');
         } finally {
             setLoadingId(null);
@@ -105,6 +125,13 @@ const PokerRechargeModal = ({ onClose }) => {
                                     />
                                 ))}
                             </div>
+                            {fallbackUrl && (
+                                <div style={{ marginTop: 12 }}>
+                                    <a href={fallbackUrl} target="_self" rel="noreferrer" className={styles.buyButton}>
+                                        Mở VNPay thủ công
+                                    </a>
+                                </div>
+                            )}
                         </div>
                     )}
 
