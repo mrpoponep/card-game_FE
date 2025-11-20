@@ -40,6 +40,13 @@ export default function Login() {
           className="login-form"
           onSubmit={async (e) => {
             e.preventDefault();
+
+            // 🔥 Guard: Nếu đang loading thì không submit
+            if (loading) {
+              console.log('⏳ Login already in progress, skipping...');
+              return;
+            }
+
             setError('');
             setLoading(true);
             try {
