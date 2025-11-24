@@ -159,9 +159,10 @@ function Home() {
         onClose={() => setShowRoomModal(false)}
       />
 
-      {showRechargeModal && (
-        <RechargeModal onClose={() => setShowRechargeModal(false)} />
-      )}
+      <RechargeModal 
+        isOpen={showRechargeModal} 
+        onClose={() => setShowRechargeModal(false)} 
+      />
     </div>
   );
 }

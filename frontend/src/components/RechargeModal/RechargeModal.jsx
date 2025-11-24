@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import styles from './RechargeModal.module.css';
 import { apiCreatePaymentUrl } from '../../api';
+import { useModalAnimation } from '../../hooks/useModalAnimation';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
 
 const rechargePackages = [
     { id: 1, amount: 100000, priceVND: '100.000vnd', chips: '10,000 CHIP', bonus: '+ 500 Bonus' },
@@ -38,11 +40,23 @@ const ChipPackageCard = ({ pkg, onBuy, loading }) => {
     );
 };
 
-const PokerRechargeModal = ({ onClose }) => {
+const PokerRechargeModal = ({ isOpen, onClose }) => {
     const [activeTab, setActiveTab] = useState('Nạp Chip');
     const [loadingId, setLoadingId] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
     const [fallbackUrl, setFallbackUrl] = useState('');
+
+    // Sử dụng custom hooks cho animation
+    const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 300);
+    
+    // Xử lý phím ESC
+    useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
+
+    const handleOverlayClick = useCallback((e) => {
+        if (e.target.classList.contains(styles.overlay)) {
+            handleClose();
+        }
+    }, [handleClose, styles.overlay]);
 
     async function handleBuy(pkg) {
         setErrorMsg(null);
@@ -87,10 +101,12 @@ const PokerRechargeModal = ({ onClose }) => {
         }
     }
 
+    if (!shouldRender) return null;
+
     return (
-        <div className={styles.overlay}>
-            <div className={styles.modal}>
-                <button onClick={onClose} className={styles.closeButton} aria-label="Close">
+        <div className={`${styles.overlay} ${isClosing ? styles.closing : ''}`} onClick={handleOverlayClick}>
+            <div className={`${styles.modal} ${isClosing ? styles.closing : ''}`}>
+                <button onClick={handleClose} className={styles.closeButton} aria-label="Close">
                     &times;
                 </button>
 
@@ -140,24 +156,6 @@ const PokerRechargeModal = ({ onClose }) => {
                             <p>Nội dung cho tab {activeTab} sẽ hiển thị ở đây.</p>
                         </div>
                     )}
-                </div>
-
-                {/* Footer close button */}
-                <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '12px 20px' }}>
-                    <button
-                        onClick={onClose}
-                        style={{
-                            padding: '10px 16px',
-                            fontWeight: 800,
-                            borderRadius: 8,
-                            border: '2px solid #facc15',
-                            background: '#991b1b',
-                            color: '#fff',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        Đóng
-                    </button>
                 </div>
             </div>
         </div>
