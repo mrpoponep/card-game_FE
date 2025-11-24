@@ -185,7 +185,7 @@ export default function GiftReward({ isOpen, onClose }) {
         <button className="modal-close-btn" onClick={handleClose}>✕</button>
         
         <div className="modal-header">
-          <h2 className="gift-reward-title">🎁 Quà Tặng</h2>
+          <h2 className="gift-reward-title">🎁 Thành tựu</h2>
         </div>
         
         <div className="modal-content gift-reward-content">
@@ -199,7 +199,7 @@ export default function GiftReward({ isOpen, onClose }) {
                 <div className="gift-card weekly-card">
                   <div className="gift-card-header">
                     <div className="gift-icon">📅</div>
-                    <h3 className="gift-card-title">Thưởng Tuần</h3>
+                    <h3 className="gift-card-title">Tuần</h3>
                   </div>
 
                   <div className="gift-card-body">
@@ -231,7 +231,7 @@ export default function GiftReward({ isOpen, onClose }) {
                 <div className="gift-card monthly-card">
                   <div className="gift-card-header">
                     <div className="gift-icon">🏆</div>
-                    <h3 className="gift-card-title">Thưởng Tháng</h3>
+                    <h3 className="gift-card-title">Tháng</h3>
                   </div>
 
                   <div className="gift-card-body">

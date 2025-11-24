@@ -71,13 +71,17 @@ export default function DailyReward({ isOpen, onClose }) {
     setClaiming(true);
     try {
       const result = await apiPost('/daily-reward/claim', {});
+      console.log('Claim result:', result); // Debug log
+      
       if (result.success) {
-        // Cập nhật số dư và gems
-        if (updateBalance) {
-          updateBalance(result.data.balance);
-        }
-        if (updateUser && result.data.gems !== undefined) {
-          updateUser({ gems: result.data.gems });
+        // Cập nhật số dư và gems an toàn
+        if (result.data) {
+          if (updateBalance && result.data.balance !== undefined) {
+            updateBalance(result.data.balance);
+          }
+          if (updateUser && result.data.gems !== undefined) {
+            updateUser({ gems: result.data.gems });
+          }
         }
 
         // Cập nhật trạng thái
@@ -88,7 +92,7 @@ export default function DailyReward({ isOpen, onClose }) {
         });
 
         // Thêm login_day_count vào danh sách đã nhận
-        const claimedLoginDay = result.data.loginDayCount;
+        const claimedLoginDay = result.data?.loginDayCount || loginDayCount;
         setClaimedDays(prev => new Set([...prev, claimedLoginDay]));
 
         // Animation success
