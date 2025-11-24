@@ -1,0 +1,263 @@
+/* Nền mờ, tái sử dụng từ Home.css */
+.room-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Khung modal, phong cách màu đỏ sẫm/vàng */
+.room-modal-container {
+    background: linear-gradient(135deg, #2d1515 0%, #4a1a1a 100%);
+    border: 2px solid #FFD700;
+    border-radius: 20px;
+    padding: 0;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: slideIn 0.3s ease;
+    overflow: hidden;
+    /* Để bo góc các tab */
+}
+
+/* Header (TẠO PHÒNG CHƠI, nút X) */
+.room-modal-header {
+    padding: 20px 25px 15px 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+}
+
+.room-modal-header h2 {
+    color: #FFD700;
+    font-size: 24px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    margin: 0;
+}
+
+.room-modal-close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.2s ease;
+}
+
+.room-modal-close-btn:hover {
+    opacity: 1;
+    transform: scale(1.1);
+    color: #FFD700;
+}
+
+/* Tabs (Tạo phòng, Tìm phòng) */
+.room-modal-tabs {
+    display: flex;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.room-modal-tab {
+    flex: 1;
+    padding: 15px;
+    background: #8B1A1A;
+    /* Màu đỏ sẫm */
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    opacity: 0.6;
+    transition: all 0.3s ease;
+    border-bottom: 4px solid transparent;
+}
+
+.room-modal-tab.active {
+    background: #A52A2A;
+    /* Màu đỏ sáng hơn */
+    opacity: 1;
+    color: #FFD700;
+    border-bottom: 4px solid #FFD700;
+}
+
+/* Nội dung bên trong modal */
+.room-modal-content {
+    padding: 25px 30px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Cài đặt (Mức cược, Số người) */
+.setting-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.setting-label {
+    font-size: 18px;
+    color: #FFD700;
+    font-weight: bold;
+}
+
+.setting-control {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.control-btn,
+.value-display,
+.player-btn {
+    background: #8B1A1A;
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    color: white;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.control-btn {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+}
+
+.value-display {
+    width: 80px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    color: #FFD700;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.player-btn {
+    width: 50px;
+    height: 40px;
+    font-size: 16px;
+}
+
+.control-btn:hover,
+.player-btn:hover {
+    border-color: #FFD700;
+    transform: scale(1.05);
+}
+
+.player-btn.active {
+    background: #FFD700;
+    color: #4a1a1a;
+    border-color: #FFD700;
+}
+
+/* Tab Tìm phòng */
+.find-room-label {
+    font-size: 18px;
+    color: #FFD700;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: -10px;
+}
+
+.pincode-input {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.pincode-input input {
+    width: 45px;
+    height: 55px;
+    text-align: center;
+    font-size: 24px;
+    font-weight: bold;
+    color: #FFD700;
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 215, 0, 0.4);
+    border-radius: 8px;
+    outline: none;
+}
+
+.pincode-input input:focus {
+    border-color: #FFD700;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+/* Nút bấm chính (Tạo/Vào) */
+.modal-action-btn {
+    background: linear-gradient(135deg, #1abc9c 0%, #16a085 100%);
+    /* Màu xanh lá */
+    border: 2px solid #5efcda;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    margin-top: 10px;
+}
+
+.modal-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(26, 188, 156, 0.3);
+}
+
+.modal-action-btn:disabled {
+    background: #555;
+    border-color: #777;
+    color: #999;
+    cursor: not-allowed;
+}
+
+/* Thông báo lỗi */
+.room-modal-error {
+    color: #ff8a8a;
+    background: rgba(255, 0, 0, 0.1);
+    border: 1px solid #ff0000;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+/* CSS cho animation (tái sử dụng từ Home.css) */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

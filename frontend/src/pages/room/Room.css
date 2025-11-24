@@ -1,220 +1,385 @@
-.container {
-    width: 100%;
-    max-width: 400px;
-    background: #4a1f2a;
-    color: #fff;
-    padding: 20px;
-    border-radius: 10px;
-    text-align: center;
-    box-sizing: border-box;
-    margin: 20px auto;
-    font-family: Arial, sans-serif;
-}
-
-.header {
+/* Trang Room.jsx mới */
+.room-page-container {
+    width: 100vw;
+    height: 100vh;
+    background: linear-gradient(135deg, #2d1515 0%, #5a1515 50%, #2d1515 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Arial', sans-serif;
+    color: white;
+    overflow: hidden;
     position: relative;
-    margin-bottom: 20px;
 }
 
-.header h1 {
-    font-size: 24px;
-    margin: 0;
+/* Bàn chơi hình bầu dục - Giảm kích thước tối đa xuống 90% */
+.game-table {
+    width: 85.5vw;
+    /* 95vw * 0.9 */
+    height: 72vh;
+    /* 80vh * 0.9 */
+    max-width: 1170px;
+    /* 1300px * 0.9 */
+    max-height: 675px;
+    /* 750px * 0.9 */
+    background: #8B1A1A;
+    border: 18px solid #4a1a1a;
+    /* Giảm nhẹ độ dày viền (từ 20px) để cân đối */
+    border-radius: 50% / 50%;
+    position: relative;
+    box-shadow: 0 0 35px rgba(0, 0, 0, 0.55) inset, 0 12px 35px rgba(0, 0, 0, 0.35);
+    /* Giảm nhẹ bóng đổ */
 }
 
-.close-btn {
+/* Đường viền vàng bên trong */
+.table-inner-border {
     position: absolute;
-    right: 0;
-    top: 0;
-    background: none;
-    border: none;
-    color: #fff;
-    font-size: 20px;
-    cursor: pointer;
+    top: 32px;
+    /* Gần viền hơn chút (từ 35px) */
+    left: 32px;
+    right: 32px;
+    bottom: 32px;
+    border: 4px solid rgba(255, 215, 0, 0.45);
+    border-radius: 50% / 50%;
+    opacity: 0.85;
 }
 
-.tabs {
+/* Chỗ ngồi của người chơi - Giữ nguyên kích thước lớn */
+.player-seat {
+    position: absolute;
+    width: 180px;
+    height: 240px;
     display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.tab {
-    background: #6b2d3a;
-    border: none;
-    padding: 10px 15px;
-    margin: 0 5px;
-    color: #fff;
-    cursor: pointer;
-    border-radius: 5px;
-    font-size: 16px;
-    flex: 1;
-    min-width: 120px;
-}
-
-.tab.active {
-    background: #9b3e50;
-}
-
-.bet-section,
-.player-section,
-.room-code-section {
-    margin-bottom: 20px;
-}
-
-.bet-section p,
-.player-section p,
-.room-code-section p {
-    margin: 0 0 10px;
-    font-size: 16px;
-}
-
-.bet-control {
-    display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
 }
 
-.bet-btn {
-    background: #6b2d3a;
-    border: none;
-    color: #fff;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 20px;
-    margin: 0 5px;
+/* Vị trí 4 ghế - Điều chỉnh lại một chút cho bàn nhỏ hơn */
+.seat-1 {
+    bottom: -115px;
+    /* Gần bàn hơn chút (từ -120px) */
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.bet-amount {
-    background: #9b3e50;
-    padding: 10px 15px;
-    margin: 0 10px;
-    border-radius: 5px;
-    font-size: 18px;
+.seat-2 {
+    top: 50%;
+    left: -85px;
+    /* Gần bàn hơn chút (từ -90px) */
+    transform: translateY(-50%);
 }
 
-.player-options {
+.seat-3 {
+    top: -115px;
+    /* Gần bàn hơn chút (từ -120px) */
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.seat-4 {
+    top: 50%;
+    right: -85px;
+    /* Gần bàn hơn chút (từ -90px) */
+    transform: translateY(-50%);
+}
+
+
+/* Khu vực hiển thị bài - Giữ nguyên kích thước lớn */
+.player-hand {
+    position: absolute;
     display: flex;
-    justify-content: center;
-    gap: 10px;
-    flex-wrap: wrap;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 5;
+    height: 113px;
+    gap: 8px;
 }
 
-.player-btn {
-    background: #6b2d3a;
-    border: none;
-    color: #fff;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-size: 16px;
+/* Định vị bài cho từng ghế - Giữ nguyên */
+.seat-1 .player-hand {
+    top: -15px;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
-.player-btn.active {
-    background: #f4a261;
-    color: #4a1f2a;
+.seat-2 .player-hand {
+    top: 50%;
+    left: 100%;
+    transform: translate(22px, -50%) rotate(90deg);
+    transform-origin: center left;
+    gap: 8px;
 }
 
-.create-btn,
-.enter-btn {
-    background: #2a9d8f;
-    border: none;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    width: 100%;
-    box-sizing: border-box;
+.seat-3 .player-hand {
+    bottom: -15px;
+    left: 50%;
+    transform: translateX(-50%) scaleY(-1);
+    gap: 8px;
 }
 
-.enter-btn:disabled {
-    background: #6b2d3a;
-    cursor: not-allowed;
+.seat-4 .player-hand {
+    top: 50%;
+    left: auto;
+    right: 100%;
+    transform: translate(-22px, -50%) rotate(-90deg);
+    transform-origin: center right;
+    gap: 8px;
 }
 
-.code-display {
-    background: #6b2d3a;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: center;
-    gap: 5px;
-}
-
-.code-char {
-    width: 20px;
-    height: 20px;
-    background: #9b3e50;
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* Style cho các lá bài trong tay - Giữ nguyên kích thước lớn */
+.player-hand .card {
+    width: 75px;
+    height: 113px;
+    margin: 0;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+    border-radius: 6px;
     font-size: 14px;
 }
 
-.keypad {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    margin: 0 auto;
-    max-width: 200px;
+.player-hand .card .card-corner {
+    width: 21px;
+    top: 6px;
+    left: 6px;
 }
 
-.key {
-    background: #6b2d3a;
-    border: none;
-    color: #fff;
-    padding: 15px;
-    border-radius: 5px;
+.player-hand .card .card-corner.bottom-right {
+    bottom: 6px;
+    right: 6px;
+}
+
+.player-hand .card .card-rank {
+    font-size: 21px;
+}
+
+.player-hand .card .card-suit-small {
+    font-size: 15px;
+    margin-top: 2px;
+}
+
+.player-hand .card .card-pattern-symbol.main {
+    font-size: 48px;
+}
+
+.player-hand .card.card-back {
+    background-image: none;
+    background-color: #a52a2a;
+    border-width: 6px;
+}
+
+/* Bài úp (placeholder) - Giữ nguyên kích thước lớn */
+.card-placeholder {
+    width: 75px;
+    height: 113px;
+    background-color: rgba(0, 0, 0, 0.25);
+    border: 2px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 6px;
+    margin: 0;
+}
+
+/* Avatar người chơi - Giữ nguyên kích thước lớn */
+.player-avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #444 0%, #222 100%);
+    border: 5px solid #FFD700;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 20px;
+    overflow: hidden;
+    position: absolute;
+    z-index: 1;
+}
+
+.player-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.player-avatar.empty {
+    background: rgba(0, 0, 0, 0.35);
+    border: 5px solid #555;
+}
+
+/* Định vị avatar cho từng ghế - Giữ nguyên */
+.seat-1 .player-avatar {
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.seat-2 .player-avatar {
+    top: 50%;
+    left: 0;
+    transform: translateY(-50%);
+}
+
+.seat-3 .player-avatar {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.seat-4 .player-avatar {
+    top: 50%;
+    right: 0;
+    transform: translateY(-50%);
+}
+
+
+/* Thông tin người chơi (tên, tiền) - Giữ nguyên kích thước lớn */
+.player-info {
+    position: absolute;
+    text-align: center;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9);
+    width: 140px;
+}
+
+.player-balance {
+    font-size: 14px;
+    color: #FFD700;
+    margin-top: 5px;
+}
+
+/* Định vị thông tin cho từng ghế - Giữ nguyên */
+.seat-1 .player-info {
+    bottom: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.seat-2 .player-info {
+    top: calc(50% + 55px);
+    left: -10px;
+}
+
+.seat-3 .player-info {
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.seat-4 .player-info {
+    top: calc(50% + 55px);
+    right: -10px;
+}
+
+
+/* Thông báo giữa bàn - Giữ nguyên kích thước lớn */
+.table-center-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background: rgba(0, 0, 0, 0.55);
+    padding: 22px 40px;
+    border-radius: 15px;
+    z-index: 20;
+}
+
+.main-message {
+    font-size: 26px;
+    font-weight: bold;
+    color: #FFD700;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8);
+}
+
+.sub-message {
+    font-size: 17px;
+    color: white;
+    opacity: 0.85;
+    margin-top: 8px;
+}
+
+/* Khu vực bài chung (Community Cards) - Giữ nguyên kích thước lớn */
+.community-cards {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, calc(-50% + 90px));
+    display: flex;
+    gap: 12px;
+    z-index: 10;
+}
+
+/* Style cho bài chung (sử dụng kích thước 75x113) - Giữ nguyên */
+.community-cards .card {
+    width: 75px;
+    height: 113px;
+    font-size: 14px;
+    border-radius: 6px;
+}
+
+.community-cards .card .card-corner {
+    width: 21px;
+    top: 6px;
+    left: 6px;
+}
+
+.community-cards .card .card-corner.bottom-right {
+    bottom: 6px;
+    right: 6px;
+}
+
+.community-cards .card .card-rank {
+    font-size: 21px;
+}
+
+.community-cards .card .card-suit-small {
+    font-size: 15px;
+    margin-top: 2px;
+}
+
+.community-cards .card .card-pattern-symbol.main {
+    font-size: 48px;
+}
+
+
+/* Header (Ping, Thoát) - Giữ nguyên kích thước lớn */
+.room-header {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    right: 25px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
+}
+
+.ping {
+    background: rgba(0, 0, 0, 0.45);
+    padding: 8px 15px;
+    border-radius: 8px;
+    font-size: 17px;
+}
+
+.exit-btn {
+    background: rgba(0, 0, 0, 0.45);
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+    width: 60px;
+    height: 60px;
+    color: white;
     cursor: pointer;
-    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
 }
 
-.key.special {
-    background: #9b3e50;
+.exit-btn:hover {
+    background: rgba(255, 0, 0, 0.45);
+    border-color: rgba(255, 0, 0, 0.65);
 }
 
-/* Responsive */
-@media (max-width: 480px) {
-    .container {
-        padding: 15px;
-        margin: 10px;
-    }
-
-    .header h1 {
-        font-size: 20px;
-    }
-
-    .tab {
-        padding: 8px 10px;
-        font-size: 14px;
-        min-width: 100px;
-    }
-
-    .bet-btn,
-    .player-btn {
-        width: 35px;
-        height: 35px;
-        font-size: 18px;
-    }
-
-    .bet-amount {
-        font-size: 16px;
-        padding: 8px 12px;
-    }
-
-    .key {
-        padding: 12px;
-        font-size: 16px;
-    }
-
-    .create-btn,
-    .enter-btn {
-        font-size: 14px;
-        padding: 8px 15px;
-    }
+.exit-btn svg {
+    width: 32px;
+    height: 32px;
 }

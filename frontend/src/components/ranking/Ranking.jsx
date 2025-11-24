@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import { apiPost } from '../../api';
+import React, { useEffect, useState, useCallback } from 'react';
+import { apiPost, apiGet } from '../../api';
+import { useAuth } from '../../context/AuthContext';
 import { useModalAnimation } from '../../hooks/useModalAnimation';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './Ranking.css';
@@ -8,50 +9,75 @@ export default function Ranking({ isOpen, onClose }) {
   // Sử dụng custom hooks cho animation
   const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
   
+  // Lấy thông tin user hiện tại
+  const { user } = useAuth();
+  
   // Xử lý phím ESC
   useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
   
   const [rankings, setRankings] = useState([]);
-  const [page, setPage] = useState(0);
-  const limit = 10; // mặc định 10, không cần chọn
-  const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [hasNext, setHasNext] = useState(false);
-  const [hasPrev, setHasPrev] = useState(false);
+  const [myRank, setMyRank] = useState(null);
 
-  const fetchRankings = async (p = page) => {
-    setLoading(true);
+  // Helper: Render rank badge theo tier
+  const renderRankBadge = (rawRank) => {
+    const rank = Number(rawRank);
+    if (!Number.isFinite(rank)) return <span className="rank-badge tier-default">{String(rawRank)}</span>;
+
+    let cls = 'tier-default';
+    let icon = '';
+    if (rank === 1) { cls = 'rank-1'; icon = '🥇'; }
+    else if (rank === 2) { cls = 'rank-2'; icon = '🥈'; }
+    else if (rank === 3) { cls = 'rank-3'; icon = '🥉'; }
+    else if (rank >= 4 && rank <= 10) { cls = 'tier-4-10'; icon = '⭐'; }
+    else if (rank >= 11 && rank <= 30) { cls = 'tier-11-30'; icon = '🎖️'; }
+    else if (rank >= 31 && rank <= 50) { cls = 'tier-31-50'; icon = '🔰'; }
+    else if (rank >= 51 && rank <= 100) { cls = 'tier-51-100'; icon = '🔹'; }
+
+    return (
+      <span className={`rank-badge ${cls}`} aria-label={`Hạng ${rank}`}>
+        {icon && <span className="rank-icon" aria-hidden="true">{icon}</span>}
+        <span className="rank-number">{rank}</span>
+      </span>
+    );
+  };
+
+  const fetchRankings = async () => {
     try {
-      const payload = { page: p, limit };
-      const data = await apiPost('/api/rankings/list', payload);
+      const data = await apiPost('/rankings/list', {});
       if (data.success) {
         setRankings(data.data);
-        setTotal(data.pagination?.totalItems ?? 0);
-        setHasNext(data.pagination?.hasNext ?? false);
-        setHasPrev(data.pagination?.hasPrev ?? false);
       } else {
         console.error('Lỗi API', data);
       }
     } catch (err) {
       console.error('Lỗi khi tải bảng xếp hạng', err);
-    } finally {
-      setLoading(false);
     }
   };
 
-  const lastFetchKeyRef = useRef(null);
+  const fetchMyRank = async () => {
+    if (!user || !user.userId) return;
+    try {
+      const data = await apiGet(`/rankings/${user.userId}`);
+      if (data.success) {
+        setMyRank(data.data);
+      }
+    } catch (err) {
+      console.error('Không tìm thấy rank của bạn', err);
+      setMyRank(null);
+    }
+  };
 
   useEffect(() => {
-    const key = `p0-l${limit}`;
-    if (lastFetchKeyRef.current === key) return;
-    lastFetchKeyRef.current = key;
-    fetchRankings(0);
+    if (isOpen) {
+      fetchRankings();
+      fetchMyRank();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isOpen]);
 
   // Đóng popup khi click vào overlay
   const handleOverlayClick = useCallback((e) => {
-    if (e.target.classList.contains('ranking-overlay')) {
+    if (e.target.classList.contains('modal-overlay')) {
       handleClose();
     }
   }, [handleClose]);
@@ -71,44 +97,38 @@ export default function Ranking({ isOpen, onClose }) {
           <h2>🏆 Bảng xếp hạng</h2>
         </div>
         
-        <div className="modal-content">
-          {loading && <div className="loading">Đang tải...</div>}
-          <table className="ranking-table">
-            <thead>
-              <tr>
-                <th>Hạng</th>
-                <th>Người chơi</th>
-                <th>ELO</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rankings.map(r => (
-                <tr key={r.playerId}>
-                  <td>{r.rank}</td>
-                  <td>{r.username}</td>
-                  <td>{r.elo}</td>
+        <div className="modal-content ranking-flex-content">
+          <div className="ranking-table-flexarea">
+            <table className="ranking-table">
+              <thead>
+                <tr>
+                  <th>Hạng</th>
+                  <th>Người chơi</th>
+                  <th>ELO</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-
-          <div className="ranking-controls">
-            <div className="pagination-group">
-              <button 
-                onClick={() => { const np = page - 1; setPage(np); fetchRankings(np); }} 
-                disabled={!hasPrev}
-              >
-                ⬅️
-              </button>
-              <span>Trang {page + 1}</span>
-              <button 
-                onClick={() => { const np = page + 1; setPage(np); fetchRankings(np); }}
-                disabled={!hasNext}
-              >
-                ➡️
-              </button>
-            </div>
+              </thead>
+              <tbody>
+                {rankings.map(r => (
+                  <tr 
+                    key={r.userId}
+                    className={r.userId === user?.userId ? 'my-rank-row' : ''}
+                  >
+                    <td>{renderRankBadge(r.rank)}</td>
+                    <td>{r.username}</td>
+                    <td>{r.elo}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
+          
+          {myRank && (
+            <div className="my-rank-info">
+              <span className="my-rank-label">Hạng của bạn:</span>
+              {renderRankBadge(myRank.rank)}
+              <span className="my-rank-label">ELO: {myRank.elo}</span>
+            </div>
+          )}
         </div>
       </div>
     </div>
