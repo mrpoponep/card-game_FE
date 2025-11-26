@@ -1,0 +1,55 @@
+.public-metrics-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px; 
+}
+
+.public-cards {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(1, 1fr);            
+  margin-bottom: 24px;
+}
+@media (min-width: 640px){
+  .public-cards { grid-template-columns: repeat(2,1fr); }
+}
+@media (min-width: 1024px){
+  .public-cards { grid-template-columns: repeat(4, minmax(0,1fr)); }
+}
+
+/* Các styles cho Toolbar */
+.table-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px; 
+  gap: 16px; 
+  flex-wrap: wrap; 
+}
+
+.toolbar__left, .toolbar__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.toolbar__filter input[type="checkbox"] {
+  margin-right: 4px;
+}
+
+.btn-table {
+  display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; font-size: 13px;
+  border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer;
+}
+.btn-table:hover { background: #f9fafb }
+
+.edit-row { background: #fefce8 !important; border-top: 1px solid #f2c926; border-bottom: 1px solid #fde68a }
+.edit-row td { padding: 8px 16px }
+.edit-row .input { height: 34px; padding: 6px 10px; font-size: 13px; border-radius: 4px }
+.edit-row .button { height: 34px }
+
+.edit-row .form-select, .edit-row .input {
+  border-color: #d1d5db; 
+  box-shadow: inset 0 1px 2px rgb(0 0 0 / 0.08);
+}

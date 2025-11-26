@@ -28,7 +28,7 @@ export function AuthProvider({ children }) {
           try { sessionStorage.removeItem('session_id'); } catch (e) { }
         }
       } catch (e) { /* ignore */ }
-      return { ok: true };
+      return { ok: true, user: res.user }; 
     }
     return { ok: false, error: res?.message || 'Đăng nhập thất bại' };
   }, []);
