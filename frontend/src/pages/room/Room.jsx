@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import Card from '../../components/Card/Card';
+import RoomChat from '../../components/RoomChat/RoomChat';
 import './Room.css'; // Import CSS
 
 // Hàm helper để định dạng tiền tệ
@@ -70,7 +71,7 @@ function Room() {
   const [gameState, setGameState] = useState({ status: 'waiting' }); // Trạng thái game từ server
   const [myHand, setMyHand] = useState([]); // Bài của người chơi hiện tại
   const [isSpectator, setIsSpectator] = useState(false); // Trạng thái xem
-
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     // Chỉ chạy khi có đủ thông tin
@@ -133,12 +134,7 @@ function Room() {
     navigate('/'); // Hàm dọn dẹp của useEffect sẽ tự động gửi 'leaveRoom'
   };
 
-  // --- Logic Render ---
-  // Tìm người chơi hiện tại và những người khác
-  // const localUser = players.find(p => p.user_id === user.user_id);
-  // const otherPlayers = players.filter(p => p.user_id !== user.user_id);
 
-  // Hàm lấy bài cho người chơi (để hiển thị bài úp của đối thủ)
   const getHandForPlayer = (playerId) => {
       // Nếu đang chia bài hoặc đang chơi
       if (gameState.status === 'dealing' || gameState.status === 'playing') {
@@ -208,7 +204,6 @@ function Room() {
     return renderedSeats;
   };
 
-  // Xác định thông báo hiển thị ở giữa bàn
   const getCenterMessage = () => {
     const playerCount = seats.filter(p => p).length;
       if (isSpectator) {
@@ -220,13 +215,11 @@ function Room() {
           case 'dealing':
               return { main: "Đang chia bài...", sub: `Mã phòng: ${roomCode}` };
           case 'playing':
-              // Hiển thị Pot trong khi chơi (nếu có)
               return { main: `Pot: ${gameState.pot || 0}`, sub: `Mã phòng: ${roomCode}` };
           case 'finished':
-              return { main: "Ván bài kết thúc", sub: `Mã phòng: ${roomCode}` }; // Có thể hiển thị người thắng sau
+              return { main: "Ván bài kết thúc", sub: `Mã phòng: ${roomCode}` }; 
           case 'waiting':
           default:
-              // Chờ đủ người hoặc chờ ván mới
               return { main: playerCount >= 2 ? "Chuẩn bị ván mới..." : "Chờ người chơi...", sub: `Mã phòng: ${roomCode}` };
       }
   };
@@ -235,35 +228,46 @@ function Room() {
 
   return (
     <div className="room-page-container">
-      {/* Header: Ping và Nút Thoát */}
       <div className="room-header">
-        <div className="ping">📶 --ms</div> {/* TODO: Cập nhật Ping sau */}
-        <button className="exit-btn" onClick={handleExit} title="Thoát phòng">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.09 15.59L11.5 17L16.5 12L11.5 7L10.09 8.41L12.67 11H3V13H12.67L10.09 15.59M19 3H5C3.9 3 3 3.9 3 5V9H5V5H19V19H5V15H3V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3Z" /></svg>
-        </button>
+        <div className="left-controls">
+             <div className="ping">📶 --ms</div>
+        </div>
+        
+        <div className="right-controls" style={{ display: 'flex', gap: '10px' }}>
+            <button 
+                className="chat-toggle-btn" 
+                onClick={() => setIsChatOpen(!isChatOpen)}
+                title="Chat trong phòng"
+            >
+                💬
+            </button>
+
+            <button className="exit-btn" onClick={handleExit} title="Thoát phòng">
+                <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.09 15.59L11.5 17L16.5 12L11.5 7L10.09 8.41L12.67 11H3V13H12.67L10.09 15.59M19 3H5C3.9 3 3 3.9 3 5V9H5V5H19V19H5V15H3V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3Z" /></svg>
+            </button>
+        </div>
       </div>
 
       {/* Bàn chơi */}
       <div className="game-table">
         <div className="table-inner-border"></div>
 
-        {/* Thông báo giữa bàn */}
         <div className="table-center-message">
           <div className="main-message">{centerMsg.main}</div>
           <div className="sub-message">{centerMsg.sub}</div>
         </div>
 
-        {/* Khu vực hiển thị bài chung (Community Cards) - Tạm ẩn */}
         <div className="community-cards">
-            {/* {gameState.communityCards?.map((card, index) => (
-                <Card key={index} suit={card.suit} rank={card.rank} faceUp={true} />
-            ))} */}
         </div>
 
-        {/* Render các ghế ngồi */}
         {renderSeats()}
-
       </div>
+
+      <RoomChat 
+        isOpen={isChatOpen} 
+        onClose={() => setIsChatOpen(false)} 
+        roomCode={roomCode} 
+      />
     </div>
   );
 }

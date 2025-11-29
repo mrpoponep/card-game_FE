@@ -383,3 +383,31 @@
     width: 32px;
     height: 32px;
 }
+
+/* Nút Chat trong phòng */
+.chat-toggle-btn {
+    background: rgba(0, 0, 0, 0.45);
+    border: 3px solid rgba(255, 215, 0, 0.6);
+    /* Viền vàng */
+    border-radius: 12px;
+    width: 60px;
+    height: 60px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.chat-toggle-btn:hover {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #FFD700;
+    transform: scale(1.05);
+}
+
+.chat-toggle-btn:active {
+    transform: scale(0.95);
+}
