@@ -1,385 +1,361 @@
 .report-player-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  animation: overlayFadeIn 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    animation: overlayFadeIn 0.3s ease;
 }
 
 @keyframes overlayFadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .report-player-modal {
-  background: linear-gradient(135deg, rgba(139, 0, 0, 0.95) 0%, rgba(70, 0, 0, 0.98) 100%);
-  border: 3px solid #dc143c;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 90vh;
-  box-shadow: 0 8px 40px rgba(220, 20, 60, 0.6);
-  animation: modalSlideIn 0.3s ease;
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.95) 0%, rgba(70, 0, 0, 0.98) 100%);
+    border: 3px solid #dc143c;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    box-shadow: 0 8px 40px rgba(220, 20, 60, 0.6);
+    animation: modalSlideIn 0.3s ease;
 }
 
 @keyframes modalSlideIn {
-  from {
-    transform: translateY(-50px) scale(0.9);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
+    from {
+        transform: translateY(-50px) scale(0.9);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
 }
 
 .report-player-header {
-  background: linear-gradient(180deg, #dc143c 0%, #8B0000 100%);
-  padding: 15px 20px;
-  border-radius: 9px 9px 0 0;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-bottom: 2px solid #ff6b6b;
+    background: linear-gradient(180deg, #dc143c 0%, #8B0000 100%);
+    padding: 15px 20px;
+    border-radius: 9px 9px 0 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #ff6b6b;
 }
 
 .report-player-header h2 {
-  margin: 0;
-  color: #ffd700;
-  font-size: 20px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-  font-weight: bold;
+    margin: 0;
+    color: #ffd700;
+    font-size: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    font-weight: bold;
 }
 
 .close-btn {
-  background: none;
-  border: none;
-  color: #ffd700;
-  font-size: 32px;
-  cursor: pointer;
-  padding: 0;
-  width: 32px;
-  height: 32px;
-  line-height: 28px;
-  transition: all 0.2s;
-  font-weight: bold;
+    background: none;
+    border: none;
+    color: #ffd700;
+    font-size: 32px;
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    line-height: 28px;
+    transition: all 0.2s;
+    font-weight: bold;
 }
 
 .close-btn:hover:not(:disabled) {
-  transform: scale(1.2) rotate(90deg);
-  color: #fff;
+    transform: scale(1.2) rotate(90deg);
+    color: #fff;
 }
 
 .close-btn:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .report-player-body {
-  padding: 20px;
-}
-
-.player-info {
-  background: rgba(0, 0, 0, 0.4);
-  padding: 12px 15px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-  border: 2px solid #8B0000;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.player-info .info-label {
-  color: #ffd700;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.player-info .player-name {
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
+    padding: 20px;
 }
 
 .form-group {
-  margin-bottom: 15px;
+    margin-bottom: 15px;
 }
 
 .form-group label {
-  display: block;
-  color: #ffd700;
-  font-weight: bold;
-  margin-bottom: 8px;
-  font-size: 14px;
+    display: block;
+    color: #ffd700;
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 14px;
 }
 
 .form-group select,
 .form-group textarea {
-  width: 100%;
-  padding: 10px 12px;
-  background: rgba(0, 0, 0, 0.5);
-  border: 2px solid #8B0000;
-  border-radius: 6px;
-  color: #fff;
-  font-size: 14px;
-  font-family: inherit;
-  transition: all 0.3s;
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(0, 0, 0, 0.5);
+    border: 2px solid #8B0000;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 14px;
+    font-family: inherit;
+    transition: all 0.3s;
 }
 
 .form-group select:focus,
 .form-group textarea:focus {
-  outline: none;
-  border-color: #dc143c;
-  background: rgba(0, 0, 0, 0.6);
-  box-shadow: 0 0 10px rgba(220, 20, 60, 0.4);
+    outline: none;
+    border-color: #dc143c;
+    background: rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 10px rgba(220, 20, 60, 0.4);
 }
 
 .form-group select:disabled,
 .form-group textarea:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
 .form-group select {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .form-group select option {
-  background-color: #2d0000;
-  color: #fff;
-  padding: 8px;
+    background-color: #2d0000;
+    color: #fff;
+    padding: 8px;
 }
 
 .form-group textarea {
-  resize: vertical;
-  min-height: 80px;
-  max-height: 120px;
+    resize: vertical;
+    min-height: 80px;
+    max-height: 120px;
 }
 
 .form-group textarea::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+    color: rgba(255, 255, 255, 0.4);
 }
 
 .char-count {
-  display: block;
-  text-align: right;
-  font-size: 12px;
-  margin-top: 5px;
-  font-weight: bold;
+    display: block;
+    text-align: right;
+    font-size: 12px;
+    margin-top: 5px;
+    font-weight: bold;
 }
 
 .char-count.invalid {
-  color: #ff6b6b;
+    color: #ff6b6b;
 }
 
 .char-count.valid {
-  color: #51cf66;
+    color: #51cf66;
 }
 
 .form-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 20px;
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 20px;
 }
 
 .form-actions button {
-  padding: 10px 25px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: all 0.3s;
-  text-transform: uppercase;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-transform: uppercase;
 }
 
 .btn-cancel {
-  background: linear-gradient(180deg, #666 0%, #444 100%);
-  color: #fff;
-  border: 2px solid #888;
+    background: linear-gradient(180deg, #666 0%, #444 100%);
+    color: #fff;
+    border: 2px solid #888;
 }
 
 .btn-cancel:hover:not(:disabled) {
-  background: linear-gradient(180deg, #777 0%, #555 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+    background: linear-gradient(180deg, #777 0%, #555 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
 }
 
 .btn-cancel:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
+    opacity: 0.5;
+    cursor: not-allowed;
 }
 
 .btn-submit {
-  background: linear-gradient(180deg, #dc143c 0%, #8B0000 100%);
-  color: #ffd700;
-  border: 2px solid #ff6b6b;
+    background: linear-gradient(180deg, #dc143c 0%, #8B0000 100%);
+    color: #ffd700;
+    border: 2px solid #ff6b6b;
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: linear-gradient(180deg, #ff1744 0%, #dc143c 100%);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(220, 20, 60, 0.6);
+    background: linear-gradient(180deg, #ff1744 0%, #dc143c 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220, 20, 60, 0.6);
 }
 
 .btn-submit:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  background: linear-gradient(180deg, #666 0%, #444 100%);
-  border-color: #888;
-  color: #aaa;
-  transform: none;
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: linear-gradient(180deg, #666 0%, #444 100%);
+    border-color: #888;
+    color: #aaa;
+    transform: none;
 }
 
 /* Toast Notification Styles (Bottom-Right Corner) */
 .success-toast {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: linear-gradient(135deg, rgba(81, 207, 102, 0.95) 0%, rgba(55, 178, 77, 0.98) 100%);
-  border: 2px solid #51cf66;
-  border-radius: 12px;
-  padding: 16px 20px;
-  box-shadow: 0 8px 32px rgba(81, 207, 102, 0.4);
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  max-width: 400px;
-  z-index: 10000;
-  transform: translateX(500px);
-  opacity: 0;
-  transition: all 0.3s ease;
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, rgba(81, 207, 102, 0.95) 0%, rgba(55, 178, 77, 0.98) 100%);
+    border: 2px solid #51cf66;
+    border-radius: 12px;
+    padding: 16px 20px;
+    box-shadow: 0 8px 32px rgba(81, 207, 102, 0.4);
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    max-width: 400px;
+    z-index: 10000;
+    transform: translateX(500px);
+    opacity: 0;
+    transition: all 0.3s ease;
 }
 
 .success-toast.show {
-  transform: translateX(0);
-  opacity: 1;
+    transform: translateX(0);
+    opacity: 1;
 }
 
 .toast-icon {
-  width: 48px;
-  height: 48px;
-  background: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 28px;
-  color: #51cf66;
-  flex-shrink: 0;
-  font-weight: bold;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    width: 48px;
+    height: 48px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #51cf66;
+    flex-shrink: 0;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .toast-content {
-  flex: 1;
+    flex: 1;
 }
 
 .toast-title {
-  color: white;
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 4px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 4px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .toast-message {
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 13px;
-  line-height: 1.4;
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 13px;
+    line-height: 1.4;
 }
 
 /* Error Message Styles */
 .error-message {
-  background: rgba(255, 107, 107, 0.2);
-  border: 2px solid #ff6b6b;
-  border-radius: 8px;
-  padding: 12px 15px;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: #ff6b6b;
-  font-size: 14px;
-  animation: errorShake 0.5s ease;
+    background: rgba(255, 107, 107, 0.2);
+    border: 2px solid #ff6b6b;
+    border-radius: 8px;
+    padding: 12px 15px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: #ff6b6b;
+    font-size: 14px;
+    animation: errorShake 0.5s ease;
 }
 
 @keyframes errorShake {
-  0%, 100% {
-    transform: translateX(0);
-  }
-  25% {
-    transform: translateX(-10px);
-  }
-  75% {
-    transform: translateX(10px);
-  }
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-10px);
+    }
+    75% {
+        transform: translateX(10px);
+    }
 }
 
 .error-icon {
-  font-size: 20px;
-  font-weight: bold;
-  flex-shrink: 0;
+    font-size: 20px;
+    font-weight: bold;
+    flex-shrink: 0;
 }
 
 /* Responsive Design */
 @media (max-width: 600px) {
-  .report-player-modal {
-    width: 95%;
-    max-height: 95vh;
-  }
+    .report-player-modal {
+        width: 95%;
+        max-height: 95vh;
+    }
 
-  .report-player-header {
-    padding: 12px 15px;
-  }
+    .report-player-header {
+        padding: 12px 15px;
+    }
 
-  .report-player-header h2 {
-    font-size: 18px;
-  }
+    .report-player-header h2 {
+        font-size: 18px;
+    }
 
-  .report-player-body {
-    padding: 15px;
-  }
+    .report-player-body {
+        padding: 15px;
+    }
 
-  .form-actions {
-    flex-direction: column-reverse;
-  }
+    .form-actions {
+        flex-direction: column-reverse;
+    }
 
-  .form-actions button {
-    width: 100%;
-  }
+    .form-actions button {
+        width: 100%;
+    }
 
-  .success-toast {
-    bottom: 10px;
-    right: 10px;
-    left: 10px;
-    max-width: none;
-  }
+    .success-toast {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
 
-  .toast-icon {
-    width: 40px;
-    height: 40px;
-    font-size: 24px;
-  }
+    .toast-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+    }
 
-  .toast-title {
-    font-size: 14px;
-  }
+    .toast-title {
+        font-size: 14px;
+    }
 
-  .toast-message {
-    font-size: 12px;
-  }
+    .toast-message {
+        font-size: 12px;
+    }
 }
-

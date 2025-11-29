@@ -1,12 +1,17 @@
 .player-card {
-  background: linear-gradient(135deg, rgba(139, 0, 0, 0.4) 0%, rgba(70, 0, 0, 0.5) 100%);
-  border: 2px solid #8B0000;
-  border-radius: 8px;
-  padding: 10px;
-  transition: all 0.3s ease;
-  height: 100%;
-  display: flex;
-  align-items: center;
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.4) 0%, rgba(70, 0, 0, 0.5) 100%);
+    border: 2px solid #8B0000;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.3s ease;
+    height: 80px;
+    width: 100%;
+    /* Flexbox Settings */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-left: 70px;
+    position: relative;   /* Needed for absolute avatar positioning */
 }
 
 .player-card:hover {
@@ -35,13 +40,16 @@
 }
 
 .player-avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid #dc143c;
-  flex-shrink: 0;
-  position: relative;
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #dc143c;
+    flex-shrink: 0;
 }
 
 .player-card.winner .player-avatar {
@@ -100,19 +108,26 @@
 }
 
 .btn-report {
-  background: linear-gradient(180deg, #dc143c 0%, #8B0000 100%);
-  border: 2px solid #ff6b6b;
-  color: #ffd700;
-  font-size: 16px;
-  font-weight: bold;
-  padding: 6px 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s;
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    background: linear-gradient(180deg, #dc143c 0%, #8B0000 100%);
+    border: 2px solid #ff6b6b;
+    color: #ffd700;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 0;
+    transition: all 0.3s;
+    flex: 0 0 45px;
+    min-width: 45px;
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    cursor: pointer;
+
+    margin-left: auto;
 }
 
 .btn-report:hover {
@@ -125,67 +140,3 @@
   transform: translateY(0);
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-  .player-card {
-    padding: 8px;
-  }
-
-  .player-avatar {
-    width: 45px;
-    height: 45px;
-  }
-
-  .avatar-placeholder {
-    font-size: 22px;
-  }
-
-  .player-name {
-    font-size: 12px;
-  }
-
-  .player-card.winner .player-name {
-    font-size: 13px;
-  }
-
-  .btn-report {
-    font-size: 14px;
-    padding: 5px 8px;
-  }
-}
-
-@media (max-width: 500px) {
-  .player-card {
-    padding: 7px;
-  }
-
-  .player-card-content {
-    gap: 8px;
-  }
-
-  .player-avatar {
-    width: 40px;
-    height: 40px;
-  }
-
-  .avatar-placeholder {
-    font-size: 20px;
-  }
-
-  .player-name {
-    font-size: 11px;
-  }
-
-  .player-card.winner .player-name {
-    font-size: 12px;
-  }
-
-  .player-id {
-    font-size: 8px;
-  }
-
-  .btn-report {
-    font-size: 13px;
-    padding: 5px 7px;
-  }
-}

@@ -113,6 +113,24 @@ function Room() {
     };
     socket.on('spectatorMode', handleSpectatorMode);
 
+    // Listen for match finished event
+    const handleMatchFinished = (matchResultData) => {
+      console.log('Nhận kết quả trận đấu:', matchResultData);
+      // Prepare match data for navigation
+      const matchData = {
+        roomCode: matchResultData.roomCode,
+        players: matchResultData.players.map(player => ({
+          id: player.user_id,
+          name: player.username,
+          avatar: null, // Will be loaded from server in MatchResultScreen
+          isWinner: player.isWinner
+        }))
+      };
+
+      // Navigate to match result screen with data
+      navigate('/match-result', { state: { matchData } });
+    };
+    socket.on('matchFinished', handleMatchFinished);
 
     // --- Hàm dọn dẹp khi rời phòng ---
     return () => {
@@ -122,6 +140,7 @@ function Room() {
       socket.off('updateRoomState', handleRoomUpdate);
       socket.off('updateMyHand', handleHandUpdate);
       socket.off('spectatorMode', handleSpectatorMode);
+      socket.off('matchFinished', handleMatchFinished);
     };
 
   // Mảng dependency này đảm bảo useEffect chỉ chạy 1 lần khi vào phòng

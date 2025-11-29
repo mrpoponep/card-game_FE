@@ -1,75 +1,25 @@
 import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import PlayerCard from '../../components/MatchResult/PlayerCard';
 import ReportPlayer from '../../components/ReportPlayer/ReportPlayer';
 import './MatchResultScreen.css';
 
 const MatchResultScreen = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [showReportModal, setShowReportModal] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
 
-  // Current user ID (TODO: Get from authentication context/state)
-  const currentUserId = '1'; // This should come from your auth system
-
-  // Sample match data
-  const matchData = {
-    matchId: 'MTH-2025-001234',
-    players: [
-      {
-        id: '12345',
-        name: 'Phong',
-        avatar: null,
-        isWinner: true
-      },
-      {
-        id: '1',
-        name: 'Alice',
-        avatar: null,
-        isWinner: false
-      },
-      {
-        id: '2',
-        name: 'Bob',
-        avatar: null,
-        isWinner: false
-      },
-      {
-        id: '3',
-        name: 'Charlie',
-        avatar: null,
-        isWinner: false
-      },
-      {
-        id: '55667',
-        name: 'Player_Fifth',
-        avatar: null,
-        isWinner: false
-      },
-      {
-        id: '66778',
-        name: 'Player_Sixth',
-        avatar: null,
-        isWinner: false
-      },
-      {
-        id: '77889',
-        name: 'Player_Seventh',
-        avatar: null,
-        isWinner: false
-      },
-      {
-        id: '88990',
-        name: 'Player_Eighth',
-        avatar: null,
-        isWinner: false
-      },
-      {
-        id: '99001',
-        name: 'Player_Ninth',
-        avatar: null,
-        isWinner: false
-      }
-    ]
+  // Get match data from navigation state
+  const matchData = location.state?.matchData || {
+    roomCode: '',
+    players: []
   };
+
+  // Get current user ID from auth context
+  const currentUserId = user?.userId || user?.user_id;
 
   const handleReport = (player) => {
     setSelectedPlayer(player);
@@ -89,13 +39,16 @@ const MatchResultScreen = () => {
   };
 
   const handleBackToHome = () => {
-    // TODO: Navigate to home screen
-    console.log('Navigate to home');
+    navigate('/');
   };
 
   const handlePlayAgain = () => {
-    // TODO: Start new match
-    console.log('Start new match');
+    // Navigate back to the room
+    if (matchData.roomCode) {
+      navigate(`/room/${matchData.roomCode}`);
+    } else {
+      navigate('/');
+    }
   };
 
   return (
