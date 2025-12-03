@@ -13,14 +13,19 @@ const formatMoney = (amount) => {
   return amount;
 };
 
-// Component Ghế ngồi (Giữ nguyên)
-const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false, isActive }) => {
+// Component Ghế ngồi
+// THÊM PROP: gameStatus
+const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false, isActive, gameStatus }) => {
   const showCardsFaceUp = isLocalPlayer;
   const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
   const activeClass = isActive ? 'active-turn-glow' : '';
 
+  // Kiểm tra xem game có đang diễn ra hay không (để hiện trạng thái Chờ ván sau)
+  const isGameRunning = ['playing', 'preflop', 'flop', 'turn', 'river', 'showdown'].includes(gameStatus);
+
   return (
     <div className={`player-seat ${seatPosition}`}>
+      
       {/* Badge Tiền Cược */}
       {player && player.betThisRound > 0 && (
         <div className="player-bet-badge-floating">
@@ -39,12 +44,16 @@ const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false, is
             />
           ))
         ) : (
-          player && !player.folded && (
+          player && !player.folded && player.inHand && (
             <>
                <Card faceUp={false} />
                <Card faceUp={false} />
             </>
           )
+        )}
+        
+        {player?.handName && (
+            <div className="hand-result-badge">{player.handName}</div>
         )}
       </div>
 
@@ -61,6 +70,16 @@ const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false, is
             <div className="player-chips">💰 {formatMoney(player.chips)}</div>
             {player.folded && <div className="status-badge folded">Bỏ bài</div>}
             {player.allIn && <div className="status-badge allin">All-in</div>}
+            
+            {/* --- LOGIC HIỂN THỊ TRẠNG THÁI MỚI --- */}
+            {/* 1. Nếu game đang chạy mà không inHand -> Chờ ván sau */}
+            {!player.inHand && !player.folded && isGameRunning && (
+                <div className="status-badge waiting">Chờ ván sau</div>
+            )}
+            {/* 2. Nếu game đang waiting/countdown -> Sẵn sàng */}
+            {(gameStatus === 'waiting' || gameStatus === 'countdown') && (
+                 <div className="status-badge ready" style={{backgroundColor: '#2ecc71', color: 'white'}}>Sẵn sàng</div>
+            )}
           </>
         )}
       </div>
@@ -69,7 +88,6 @@ const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false, is
 };
 
 function Room() {
-  // ... (Giữ nguyên phần Hooks, State, useEffect, Logic xử lý) ...
   const { roomCode } = useParams();
   const { user } = useAuth();
   const { socket } = useSocket();
@@ -87,6 +105,7 @@ function Room() {
 
   const localPlayerSeat = seats.find(s => s && s.user_id === user?.userId);
   const isMyTurn = localPlayerSeat?.isActing || false;
+  const isInHand = localPlayerSeat?.inHand || false;
 
   const minRaise = (gameState.currentBet || 0) + (gameState.minRaise || 0);
   const maxRaise = localPlayerSeat?.chips || 0;
@@ -106,7 +125,6 @@ function Room() {
       setShowRaisePopup(false);
   };
 
-  // ... (Giữ nguyên useEffect socket) ...
   useEffect(() => {
     if (!socket || !user || !roomCode) return;
     const initialSettings = location.state?.roomSettings || null;
@@ -136,7 +154,15 @@ function Room() {
     };
   }, [socket, roomCode, user, navigate]);
 
-  const handleExit = () => { navigate('/'); };
+  const handleExit = () => {
+    if (socket) {
+      socket.emit('leaveRoom', () => {
+         navigate('/');
+      });
+    } else {
+      navigate('/');
+    }
+  };
 
   const getHandForPlayer = (playerId, player) => {
       if (gameState.status === 'finished') {
@@ -144,7 +170,7 @@ function Room() {
           return [{ rank: '', suit: '' }, { rank: '', suit: '' }];
       }
       const activeStates = ['playing', 'preflop', 'flop', 'turn', 'river'];
-      if (activeStates.includes(gameState.status)) {
+      if (activeStates.includes(gameState.status) && player?.inHand) {
           if (playerId === user.userId) return myHand;
           return [{ rank: '', suit: '' }, { rank: '', suit: '' }];
       }
@@ -152,7 +178,6 @@ function Room() {
   };
 
   const renderSeats = () => {
-    // ... (Giữ nguyên logic renderSeats) ...
     if (!roomSettings || !seats.length) return null;
     const renderedSeats = [];
     const max = parseInt(roomSettings.max_players, 10);
@@ -180,6 +205,7 @@ function Room() {
                     hand={player ? getHandForPlayer(player.user_id, player) : []}
                     isLocalPlayer={player?.user_id === localPlayerId}
                     isActive={player?.isActing}
+                    gameStatus={gameState.status} // TRUYỀN STATUS VÀO ĐÂY
                 />
             );
         }
@@ -187,9 +213,19 @@ function Room() {
     return renderedSeats;
   };
 
+  // --- LOGIC CENTER MESSAGE ĐÃ SỬA ---
   const getCenterMessage = () => {
       const playerCount = seats.filter(p => p).length;
       if (isSpectator) return { main: "Đang xem...", sub: "Vui lòng chờ ván sau" };
+      
+      // Kiểm tra xem game có đang chạy không
+      const isGameRunning = ['playing', 'preflop', 'flop', 'turn', 'river', 'showdown'].includes(gameState.status);
+
+      // Chỉ hiển thị "Vui lòng chờ" nếu game ĐANG CHẠY và mình không inHand
+      if (isGameRunning && localPlayerSeat && !localPlayerSeat.inHand) {
+          return { main: "Vui lòng chờ...", sub: "Bạn sẽ chơi ở ván sau" };
+      }
+
       switch (gameState.status) {
           case 'countdown':
               return { main: `Bắt đầu: ${gameState.countdown}s`, sub: "Chuẩn bị..." };
@@ -199,20 +235,21 @@ function Room() {
               return { main: "Kết thúc", sub: gameState.lastAction || "Đang chia thưởng..." };
           case 'waiting':
           default:
-              return { main: playerCount >= 2 ? "Sẵn sàng" : "Chờ người...", sub: `Cần tối thiểu 2 người` };
+              // Logic hiển thị khi chờ
+              if (playerCount < 2) {
+                  return { main: "Chờ người chơi...", sub: "Ván chơi bắt đầu khi có 2 người trở lên" };
+              }
+              // Khi đủ người, server sẽ chuyển sang countdown rất nhanh, nhưng hiển thị Sẵn sàng là hợp lý
+              return { main: "Sẵn sàng", sub: "Đang chuẩn bị bắt đầu..." };
       }
   };
   const centerMsg = getCenterMessage();
 
   return (
     <div className="room-page-container">
-      {/* 1. HEADER (Bố cục mới) */}
       <div className="room-header">
-        
-        {/* TRÁI: Nút Thoát + Box Thông Tin */}
         <div className="left-controls">
             <button className="exit-btn" onClick={handleExit} title="Thoát phòng">✕</button>
-            
             <div className="room-info-box">
                 <div className="info-item">
                     <span className="info-label">Ping</span>
@@ -230,8 +267,6 @@ function Room() {
                 </div>
             </div>
         </div>
-
-        {/* PHẢI: Chỉ còn nút Chat */}
         <div className="right-controls">
             <button className="chat-toggle-btn" onClick={() => setIsChatOpen(!isChatOpen)}>💬</button>
         </div>
@@ -253,7 +288,7 @@ function Room() {
         {renderSeats()}
       </div>
 
-      {isMyTurn && !isSpectator && (
+      {isMyTurn && !isSpectator && isInHand && (
           <div className="action-bar-right">
               <button className="game-btn fold-btn" onClick={() => handleAction('fold')}>BỎ BÀI</button>
               

@@ -11,7 +11,7 @@ let _autoRefreshPromise = null;
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
-  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(true); // Flag cho auto-login
+  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(true); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -38,14 +38,12 @@ export function AuthProvider({ children }) {
     } catch {}
     setApiAccessToken(null);
     setUser(null);
-  try { sessionStorage.removeItem('session_id'); } catch (e) { /* ignore */ }
+    try { sessionStorage.removeItem('session_id'); } catch (e) { /* ignore */ }
     // Clear any pending auto-refresh so future mounts can attempt refresh again
     try { _autoRefreshPromise = null; } catch (e) { /* ignore */ }
-    // Đưa về trang đăng nhập
     navigate('/login', { replace: true });
   }, [navigate]);
 
-  // Hàm cập nhật balance sau khi nhận thưởng
   const updateBalance = useCallback((newBalance) => {
     setUser(prevUser => {
       if (!prevUser) return prevUser;
@@ -53,7 +51,6 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  // Hàm cập nhật gems sau khi nhận thưởng
   const updateGems = useCallback((newGems) => {
     setUser(prevUser => {
       if (!prevUser) return prevUser;
@@ -61,7 +58,6 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  // Hàm cập nhật cả balance và gems
   const updateUser = useCallback((updates) => {
     setUser(prevUser => {
       if (!prevUser) return prevUser;
@@ -69,7 +65,36 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  // Khởi tạo: thự refresh nếu có cookie refresh_token (auto-login)
+  // --- MỚI: Hàm tải lại thông tin user từ Server ---
+  const reloadUser = useCallback(async () => {
+    try {
+        const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
+        // Thêm timestamp để tránh cache trình duyệt
+        const res = await fetch(`${API_BASE}/auth/refresh?t=${Date.now()}`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+              'Expires': '0'
+          }
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.success && data?.user) {
+            console.log("User reloaded:", data.user); // Log kiểm tra
+            setUser(data.user); 
+            return true;
+          }
+        }
+    } catch (e) {
+        console.error("Reload user failed", e);
+    }
+    return false;
+  }, []);
+
+  // Khởi tạo: thực hiện refresh nếu có cookie refresh_token (auto-login)
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -124,8 +149,10 @@ export function AuthProvider({ children }) {
     logout, 
     updateBalance,
     updateGems,
-    updateUser 
-  }), [user, ready, isAutoLoggingIn, login, logout, updateBalance, updateGems, updateUser]);
+    updateUser,
+    reloadUser // Export hàm này
+  }), [user, ready, isAutoLoggingIn, login, logout, updateBalance, updateGems, updateUser, reloadUser]);
+  
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 

@@ -1,54 +1,37 @@
-import React, {useState, useEffect, useCallback, useRef} from "react";
-import { useAuth } from "../../context/AuthContext";
-import { useSocket } from "../../context/SocketContext";
-import { useModalAnimation } from "../../hooks/useModalAnimation";
-import { useEscapeKey } from "../../hooks/useEscapeKey";
-import "./GlobalChat.css";
+import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../../context/AuthContext';
+import { useSocket } from '../../context/SocketContext';
+import { useEscapeKey } from '../../hooks/useEscapeKey';
+import './GlobalChat.css';
 
-export default function GlobalChat({isOpen, onClose}) {
-    useEscapeKey(isOpen, onClose);
+export default function GlobalChat({ isOpen, onClose, externalMessages }) {
+  useEscapeKey(isOpen, onClose);
 
-    const { user } = useAuth();
-    const { socket } = useSocket();
-    const [messages, setMessages] = useState([]);
-    const [currentMessage, setCurrentMessage] = useState("");
-    const messageListRef = useRef(null);
+  const { user } = useAuth();
+  const { socket } = useSocket();
+  const [currentMessage, setCurrentMessage] = useState('');
+  const messageListRef = useRef(null);
 
-    useEffect( () => {
-        if (messageListRef.current){
-            messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-        }
-    }, [messages]);
+  // Tự động cuộn xuống khi có tin nhắn mới từ props
+  useEffect(() => {
+    if (messageListRef.current) {
+      messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
+    }
+  }, [externalMessages, isOpen]);
 
-    useEffect(() => {
-        if (!socket) return;
-        const handleReceiveMessage = (newMessage) => {
-            setMessages(prevMessages => [...prevMessages, newMessage]);
-        };
-        if (isOpen){
-            socket.emit('joinGlobalChat');
-            socket.on('receiveGlobalMessage', handleReceiveMessage);
-        }
-        return () => {
-            if (isOpen){
-                socket.emit('leaveGlobalChat');
-            }
-            socket.off('receiveGlobalMessage', handleReceiveMessage);
-        };
+  const handleSendMessage = (e) => {
+    e.preventDefault();
+    const text = currentMessage.trim();
+    if (text && socket) {
+      socket.emit('sendGlobalMessage', { text });
+      setCurrentMessage('');
+    }
+  };
 
-    }, [socket, isOpen]);
-
-    const handleSendMessage = (e) => {
-        e.preventDefault();
-        const text = currentMessage.trim();
-        if (text && socket){
-            socket.emit('sendGlobalMessage', { text });
-            setCurrentMessage("");
-        }
-    };
-    return (
+  // Component này giờ chỉ render giao diện, logic nhận tin nhắn nằm ở Home.jsx
+  return (
     <div className={`global-chat-sidebar ${isOpen ? 'active' : ''}`}>
-            <button className="global-chat-close-btn" onClick={onClose}>✕</button>
+        <button className="global-chat-close-btn" onClick={onClose}>✕</button>
         
         <div className="global-chat-header">
           <h2>Chat Tổng</h2>
@@ -56,12 +39,12 @@ export default function GlobalChat({isOpen, onClose}) {
         
         <div className="global-chat-content">
           <div className="global-chat-messages" ref={messageListRef}>
-            {messages.map((msg, index) => (
+            {externalMessages && externalMessages.map((msg, index) => (
               <div 
                 key={index} 
-                className={`chat-message-item ${msg.userId === user.userId ? 'my-message' : ''}`}
+                className={`chat-message-item ${msg.userId === user?.userId ? 'my-message' : ''}`}
               >
-                {msg.userId !== user.userId && (
+                {msg.userId !== user?.userId && (
                   <div className="message-sender">{msg.username}</div>
                 )}
                 <div className="message-text">{msg.text}</div>

@@ -796,15 +796,10 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     filter: brightness(1.1);
 }
 
-.chip-icon {
-    font-size: 14px;
-}
-
 .player-bet-badge-floating {
     position: absolute;
-    top: -40px;
-    /* Đẩy lên trên đầu bài */
-    left: 50%;
+    top: 100px;
+    left: -10%;
     transform: translateX(-50%);
     background: rgba(0, 0, 0, 0.85);
     color: #FFD700;
