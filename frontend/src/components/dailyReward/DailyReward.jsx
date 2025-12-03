@@ -5,7 +5,7 @@ import { useModalAnimation } from '../../hooks/useModalAnimation';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './DailyReward.css';
 
-export default function DailyReward({ isOpen, onClose, onClaimed }) {
+export default function DailyReward({ isOpen, onClose }) {
   const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
   useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
 
@@ -74,8 +74,8 @@ export default function DailyReward({ isOpen, onClose, onClaimed }) {
       
       if (result.success) {
         if (result.data && updateUser) {
-          if (result.data.balance !== undefined) {
-            updateUser({ balance: result.data.balance });
+          if (result.data.reward) {
+            updateUser({ balance: user.balance + result.data.reward });
           }
         }
 
@@ -89,11 +89,6 @@ export default function DailyReward({ isOpen, onClose, onClaimed }) {
         // Thêm login_day_count vào danh sách đã nhận
         const claimedLoginDay = result.data?.loginDayCount || loginDayCount;
         setClaimedDays(prev => new Set([...prev, claimedLoginDay]));
-
-        // Gọi callback để cập nhật notification dot
-        if (onClaimed) {
-          onClaimed();
-        }
 
         // Animation success
         const claimButton = document.querySelector('.claim-button');

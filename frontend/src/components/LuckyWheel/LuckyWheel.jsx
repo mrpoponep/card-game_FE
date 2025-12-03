@@ -9,11 +9,14 @@ import './LuckyWheel.css';
 
 const LuckyWheel = ({ isOpen, onClose }) => {
   const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
-  useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
   const { user, updateUser } = useAuth();
   const [multiplier, setMultiplier] = useState(1);
   const [showPrizeTable, setShowPrizeTable] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
+  
+  // Chỉ lắng nghe ESC khi không có sub-modal nào đang mở
+  const hasSubModalOpen = showPrizeTable || showHistory;
+  useEscapeKey(isOpen && !isClosing && !hasSubModalOpen, handleClose, isAnimating);
   const [isSpinning, setIsSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
   const [result, setResult] = useState(null);
@@ -342,20 +345,24 @@ const LuckyWheel = ({ isOpen, onClose }) => {
             </div>
           </div>
         )}
+
+        {/* Prize Table Modal - Render bên trong để tránh đóng modal chính */}
+        {showPrizeTable && (
+          <PrizeTable 
+            isOpen={showPrizeTable} 
+            onClose={() => setShowPrizeTable(false)}
+            prizes={prizes}
+          />
+        )}
+
+        {/* Spin History Modal - Render bên trong để tránh đóng modal chính */}
+        {showHistory && (
+          <SpinHistory 
+            isOpen={showHistory} 
+            onClose={() => setShowHistory(false)}
+          />
+        )}
       </div>
-
-      {/* Prize Table Modal */}
-      <PrizeTable 
-        isOpen={showPrizeTable} 
-        onClose={() => setShowPrizeTable(false)}
-        prizes={prizes}
-      />
-
-      {/* Spin History Modal */}
-      <SpinHistory 
-        isOpen={showHistory} 
-        onClose={() => setShowHistory(false)}
-      />
     </div>
   );
 };

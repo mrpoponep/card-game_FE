@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
@@ -110,21 +110,13 @@ function Home() {
     }
   };
 
-  // Hàm cập nhật thủ công notification từ các modal
-  const updateNotification = useCallback((type, value) => {
-    setHasNotifications(prev => ({
-      ...prev,
-      [type]: value
-    }));
-  }, []);
-
-  // Kiểm tra phần thưởng khi load trang (chỉ 1 lần khi userId thay đổi)
+  // Kiểm tra phần thưởng khi load trang (chỉ khi userId thay đổi, không phải khi gems/balance thay đổi)
   useEffect(() => {
     if (user?.userId) {
       checkRewardNotifications();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.userId]); // Chỉ chạy khi userId thay đổi (login/logout)
+  }, [user?.userId]); // Chỉ chạy khi userId thay đổi (login/logout), không chạy khi gems/balance thay đổi
 
   // Lắng nghe socket notification cho phần thưởng mới (chỉ đăng ký khi userId thay đổi)
   useEffect(() => {
@@ -304,20 +296,17 @@ function Home() {
 
       <DailyReward 
         isOpen={showDailyReward} 
-        onClose={() => setShowDailyReward(false)}
-        onClaimed={() => updateNotification('daily', false)}
+        onClose={() => setShowDailyReward(false)} 
       />
 
       <EloReward 
         isOpen={showEloReward} 
-        onClose={() => setShowEloReward(false)}
-        onClaimed={() => updateNotification('elo', false)}
+        onClose={() => setShowEloReward(false)} 
       />
 
       <GiftReward 
         isOpen={showGiftReward} 
         onClose={() => setShowGiftReward(false)}
-        onClaimed={() => updateNotification('gift', false)}
       />
 
       <LuckyWheel 
