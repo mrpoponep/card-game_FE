@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
@@ -11,6 +11,7 @@ import RechargeModal from '../../components/RechargeModal/RechargeModal.jsx';
 import DailyReward from '../../components/dailyReward/DailyReward';
 import EloReward from '../../components/eloReward/EloReward';
 import GiftReward from '../../components/giftReward/GiftReward';
+import LuckyWheel from '../../components/LuckyWheel/LuckyWheel';
 
 function Home() {
   const navigate = useNavigate();
@@ -23,6 +24,7 @@ function Home() {
   const [showDailyReward, setShowDailyReward] = useState(false);
   const [showEloReward, setShowEloReward] = useState(false);
   const [showGiftReward, setShowGiftReward] = useState(false);
+  const [showLuckyWheel, setShowLuckyWheel] = useState(false);
   const [hasNotifications, setHasNotifications] = useState({
     daily: false,
     elo: false,
@@ -70,7 +72,6 @@ function Home() {
       // Kiểm tra Daily Reward
       try {
         const dailyCheck = await apiPost('/daily-reward/check', {});
-        console.log('📅 Daily check:', dailyCheck);
         if (dailyCheck.success && dailyCheck.data.canClaim) {
           notifications.daily = true;
         }
@@ -81,7 +82,6 @@ function Home() {
       // Kiểm tra Elo Reward
       try {
         const eloCheck = await apiPost('/elo-reward/check', {});
-        console.log('🏆 Elo check:', eloCheck);
         if (eloCheck.success && eloCheck.data.canClaim) {
           notifications.elo = true;
         }
@@ -93,8 +93,6 @@ function Home() {
       try {
         const weeklyCheck = await apiPost('/weekly-reward/check', {});
         const monthlyCheck = await apiPost('/monthly-reward/check', {});
-        console.log('📅 Weekly check:', weeklyCheck);
-        console.log('📆 Monthly check:', monthlyCheck);
         
         // Hiển thị notification nếu có thể nhận thưởng tuần HOẶC thưởng tháng
         if ((weeklyCheck.success && weeklyCheck.data.canClaim) || 
@@ -105,25 +103,34 @@ function Home() {
         console.error('Error checking gift reward:', err);
       }
 
-      console.log('✅ Final notifications:', notifications);
+      console.log('✅ Kiểm tra thông báo:', notifications);
       setHasNotifications(notifications);
     } catch (error) {
       console.error('Error checking reward notifications:', error);
     }
   };
 
-  // Kiểm tra phần thưởng khi load trang
+  // Hàm cập nhật thủ công notification từ các modal
+  const updateNotification = useCallback((type, value) => {
+    setHasNotifications(prev => ({
+      ...prev,
+      [type]: value
+    }));
+  }, []);
+
+  // Kiểm tra phần thưởng khi load trang (chỉ 1 lần khi userId thay đổi)
   useEffect(() => {
-    if (user) {
+    if (user?.userId) {
       checkRewardNotifications();
     }
-  }, [user]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.userId]); // Chỉ chạy khi userId thay đổi (login/logout)
 
-  // Lắng nghe socket notification cho phần thưởng mới
+  // Lắng nghe socket notification cho phần thưởng mới (chỉ đăng ký khi userId thay đổi)
   useEffect(() => {
     console.log('🔌 Socket notification hook mounted, onRewardNotification:', !!onRewardNotification);
-    if (!onRewardNotification) {
-      console.warn('⚠️ onRewardNotification is not available');
+    if (!onRewardNotification || !user?.userId) {
+      console.warn('⚠️ onRewardNotification is not available or user not logged in');
       return;
     }
 
@@ -150,9 +157,9 @@ function Home() {
       console.log('🔌 Socket notification listener unregistered');
       if (unsubscribe) unsubscribe();
     };
-  }, [onRewardNotification]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.userId]); // Chỉ đăng ký lại khi userId thay đổi (login/logout), không phải khi gems/balance thay đổi
 
-  console.log('User data in Home.jsx:', user);
   return (
     <div className="home-container">
       {/* User Info Section */}
@@ -186,17 +193,23 @@ function Home() {
               <span className="menu-icon">🏆</span>
               {hasNotifications.elo && <span className="notification-dot"></span>}
             </button>
-            <span className="menu-label">Thưởng Hạng</span>
+            <span className="menu-label">Hạng</span>
           </div>
           <div className="menu-item">
-            <button className="menu-btn reward-menu-btn" onClick={() => setShowGiftReward(true)} title="Nhận quà">
+            <button className="menu-btn reward-menu-btn" onClick={() => setShowGiftReward(true)} title="Thành tựu">
               <span className="menu-icon">🎉</span>
               {hasNotifications.gift && <span className="notification-dot"></span>}
             </button>
             <span className="menu-label">Thành tựu</span>
           </div>
           <div className="menu-item">
-            <button className="menu-btn" onClick={handleShowRules} title="Quy tắc">
+            <button className="menu-btn" onClick={() => setShowLuckyWheel(true)} title="Vòng quay">
+              <span className="menu-icon">🎡</span>
+            </button>
+            <span className="menu-label">Vòng quay</span>
+          </div>
+          <div className="menu-item">
+            <button className="menu-btn" onClick={handleShowRules} title="Hướng dẫn">
               <span className="menu-icon">📖</span>
             </button>
             <span className="menu-label">Hướng dẫn</span>
@@ -217,7 +230,7 @@ function Home() {
             <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z" />
           </svg>
         </div>
-        <span className="balance-amount">Coin: {user.balance.toLocaleString()}</span>
+        <span className="balance-amount">Coin: {user?.balance?.toLocaleString() || '0'}</span>
         <button className="topup-btn" onClick={handleTopUp}>NẠP TIỀN</button>
       </div>
 
@@ -291,26 +304,25 @@ function Home() {
 
       <DailyReward 
         isOpen={showDailyReward} 
-        onClose={() => {
-          setShowDailyReward(false);
-          checkRewardNotifications(); // Refresh notification sau khi đóng modal
-        }} 
+        onClose={() => setShowDailyReward(false)}
+        onClaimed={() => updateNotification('daily', false)}
       />
 
       <EloReward 
         isOpen={showEloReward} 
-        onClose={() => {
-          setShowEloReward(false);
-          checkRewardNotifications(); // Refresh notification sau khi đóng modal
-        }} 
+        onClose={() => setShowEloReward(false)}
+        onClaimed={() => updateNotification('elo', false)}
       />
 
       <GiftReward 
         isOpen={showGiftReward} 
-        onClose={() => {
-          setShowGiftReward(false);
-          checkRewardNotifications(); // Refresh notification sau khi đóng modal
-        }} 
+        onClose={() => setShowGiftReward(false)}
+        onClaimed={() => updateNotification('gift', false)}
+      />
+
+      <LuckyWheel 
+        isOpen={showLuckyWheel} 
+        onClose={() => setShowLuckyWheel(false)} 
       />
 
       {/* Toast notification cho phần thưởng mới */}

@@ -5,7 +5,7 @@ import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './EloReward.css';
 import { apiPost } from '../../api';
 
-export default function EloReward({ isOpen, onClose }) {
+export default function EloReward({ isOpen, onClose, onClaimed }) {
   // Sử dụng custom hooks cho animation
   const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
   
@@ -89,6 +89,12 @@ export default function EloReward({ isOpen, onClose }) {
         }
         // Refresh data (không hiển thị loading)
         await fetchRewardData(false);
+        
+        // Kiểm tra xem còn reward có thể claim không
+        const hasMoreClaimable = rewardData?.milestones?.some(m => m.status === 'claimable' && m.milestone_id !== milestoneId);
+        if (!hasMoreClaimable && onClaimed) {
+          onClaimed(); // Tắt notification dot nếu không còn reward nào
+        }
       } else {
         setError(response.message);
       }
@@ -117,6 +123,11 @@ export default function EloReward({ isOpen, onClose }) {
         }
         // Refresh data (không hiển thị loading)
         await fetchRewardData(false);
+        
+        // Tắt notification dot vì đã claim all
+        if (onClaimed) {
+          onClaimed();
+        }
       } else {
         setError(response.message);
       }

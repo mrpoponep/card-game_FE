@@ -169,8 +169,7 @@ export function AuthProvider({ children }) {
     updateGems,
     updateUser,
     refetchUserData
-  }), [user, ready, isAutoLoggingIn, login, logout, updateBalance, updateGems, updateUser]);
-  // 🔥 BỎ refetchUserData khỏi dependencies để tránh recreate function liên tục
+  }), [user, ready, isAutoLoggingIn, login, logout, updateBalance, updateGems, updateUser, refetchUserData]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

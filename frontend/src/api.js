@@ -104,13 +104,11 @@ async function request(path, options = {}, retryOn401 = true, showErrorModal = t
 }
 
 async function apiGet(path, options = {}) {
-  console.log(getAccessToken());
   const { showErrorModal = true, ...rest } = options;
   return request(path, { method: 'GET', ...rest }, true, showErrorModal);
 }
 
 async function apiPost(path, body, options = {}) {
-  console.log(getAccessToken());
   const { showErrorModal = true, ...rest } = options;
   // Các API auth không hiển thị modal
   const isAuthAPI = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/logout') || path.includes('/auth/register') || path.includes('/auth/send-email-verification-otp') || path.includes('/auth/verify-email-otp');

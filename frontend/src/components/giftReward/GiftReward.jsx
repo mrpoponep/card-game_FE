@@ -5,7 +5,7 @@ import { useModalAnimation } from '../../hooks/useModalAnimation';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './GiftReward.css';
 
-export default function GiftReward({ isOpen, onClose }) {
+export default function GiftReward({ isOpen, onClose, onClaimed }) {
   const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
   useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
 
@@ -133,6 +133,11 @@ export default function GiftReward({ isOpen, onClose }) {
           canClaim: false,
           alreadyClaimed: true
         }));
+        
+        // Kiểm tra xem còn reward nào có thể claim không
+        if (!monthlyStatus?.canClaim && onClaimed) {
+          onClaimed(); // Tắt notification dot nếu cả weekly và monthly đều không còn
+        }
       }
     } catch (err) {
       console.error('Error claiming weekly reward:', err);
@@ -160,6 +165,11 @@ export default function GiftReward({ isOpen, onClose }) {
           canClaim: false,
           alreadyClaimed: true
         }));
+        
+        // Kiểm tra xem còn reward nào có thể claim không
+        if (!weeklyStatus?.canClaim && onClaimed) {
+          onClaimed(); // Tắt notification dot nếu cả weekly và monthly đều không còn
+        }
       }
     } catch (err) {
       console.error('Error claiming monthly reward:', err);
