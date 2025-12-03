@@ -50,7 +50,7 @@ function Home() {
     <div className="home-container">
       {/* User Info Section */}
       <div className="user-info">
-        <div className="user-avatar">
+        <div className="user-avatar" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }} title="Xem hồ sơ">
           <img
             src={`${SERVER_URL}/avatar/${user.userId}`}
             alt="Avatar"
