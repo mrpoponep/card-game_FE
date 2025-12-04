@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './ReportPlayer.css';
 import { apiPost } from '../../api';
 
-const ReportPlayer = ({ playerName, playerId, reporterId, onClose, onSubmit }) => {
+const ReportPlayer = ({ playerName, playerId, reporterId, roomCode, onClose, onSubmit }) => {
     const [reportType, setReportType] = useState('');
     const [reason, setReason] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -58,7 +58,8 @@ const ReportPlayer = ({ playerName, playerId, reporterId, onClose, onSubmit }) =
                 reporter_id: reporterId,
                 reported_id: playerId,
                 type: reportType,
-                reason: reason.trim()
+                reason: reason.trim(),
+                roomCode: roomCode
             });
 
             if (response.success) {

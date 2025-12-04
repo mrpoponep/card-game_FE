@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import Card from '../../components/Card/Card';
 import RoomChat from '../../components/RoomChat/RoomChat';
-import './Room.css'; 
+import MatchResultModal from '../../components/MatchResult/MatchResultModal';
+import './Room.css';
 
 // Format tiền (1000 -> 1K)
 const formatMoney = (amount) => {
@@ -103,6 +104,11 @@ function Room() {
   const [showRaisePopup, setShowRaisePopup] = useState(false);
   const [raiseValue, setRaiseValue] = useState(0);
 
+  // Match result modal state
+  const [showMatchResult, setShowMatchResult] = useState(false);
+  const [matchResultData, setMatchResultData] = useState(null);
+  const prevGameStatusRef = useRef(null);
+
   const localPlayerSeat = seats.find(s => s && s.user_id === user?.userId);
   const isMyTurn = localPlayerSeat?.isActing || false;
   const isInHand = localPlayerSeat?.inHand || false;
@@ -125,6 +131,12 @@ function Room() {
       setShowRaisePopup(false);
   };
 
+  // Store seats ref for use in handleGameResult
+  const seatsRef = useRef([]);
+  useEffect(() => {
+    seatsRef.current = seats;
+  }, [seats]);
+
   useEffect(() => {
     if (!socket || !user || !roomCode) return;
     const initialSettings = location.state?.roomSettings || null;
@@ -138,7 +150,34 @@ function Room() {
     };
     const handleHandUpdate = (hand) => { setMyHand(hand); };
     const handleSpectatorMode = (status) => { setIsSpectator(status); setMyHand([]); };
-    const handleGameResult = (result) => { console.log("Winner:", result); };
+
+    const handleGameResult = (result) => {
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
+      const winnerIds = result.winners.map(w => w.userId);
+
+      // Build players list from current seats
+      const players = seatsRef.current
+        .filter(s => s !== null)
+        .map(seat => {
+          const isWinner = winnerIds.includes(seat.user_id);
+          const winnerInfo = result.winners.find(w => w.userId === seat.user_id);
+          return {
+            id: seat.user_id,
+            name: seat.username,
+            avatar: `${SERVER_URL}/avatar/${seat.user_id}`,
+            isWinner: isWinner,
+            handName: winnerInfo?.handName || seat.handName || null,
+            chipsChange: isWinner ? (winnerInfo?.amount || 0) : -(seat.totalBet || 0)
+          };
+        });
+
+      setMatchResultData({
+        roomCode: roomCode,
+        players: players,
+        winners: result.winners
+      });
+      setShowMatchResult(true);
+    };
 
     socket.on('updateRoomState', handleRoomUpdate);
     socket.on('updateMyHand', handleHandUpdate);
@@ -153,6 +192,15 @@ function Room() {
       socket.off('game:result', handleGameResult);
     };
   }, [socket, roomCode, user, navigate]);
+
+  // Auto-close match result modal when countdown starts
+  useEffect(() => {
+    if (gameState.status === 'countdown' && prevGameStatusRef.current === 'finished') {
+      setShowMatchResult(false);
+      setMatchResultData(null);
+    }
+    prevGameStatusRef.current = gameState.status;
+  }, [gameState.status]);
 
   const handleExit = () => {
     if (socket) {
@@ -328,6 +376,21 @@ function Room() {
               
               <button className="game-btn allin-btn" onClick={() => handleAction('allin')}>TẤT TAY</button>
           </div>
+      )}
+
+      {/* Match Result Modal */}
+      {showMatchResult && matchResultData && (
+        <MatchResultModal
+          matchData={matchResultData}
+          onClose={() => {
+            setShowMatchResult(false);
+            setMatchResultData(null);
+          }}
+          onPlayAgain={() => {
+            setShowMatchResult(false);
+            setMatchResultData(null);
+          }}
+        />
       )}
 
       <RoomChat isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} roomCode={roomCode} />

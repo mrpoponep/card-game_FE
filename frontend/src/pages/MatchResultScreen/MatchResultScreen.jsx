@@ -65,6 +65,7 @@ const MatchResultScreen = () => {
               player={player}
               isWinner={player.isWinner}
               onReport={handleReport}
+              showReportButton={player.id !== currentUserId}
             />
           ))}
         </div>
@@ -87,6 +88,7 @@ const MatchResultScreen = () => {
           playerName={selectedPlayer.name}
           playerId={selectedPlayer.id}
           reporterId={currentUserId}
+          roomCode={matchData.roomCode}
           onClose={handleCloseReport}
           onSubmit={handleSubmitReport}
         />
