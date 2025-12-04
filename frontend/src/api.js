@@ -113,6 +113,48 @@ export async function fetchTotalBannedPlayers() {
   return data.totalBannedPlayers; 
 }
 
+/**
+ * Tạo báo cáo vi phạm
+ * @param {{reportedId:number, reason:string, chatHistory?:string}} payload
+ */
+export async function createBannedReport(payload) {
+  const data = await apiPost('/ban/', payload);
+  return data; // { message, report, user }
+}
+
+/** Lấy danh sách báo cáo */
+export async function listBannedReports({ limit = 100, offset = 0 } = {}) {
+  const data = await apiGet(`/ban/?limit=${limit}&offset=${offset}`);
+  return data; // array of reports
+}
+
+/** Lấy báo cáo theo user */
+export async function getBannedReportsByUser(userId, limit = 50) {
+  const data = await apiGet(`/ban/user/${userId}?limit=${limit}`);
+  return data; // array
+}
+
+/** Lấy báo cáo theo id */
+export async function getBannedReportById(reportId) {
+  const data = await apiGet(`/ban/${reportId}`);
+  return data; // single report object
+}
+
+/** Xóa báo cáo theo id */
+export async function deleteBannedReport(reportId) {
+  const data = await request(`/ban/${reportId}`, { method: 'DELETE' });
+  return data; // { message, deletedRows }
+}
+
+/**
+ * Gọi AI để phân tích hội thoại và (nếu có vi phạm) lưu báo cáo
+ * @param {{reportedId:number, conversation: Array}} payload
+ */
+export async function analyzeAndSaveAI(payload) {
+  const data = await apiPost('/ban/ai/analyze-and-save', payload);
+  return data; // { message, violations, report?, user? }
+}
+
 /** @param {"public"|"private"} type */
 export async function fetchTables(type = "public") {
   const data = await apiGet(`/listRoom/list?type=${type}`);
@@ -248,6 +290,12 @@ async function fetchActiveTablesSeries(fromDate, toDate) {
 async function fetchTotalActiveTables(fromDate, toDate) {
   const data = await apiGet(`/admin/total-active-tables?from=${fromDate}&to=${toDate}`);
   return data.totalActiveTables;
+}
+
+/** Lấy số lần bị báo cáo của user */
+export async function getUserViolationCount(userId) {
+  const data = await apiGet(`/user/${userId}/violation-count`);
+  return data.violation_count;
 }
 
 export {

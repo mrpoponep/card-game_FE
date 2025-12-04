@@ -7,6 +7,7 @@ import KpiOverview from "../../components/admin/KpiOverview";
 import StatsForm from "../../components/admin/StatsForm";
 import ResultBlocks from "../../components/admin/ResultBlocks";
 import SeriesChart from "../../components/admin/SeriesChart";
+import BannedPlayers from "../../pages/admin/BannedPlayers";
 
 import { TYPE_OPTS, numberFmt as fmt } from "./constants";
 import { useTimeRange } from "../../hooks/useTimeRange";
@@ -49,13 +50,11 @@ export default function Dashboard() {
         </div>
       )}
 
-      {tab === "overview" ? (
+      {tab === "overview" && (
         <>
           <KpiOverview kpi={kpi} />
-
           <div className="stats-box">
             <div className="stats-box__title">Thống kê tuỳ chọn</div>
-
             <StatsForm
               type={type}
               setType={setType}
@@ -67,7 +66,6 @@ export default function Dashboard() {
               onView={onView}
               isLoading={isLoading}
             />
-
             <ResultBlocks
               type={type}
               periodLabel={periodLabel}
@@ -84,7 +82,6 @@ export default function Dashboard() {
               errorMatches={errorMatches}
               errorTables={errorTables}
             />
-
             <SeriesChart
               type={type}
               data={seriesData}
@@ -93,8 +90,12 @@ export default function Dashboard() {
             />
           </div>
         </>
-      ) : (
+      )}
+      {tab === "publicTables" && (
         <PublicTables from={from} to={to} />
+      )}
+      {tab === "bannedPlayers" && (
+        <BannedPlayers />
       )}
     </div>
   );

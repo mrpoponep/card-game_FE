@@ -1,0 +1,222 @@
+/* Responsive cho bảng danh sách và chi tiết */
+@media (max-width: 700px) {
+  .admin-banned-players-table th, .admin-banned-players-table td {
+    font-size: 13px;
+    padding: 6px 4px;
+  }
+  .admin-banned-players-table {
+    font-size: 13px;
+    min-width: 0;
+    width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+  .admin-banned-players-detail {
+    padding: 10px 4px;
+    min-height: 120px;
+  }
+  .detail-label {
+    min-width: 90px;
+    font-size: 13px;
+  }
+  .detail-value, .detail-pre {
+    font-size: 13px;
+  }
+}
+/* Thêm style cho detail label/value và căn chỉnh hài hòa */
+.detail-block {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.detail-label {
+  min-width: 130px;
+  color: #4a5568;
+  font-weight: 500;
+  margin-right: 8px;
+  display: inline-block;
+}
+.detail-value {
+  color: #2d3748;
+  font-weight: 400;
+  word-break: break-word;
+}
+.detail-pre {
+  background: #f1f5f9;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  margin: 0;
+  flex: 1;
+}
+.animated-detail {
+  animation: fadeInDetail 0.3s ease;
+}
+@keyframes fadeInDetail {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+/* Modern UX/UI styles for banned player page */
+.admin-banned-players-page {
+  padding: 24px;
+  background: #f8fafc;
+  min-height: 80vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+.banned-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+.banned-header h2 {
+  color: #2d3748;
+  margin: 0;
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  padding: 4px 10px;
+}
+.search-bar input {
+  border: none;
+  outline: none;
+  font-size: 15px;
+  background: transparent;
+  padding: 6px 0;
+}
+.search-icon {
+  margin-left: 6px;
+  color: #3182ce;
+}
+.banned-main {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.banned-list {
+  flex: 1 1 340px;
+  min-width: 320px;
+}
+.banned-detail {
+  flex: 1 1 340px;
+  min-width: 320px;
+}
+.admin-banned-players-table {
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  margin-bottom: 24px;
+  border-collapse: collapse;
+}
+.admin-banned-players-table th, .admin-banned-players-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 15px;
+}
+.admin-banned-players-table th {
+  background: #edf2f7;
+  color: #4a5568;
+  font-weight: 600;
+}
+/* Highlight selected row and move detail box below */
+.admin-banned-players-table tr.selected-row {
+  background: #bee3f8;
+  position: relative;
+  z-index: 2;
+}
+.banned-list {
+  position: relative;
+}
+.inline-detail-row {
+  background: transparent;
+  box-shadow: none;
+}
+.inline-detail-cell {
+  padding: 0;
+  border: none;
+}
+.inline-detail-box {
+  margin: 0 0 16px 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+.admin-banned-players-table tr:last-child td {
+  border-bottom: none;
+}
+.detail-btn, .delete-btn, .close-btn {
+  background: #3182ce;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 14px;
+}
+.detail-btn:hover, .close-btn:hover {
+  background: #2b6cb0;
+}
+.delete-btn {
+  background: #e53e3e;
+}
+.delete-btn:hover {
+  background: #c53030;
+}
+.admin-banned-players-detail {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 18px 16px;
+  min-height: 220px;
+}
+.admin-banned-players-detail h3 {
+  margin-top: 0;
+  color: #2b6cb0;
+  margin-bottom: 10px;
+}
+.detail-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.detail-block {
+  margin-bottom: 10px;
+}
+.admin-banned-players-detail pre {
+  background: #f1f5f9;
+  padding: 8px;
+  border-radius: 4px;
+  font-size: 14px;
+  white-space: pre-wrap;
+  margin: 0;
+}
+.empty-detail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 220px;
+}
+.error {
+  color: #e53e3e;
+  margin-bottom: 12px;
+}
+.loading {
+  color: #718096;
+  margin-bottom: 12px;
+}
+@media (max-width: 900px) {
+  .banned-main {
+    flex-direction: column;
+    gap: 18px;
+  }
+  .banned-list, .banned-detail {
+    min-width: 0;
+  }
+}

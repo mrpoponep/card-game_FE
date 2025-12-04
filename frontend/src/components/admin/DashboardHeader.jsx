@@ -7,7 +7,8 @@ export default function DashboardHeader({ tab, onChange }) {
       <TabSwitch
         tabs={[
           { value: "overview", label: "Tổng quan" },
-          { value: "public",   label: "Bản public / Tables" },
+          { value: "publicTables", label: "Bàn public" },
+          { value: "bannedPlayers", label: "Banned Player" },
         ]}
         value={tab}
         onChange={onChange}
