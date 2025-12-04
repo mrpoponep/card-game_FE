@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
@@ -30,6 +30,19 @@ function Home() {
     elo: false,
     gift: false
   });
+
+  // Callbacks để xóa dấu chấm đỏ sau khi nhận thưởng
+  const handleDailyRewardClaimed = useCallback(() => {
+    setHasNotifications(prev => ({ ...prev, daily: false }));
+  }, []);
+
+  const handleEloRewardClaimed = useCallback(() => {
+    setHasNotifications(prev => ({ ...prev, elo: false }));
+  }, []);
+
+  const handleGiftRewardClaimed = useCallback(() => {
+    setHasNotifications(prev => ({ ...prev, gift: false }));
+  }, []);
   const [showRewardToast, setShowRewardToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const rankingOverlayRef = useRef(null);
@@ -82,7 +95,8 @@ function Home() {
       // Kiểm tra Elo Reward
       try {
         const eloCheck = await apiPost('/elo-reward/check', {});
-        if (eloCheck.success && eloCheck.data.canClaim) {
+        // Kiểm tra xem có milestone nào có thể claim không
+        if (eloCheck.success && eloCheck.data?.summary?.claimable > 0) {
           notifications.elo = true;
         }
       } catch (err) {
@@ -296,17 +310,20 @@ function Home() {
 
       <DailyReward 
         isOpen={showDailyReward} 
-        onClose={() => setShowDailyReward(false)} 
+        onClose={() => setShowDailyReward(false)}
+        onClaimed={handleDailyRewardClaimed}
       />
 
       <EloReward 
         isOpen={showEloReward} 
-        onClose={() => setShowEloReward(false)} 
+        onClose={() => setShowEloReward(false)}
+        onClaimed={handleEloRewardClaimed}
       />
 
       <GiftReward 
         isOpen={showGiftReward} 
         onClose={() => setShowGiftReward(false)}
+        onClaimed={handleGiftRewardClaimed}
       />
 
       <LuckyWheel 

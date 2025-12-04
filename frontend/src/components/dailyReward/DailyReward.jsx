@@ -5,7 +5,7 @@ import { useModalAnimation } from '../../hooks/useModalAnimation';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './DailyReward.css';
 
-export default function DailyReward({ isOpen, onClose }) {
+export default function DailyReward({ isOpen, onClose, onClaimed }) {
   const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
   useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
 
@@ -97,6 +97,11 @@ export default function DailyReward({ isOpen, onClose }) {
           setTimeout(() => {
             claimButton.classList.remove('claim-success-animation');
           }, 500);
+        }
+
+        // Gọi callback để xóa dấu chấm đỏ
+        if (onClaimed) {
+          onClaimed();
         }
       }
     } catch (error) {

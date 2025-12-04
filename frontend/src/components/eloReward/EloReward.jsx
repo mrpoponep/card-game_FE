@@ -87,13 +87,17 @@ export default function EloReward({ isOpen, onClose, onClaimed }) {
         if (updateUser) {
           updateUser({ gems: response.data.newGemsBalance });
         }
-        // Refresh data (không hiển thị loading)
-        await fetchRewardData(false);
         
-        // Kiểm tra xem còn reward có thể claim không
-        const hasMoreClaimable = rewardData?.milestones?.some(m => m.status === 'claimable' && m.milestone_id !== milestoneId);
-        if (!hasMoreClaimable && onClaimed) {
-          onClaimed(); // Tắt notification dot nếu không còn reward nào
+        // Refresh data và kiểm tra còn reward không
+        const updatedData = await apiPost('/elo-reward/check');
+        if (updatedData.success) {
+          setRewardData(updatedData.data);
+          
+          // Kiểm tra xem còn reward có thể claim không
+          const hasMoreClaimable = updatedData.data?.milestones?.some(m => m.status === 'claimable');
+          if (!hasMoreClaimable && onClaimed) {
+            onClaimed();
+          }
         }
       } else {
         setError(response.message);

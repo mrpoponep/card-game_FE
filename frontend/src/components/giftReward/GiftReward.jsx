@@ -135,8 +135,9 @@ export default function GiftReward({ isOpen, onClose, onClaimed }) {
         }));
         
         // Kiểm tra xem còn reward nào có thể claim không
+        // Nếu không còn thì xóa dấu chấm đỏ
         if (!monthlyStatus?.canClaim && onClaimed) {
-          onClaimed(); // Tắt notification dot nếu cả weekly và monthly đều không còn
+          onClaimed();
         }
       }
     } catch (err) {
@@ -167,8 +168,9 @@ export default function GiftReward({ isOpen, onClose, onClaimed }) {
         }));
         
         // Kiểm tra xem còn reward nào có thể claim không
+        // Nếu không còn thì xóa dấu chấm đỏ
         if (!weeklyStatus?.canClaim && onClaimed) {
-          onClaimed(); // Tắt notification dot nếu cả weekly và monthly đều không còn
+          onClaimed();
         }
       }
     } catch (err) {
