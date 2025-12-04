@@ -390,6 +390,17 @@ function Room() {
             setShowMatchResult(false);
             setMatchResultData(null);
           }}
+          onBackToMenu={() => {
+            setShowMatchResult(false);
+            setMatchResultData(null);
+            if (socket) {
+              socket.emit('leaveRoom', () => {
+                navigate('/');
+              });
+            } else {
+              navigate('/');
+            }
+          }}
         />
       )}
 

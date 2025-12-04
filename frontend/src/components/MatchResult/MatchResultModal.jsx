@@ -4,7 +4,7 @@ import PlayerCard from './PlayerCard';
 import ReportPlayer from '../ReportPlayer/ReportPlayer';
 import './MatchResultModal.css';
 
-const MatchResultModal = ({ matchData, onClose, onPlayAgain }) => {
+const MatchResultModal = ({ matchData, onClose, onPlayAgain, onBackToMenu }) => {
   const { user } = useAuth();
   const [showReportModal, setShowReportModal] = useState(false);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
@@ -52,8 +52,8 @@ const MatchResultModal = ({ matchData, onClose, onPlayAgain }) => {
           </div>
 
           <div className="result-actions">
-            <button className="btn-action btn-home" onClick={onClose}>
-              <span>Đóng</span>
+            <button className="btn-action btn-home" onClick={onBackToMenu}>
+              <span>Về menu</span>
             </button>
             <button className="btn-action btn-play-again" onClick={onPlayAgain}>
               <span>Chơi tiếp</span>
