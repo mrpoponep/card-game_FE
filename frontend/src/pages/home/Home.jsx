@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom'; 
+import { useNavigate } from 'react-router-dom';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
-import RoomModal from '../../components/RoomModal/RoomModal'; 
+import RoomModal from '../../components/RoomModal/RoomModal';
+import TableSelect from '../../components/TableSelect/TableSelect';
 import GlobalChat from '../../components/GlobalChat/GlobalChat';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
@@ -12,15 +13,15 @@ function Home() {
   const navigate = useNavigate();
   const { user, logout, reloadUser } = useAuth();
   const { socket } = useSocket();
-  
+
   const [showRanking, setShowRanking] = useState(false);
   const [showRules, setShowRules] = useState(false);
-  const [showRoomModal, setShowRoomModal] = useState(false); 
+  const [showRoomModal, setShowRoomModal] = useState(false);
   const [isChatOpen, setIsChatOpen] = useState(false);
-  
   // State lưu trữ tin nhắn chat tổng (Persistent)
   const [globalMessages, setGlobalMessages] = useState([]);
-  
+  const [showRechargeModal, setShowRechargeModal] = useState(false);
+  const [showTableSelect, setShowTableSelect] = useState(false);
   const rankingOverlayRef = useRef(null);
   const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
 
@@ -47,12 +48,12 @@ function Home() {
     return () => {
       socket.off('receiveGlobalMessage', handleReceiveMessage);
       // Không leave phòng để giữ kết nối ngầm nếu cần, hoặc leave nếu muốn tiết kiệm resource
-      // socket.emit('leaveGlobalChat'); 
+      // socket.emit('leaveGlobalChat');
     };
   }, [socket]);
 
   const handleLogout = () => {
-    logout(); 
+    logout();
   };
 
   const handlePlayWithAI = () => {
@@ -64,7 +65,7 @@ function Home() {
   };
 
   const handlePlayWithFriend = () => {
-    setShowRoomModal(true); 
+    setShowRoomModal(true);
   };
 
   const handleShowRanking = () => {
@@ -75,12 +76,17 @@ function Home() {
     setShowRules(true);
   };
 
+  const handleTopUp = () => setShowRechargeModal(true);
+
+  const handleSelectTable = () => setShowTableSelect(true);
+
+  console.log('User data in Home.jsx:', user);
   return (
     <div className="home-container">
       {/* User Info Section */}
       <div className="user-info">
         <div className="user-avatar">
-            <img 
+            <img
               src={`${SERVER_URL}/avatar/${user?.userId}`}
               alt="Avatar"
               className="avatar-placeholder"
@@ -95,7 +101,7 @@ function Home() {
             <span className="elo-badge">Elo: {user?.elo}</span>
           </div>
         </div>
-        
+
         <div className="top-right-icons">
           <button className="icon-btn notes-btn" onClick={handleLogout} title="Đăng xuất">
             <svg viewBox="0 0 24 24" fill="currentColor">
@@ -122,7 +128,8 @@ function Home() {
             <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
           </svg>
         </div>
-        <span className="balance-amount">Coin: {user?.balance?.toLocaleString()}</span>
+        <span className="balance-amount">Coin: {user.balance.toLocaleString()}</span>
+        <button className="topup-btn" onClick={handleTopUp}>NẠP CHIP</button>
       </div>
 
       {/* Main Action Buttons */}
@@ -161,7 +168,7 @@ function Home() {
           <span>CHAT TỔNG</span>
         </button>
 
-        <button className="bottom-btn select-table-btn">
+        <button className="bottom-btn select-table-btn" onClick={handleSelectTable}>
           <div className="table-icon">
             <span>CHỌN</span>
             <span>BÀN</span>
@@ -183,16 +190,25 @@ function Home() {
 
       <PokerRules isOpen={showRules} onClose={() => setShowRules(false)} />
 
-      <RoomModal 
-        isOpen={showRoomModal} 
-        onClose={() => setShowRoomModal(false)} 
+      <RoomModal
+        isOpen={showRoomModal}
+        onClose={() => setShowRoomModal(false)}
       />
-      
+
+      <RechargeModal
+        isOpen={showRechargeModal}
+        onClose={() => setShowRechargeModal(false)}
+      />
       {/* Truyền tin nhắn xuống GlobalChat */}
-      <GlobalChat 
-        isOpen={isChatOpen} 
-        onClose={() => setIsChatOpen(false)} 
-        externalMessages={globalMessages} 
+      <GlobalChat
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        externalMessages={globalMessages}
+      />
+
+      <TableSelect
+        isOpen={showTableSelect}
+        onClose={() => setShowTableSelect(false)}
       />
     </div>
   );

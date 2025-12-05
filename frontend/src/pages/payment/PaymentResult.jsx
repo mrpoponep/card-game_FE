@@ -57,17 +57,6 @@ const PaymentResult = () => {
     return (
         <div className="payment-result-container">
             <div className="payment-result-card">
-                {showLoginPrompt && (
-                    <div className="login-prompt">
-                        <p className="prompt-text">
-                            ⚠️ Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại để xem số dư đã được cập nhật.
-                        </p>
-                        <button className="btn-login" onClick={handleGoLogin}>
-                            Đăng Nhập Ngay
-                        </button>
-                    </div>
-                )}
-
                 <div className={`result-icon ${isSuccess ? 'success' : 'failed'}`}>
                     {isSuccess ? (
                         <svg viewBox="0 0 52 52" className="checkmark">
@@ -123,15 +112,9 @@ const PaymentResult = () => {
                     )}
                 </div>
 
-                {isSuccess && !showLoginPrompt && (
+                {isSuccess && (
                     <div className="success-note">
                         <p>✨ Số dư của bạn đã được cập nhật!</p>
-                    </div>
-                )}
-
-                {isSuccess && showLoginPrompt && (
-                    <div className="success-note">
-                        <p>✅ Giao dịch thành công! Số dư đã được cộng vào tài khoản của bạn.</p>
                     </div>
                 )}
             </div>
