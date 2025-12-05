@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
 import RoomModal from '../../components/RoomModal/RoomModal';
+import TableSelect from '../../components/TableSelect/TableSelect';
 import { useAuth } from '../../context/AuthContext';
 import './Home.css';
 import RechargeModal from '../../components/RechargeModal/RechargeModal.jsx';
@@ -14,6 +15,7 @@ function Home() {
   const [showRules, setShowRules] = useState(false);
   const [showRoomModal, setShowRoomModal] = useState(false);
   const [showRechargeModal, setShowRechargeModal] = useState(false);
+  const [showTableSelect, setShowTableSelect] = useState(false);
   const rankingOverlayRef = useRef(null);
   const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
 
@@ -44,6 +46,8 @@ function Home() {
   };
 
   const handleTopUp = () => setShowRechargeModal(true);
+
+  const handleSelectTable = () => setShowTableSelect(true);
 
   console.log('User data in Home.jsx:', user);
   return (
@@ -93,7 +97,7 @@ function Home() {
           </svg>
         </div>
         <span className="balance-amount">Coin: {user.balance.toLocaleString()}</span>
-        <button className="topup-btn" onClick={handleTopUp}>NẠP TIỀN</button>
+        <button className="topup-btn" onClick={handleTopUp}>NẠP CHIP</button>
       </div>
 
       {/* Main Action Buttons */}
@@ -132,7 +136,7 @@ function Home() {
           <span>CHAT TỔNG</span>
         </button>
 
-        <button className="bottom-btn select-table-btn">
+        <button className="bottom-btn select-table-btn" onClick={handleSelectTable}>
           <div className="table-icon">
             <span>CHỌN</span>
             <span>BÀN</span>
@@ -159,9 +163,14 @@ function Home() {
         onClose={() => setShowRoomModal(false)}
       />
 
-      <RechargeModal 
-        isOpen={showRechargeModal} 
-        onClose={() => setShowRechargeModal(false)} 
+      <RechargeModal
+        isOpen={showRechargeModal}
+        onClose={() => setShowRechargeModal(false)}
+      />
+
+      <TableSelect
+        isOpen={showTableSelect}
+        onClose={() => setShowTableSelect(false)}
       />
     </div>
   );

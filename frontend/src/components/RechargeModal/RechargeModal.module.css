@@ -322,3 +322,375 @@
 .content::-webkit-scrollbar-thumb:hover {
     background: #FFA500;
 }
+
+/* ========================================
+   HISTORY PANEL - LỊCH SỬ GIAO DỊCH
+   ======================================== */
+
+.historyPanel {
+    padding: 24px;
+    border: 4px solid #f59e0b;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    min-height: 400px;
+}
+
+/* Loading State */
+.loadingState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 16px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(250, 204, 21, 0.2);
+    border-top-color: #facc15;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loadingState p {
+    color: #fde68a;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+/* Empty State */
+.emptyState {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 12px;
+}
+
+.emptyState p {
+    font-size: 48px;
+    margin: 0;
+}
+
+.emptyState span {
+    color: #d1d5db;
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+/* Transaction List - NO HEIGHT LIMIT */
+.transactionList {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-height: none;
+    overflow-y: visible;
+    padding-right: 8px;
+    padding-bottom: 20px;
+}
+
+/* Custom scrollbar for transaction list */
+.transactionList::-webkit-scrollbar {
+    width: 6px;
+}
+
+.transactionList::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.transactionList::-webkit-scrollbar-thumb {
+    background: #facc15;
+    border-radius: 3px;
+}
+
+.transactionList::-webkit-scrollbar-thumb:hover {
+    background: #fbbf24;
+}
+
+/* Transaction Card - COMPACT & CLEAN */
+.transactionCard {
+    background: linear-gradient(135deg, rgba(31, 41, 55, 0.95) 0%, rgba(17, 24, 39, 0.95) 100%);
+    border: 2px solid #4b5563;
+    border-radius: 12px;
+    padding: 16px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.transactionCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(250, 204, 21, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.transactionCard:hover {
+    border-color: #facc15;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.2);
+}
+
+.transactionCard:hover::before {
+    left: 100%;
+}
+
+/* Transaction Header - COMPACT */
+.txHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #4b5563;
+}
+
+.txStatus {
+    font-weight: 700;
+    font-size: 13px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.txStatus.success {
+    background: rgba(22, 163, 74, 0.2);
+    color: #4ade80;
+    border: 1px solid #16a34a;
+}
+
+.txStatus.failed {
+    background: rgba(220, 38, 38, 0.2);
+    color: #f87171;
+    border: 1px solid #dc2626;
+}
+
+.txStatus.pending {
+    background: rgba(245, 158, 11, 0.2);
+    color: #fbbf24;
+    border: 1px solid #f59e0b;
+}
+
+.txDate {
+    color: #9ca3af;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Transaction Body - COMPACT */
+.txBody {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Amount Section - HIGHLIGHT */
+.txAmount {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: rgba(250, 204, 21, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(250, 204, 21, 0.3);
+    margin-bottom: 4px;
+}
+
+.txLabel {
+    color: #d1d5db;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.txValue {
+    color: #fde68a;
+    font-size: 16px;
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Info Rows - MINIMAL */
+.txInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.txInfo:hover {
+    background: rgba(255, 255, 255, 0.04);
+}
+
+.txValueSmall {
+    color: #e5e7eb;
+    font-size: 12px;
+    font-weight: 500;
+    max-width: 60%;
+    text-align: right;
+    word-break: break-word;
+}
+
+/* Responsive Design - MOBILE */
+@media (max-width: 640px) {
+    .transactionCard {
+        padding: 14px;
+    }
+
+    .txHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .txStatus {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    .txDate {
+        font-size: 11px;
+    }
+
+    .txAmount {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 10px 12px;
+    }
+
+    .txLabel {
+        font-size: 12px;
+    }
+
+    .txValue {
+        font-size: 15px;
+    }
+
+    .txInfo {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+        padding: 6px 10px;
+    }
+
+    .txValueSmall {
+        max-width: 100%;
+        text-align: left;
+        font-size: 11px;
+    }
+}
+
+/* Animation for new transactions */
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.transactionCard {
+    animation: slideInFromRight 0.3s ease-out;
+}
+
+/* Stagger animation for multiple cards */
+.transactionCard:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.transactionCard:nth-child(2) {
+    animation-delay: 0.05s;
+}
+
+.transactionCard:nth-child(3) {
+    animation-delay: 0.1s;
+}
+
+.transactionCard:nth-child(4) {
+    animation-delay: 0.15s;
+}
+
+.transactionCard:nth-child(5) {
+    animation-delay: 0.2s;
+}
+
+.transactionCard:nth-child(n+6) {
+    animation-delay: 0.25s;
+}
+
+/* Bonus chip styles */
+.bonusHot {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+    border-color: #fde68a;
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+@keyframes pulseGlow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 10px rgba(252, 211, 77, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 20px rgba(252, 211, 77, 0.8);
+    }
+}
+
+.chipInfo {
+    text-align: center;
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    margin: 12px 0;
+}
+
+.baseChips {
+    color: #d1d5db;
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.bonusChips {
+    color: #4ade80;
+    font-size: 14px;
+    font-weight: 700;
+    margin: 4px 0;
+    text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
+
+.totalChips {
+    color: #fde68a;
+    font-size: 20px;
+    font-weight: 800;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 2px solid #374151;
+    text-shadow: 0 0 10px rgba(253, 230, 138, 0.6);
+}
