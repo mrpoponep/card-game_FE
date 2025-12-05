@@ -8,6 +8,7 @@ import GlobalChat from '../../components/GlobalChat/GlobalChat';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import './Home.css';
+import RechargeModal from "../../components/RechargeModal/RechargeModal";
 
 function Home() {
   const navigate = useNavigate();
@@ -199,6 +200,7 @@ function Home() {
         isOpen={showRechargeModal}
         onClose={() => setShowRechargeModal(false)}
       />
+
       {/* Truyền tin nhắn xuống GlobalChat */}
       <GlobalChat
         isOpen={isChatOpen}

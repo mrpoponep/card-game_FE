@@ -231,7 +231,7 @@
 
 
 /* Thông tin người chơi (tên, tiền) - Giữ nguyên kích thước lớn */
-.player-info {
+.seat-player-info {
     position: absolute;
     text-align: center;
     font-size: 16px;
@@ -247,24 +247,24 @@
 }
 
 /* Định vị thông tin cho từng ghế - Giữ nguyên */
-.seat-1 .player-info {
+.seat-1 .seat-player-info {
     bottom: -30px;
     left: 50%;
     transform: translateX(-50%);
 }
 
-.seat-2 .player-info {
+.seat-2 .seat-player-info {
     top: calc(50% + 55px);
     left: -25px;
 }
 
-.seat-3 .player-info {
+.seat-3 .seat-player-info {
     top: calc(40% + 10px);
     left: 50%;
     transform: translateX(-50%);
 }
 
-.seat-4 .player-info {
+.seat-4 .seat-player-info {
     top: calc(50% + 55px);
     right: -30px;
 }

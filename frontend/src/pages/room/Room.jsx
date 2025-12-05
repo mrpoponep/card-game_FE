@@ -64,7 +64,7 @@ const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false, is
         ) : null}
       </div>
       
-      <div className="player-info">
+      <div className="seat-player-info">
         <div className="player-name">{player ? player.username : 'Ghế Trống'}</div>
         {player && (
           <>
