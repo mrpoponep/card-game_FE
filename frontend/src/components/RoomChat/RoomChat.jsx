@@ -3,7 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import './RoomChat.css';
 
-export default function RoomChat({ isOpen, onClose, roomCode }) {
+export default function RoomChat({ isOpen, onClose, roomCode, onNewMessage }) {
   const { user } = useAuth();
   const { socket } = useSocket();
   const [messages, setMessages] = useState([]);
@@ -23,6 +23,10 @@ export default function RoomChat({ isOpen, onClose, roomCode }) {
 
     const handleReceiveMessage = (newMessage) => {
       setMessages(prev => [...prev, newMessage]);
+      // Notify parent component about new message
+      if (onNewMessage) {
+        onNewMessage(newMessage);
+      }
     };
 
     socket.on('receiveRoomMessage', handleReceiveMessage);
@@ -30,7 +34,7 @@ export default function RoomChat({ isOpen, onClose, roomCode }) {
     return () => {
       socket.off('receiveRoomMessage', handleReceiveMessage);
     };
-  }, [socket]);
+  }, [socket, onNewMessage]);
 
   const handleSendMessage = (e) => {
     e.preventDefault();
