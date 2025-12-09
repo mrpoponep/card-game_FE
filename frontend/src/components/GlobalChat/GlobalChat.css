@@ -2,16 +2,20 @@
 .global-chat-sidebar {
 
   position: fixed;
-  top: 0;
+  bottom: 0;
   left: 0;
   width: 380px;
   max-width: 90vw;
-  height: 100vh;
+  height: 50vh;
+  min-height: 350px;
+  max-height: 500px;
   z-index: 900;
 
   background: rgba(45, 21, 21, 0.85); 
   border-right: 2px solid #FFD700;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+  border-top: 2px solid #FFD700;
+  border-top-right-radius: 16px;
+  box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
 
@@ -36,6 +40,7 @@
   background: rgba(139, 26, 26, 0.9);
   color: #FFD700;
   flex-shrink: 0;
+  border-top-right-radius: 14px;
 }
 
 .global-chat-header h2 {

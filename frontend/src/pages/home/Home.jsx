@@ -21,6 +21,11 @@ function Home() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   // State lưu trữ tin nhắn chat tổng (Persistent)
   const [globalMessages, setGlobalMessages] = useState([]);
+  // Floating global chat messages (bottom-left)
+  const [floatingGlobalMessages, setFloatingGlobalMessages] = useState([]);
+  const floatingMessageIdRef = useRef(0);
+  // Quick chat input
+  const [quickChatMessage, setQuickChatMessage] = useState('');
   const [showRechargeModal, setShowRechargeModal] = useState(false);
   const [showTableSelect, setShowTableSelect] = useState(false);
   const rankingOverlayRef = useRef(null);
@@ -42,6 +47,25 @@ function Home() {
 
     const handleReceiveMessage = (newMessage) => {
       setGlobalMessages(prev => [...prev, newMessage]);
+
+      // Add floating message for bottom-left display
+      const messageId = floatingMessageIdRef.current++;
+      const floatingMsg = {
+        id: messageId,
+        username: newMessage.username,
+        text: newMessage.text,
+        timestamp: Date.now()
+      };
+
+      setFloatingGlobalMessages(prev => {
+        // Keep only the last 8 messages (to not overflow past middle of screen)
+        return [...prev, floatingMsg].slice(-8);
+      });
+
+      // Auto-remove this message after 10 seconds
+      setTimeout(() => {
+        setFloatingGlobalMessages(prev => prev.filter(m => m.id !== messageId));
+      }, 10000);
     };
 
     socket.on('receiveGlobalMessage', handleReceiveMessage);
@@ -55,6 +79,16 @@ function Home() {
 
   const handleLogout = () => {
     logout();
+  };
+
+  // Quick chat send handler
+  const handleQuickChatSend = (e) => {
+    e.preventDefault();
+    const text = quickChatMessage.trim();
+    if (text && socket) {
+      socket.emit('sendGlobalMessage', { text });
+      setQuickChatMessage('');
+    }
   };
 
   const handlePlayWithAI = () => {
@@ -212,6 +246,35 @@ function Home() {
         isOpen={showTableSelect}
         onClose={() => setShowTableSelect(false)}
       />
+
+      {/* Global Chat Floating Messages - Bottom Left */}
+      <div className="global-chat-floating-container">
+        {floatingGlobalMessages.map((msg) => (
+          <div key={msg.id} className="global-chat-floating-message">
+            <span className="global-chat-label">[Chat tổng]</span>
+            <span className="global-chat-sender">{msg.username}:</span>
+            <span className="global-chat-text">{msg.text}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick Chat Input Box - Bottom Left */}
+      <form className="quick-chat-box" onSubmit={handleQuickChatSend}>
+        <input
+          type="text"
+          className="quick-chat-input"
+          placeholder="Nhập tin nhắn..."
+          value={quickChatMessage}
+          onChange={(e) => setQuickChatMessage(e.target.value)}
+        />
+        <button
+          type="submit"
+          className="quick-chat-send-btn"
+          disabled={!quickChatMessage.trim()}
+        >
+          ➤
+        </button>
+      </form>
     </div>
   );
 }
