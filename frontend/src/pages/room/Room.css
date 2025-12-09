@@ -1078,4 +1078,498 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     line-height: 1.4;
 }
 
+/* ========================================
+   RESPONSIVE DESIGN - MEDIA QUERIES
+   ======================================== */
 
+/* TABLET LANDSCAPE (max-width: 1024px) */
+@media (max-width: 1024px) {
+    .game-table {
+        width: 90vw;
+        height: 70vh;
+        max-width: 950px;
+        max-height: 550px;
+        border: 14px solid #4a1a1a;
+    }
+
+    .table-inner-border {
+        top: 25px;
+        left: 25px;
+        right: 25px;
+        bottom: 25px;
+        border-width: 3px;
+    }
+
+    .player-seat {
+        width: 150px;
+        height: 200px;
+    }
+
+    .player-avatar {
+        width: 85px;
+        height: 85px;
+        border-width: 4px;
+    }
+
+    .seat-player-info {
+        font-size: 14px;
+        width: 120px;
+    }
+
+    .player-balance {
+        font-size: 12px;
+    }
+
+    .player-hand .card,
+    .community-cards .card {
+        width: 65px;
+        height: 98px;
+    }
+
+    .community-cards {
+        gap: 10px;
+    }
+
+    .action-bar-container {
+        bottom: 20px;
+        right: 20px;
+    }
+
+    .action-buttons-grid {
+        padding: 12px;
+        gap: 8px;
+    }
+
+    .game-btn {
+        padding: 10px 12px;
+        font-size: 12px;
+        min-width: 80px;
+    }
+
+    .pot-display {
+        font-size: 18px;
+        padding: 10px 20px;
+    }
+
+    .room-header {
+        top: 15px;
+        left: 15px;
+        right: 15px;
+    }
+
+    .exit-btn,
+    .chat-toggle-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+    }
+
+    .table-center-message {
+        padding: 18px 30px;
+    }
+
+    .main-message {
+        font-size: 22px;
+    }
+
+    .sub-message {
+        font-size: 15px;
+    }
+}
+
+/* TABLET PORTRAIT & MOBILE LANDSCAPE (max-width: 768px) */
+@media (max-width: 768px) {
+    .game-table {
+        width: 95vw;
+        height: 65vh;
+        max-width: 100%;
+        max-height: 500px;
+        border: 10px solid #4a1a1a;
+    }
+
+    .table-inner-border {
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        bottom: 20px;
+        border-width: 2px;
+    }
+
+    .player-seat {
+        width: 120px;
+        height: 160px;
+    }
+
+    .player-avatar {
+        width: 70px;
+        height: 70px;
+        border-width: 3px;
+    }
+
+    .seat-1 {
+        bottom: -95px;
+    }
+
+    .seat-2 {
+        left: -70px;
+    }
+
+    .seat-3 {
+        top: -100px;
+    }
+
+    .seat-4 {
+        right: -70px;
+    }
+
+    .seat-player-info {
+        font-size: 12px;
+        width: 100px;
+    }
+
+    .player-balance {
+        font-size: 11px;
+    }
+
+    .status-badge {
+        font-size: 10px;
+        padding: 3px 8px;
+    }
+
+    .player-hand .card,
+    .community-cards .card {
+        width: 50px;
+        height: 75px;
+    }
+
+    .player-hand {
+        gap: 6px;
+        height: 75px;
+    }
+
+    .community-cards {
+        gap: 8px;
+        transform: translate(-50%, calc(-50% + 70px));
+    }
+
+    .seat-2 .player-hand {
+        transform: translate(18px, -50%) rotate(90deg);
+    }
+
+    .seat-4 .player-hand {
+        transform: translate(-18px, -50%) rotate(-90deg);
+    }
+
+    .action-bar-container {
+        bottom: 15px;
+        right: 15px;
+        gap: 10px;
+    }
+
+    .action-buttons-grid {
+        padding: 10px;
+        gap: 6px;
+    }
+
+    .game-btn {
+        padding: 8px 10px;
+        font-size: 11px;
+        min-width: 70px;
+    }
+
+    .raise-slider-container {
+        padding: 10px;
+        min-width: 250px;
+    }
+
+    .slider-values {
+        font-size: 11px;
+    }
+
+    .raise-submit-btn,
+    .raise-cancel-btn {
+        padding: 8px 12px;
+        font-size: 11px;
+    }
+
+    .pot-display {
+        font-size: 16px;
+        padding: 8px 16px;
+    }
+
+    .room-header {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+    }
+
+    .ping-display {
+        font-size: 13px;
+        padding: 6px 12px;
+    }
+
+    .exit-btn,
+    .chat-toggle-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .table-center-message {
+        padding: 15px 25px;
+        border-radius: 12px;
+    }
+
+    .main-message {
+        font-size: 18px;
+    }
+
+    .sub-message {
+        font-size: 13px;
+    }
+
+    .player-bet-badge-floating {
+        padding: 4px 10px;
+        font-size: 12px;
+    }
+
+    .floating-global-messages {
+        bottom: 70px;
+        left: 8px;
+        max-width: 85%;
+    }
+
+    .floating-message {
+        padding: 6px 10px;
+    }
+
+    .floating-message-sender {
+        font-size: 11px;
+    }
+
+    .floating-message-text {
+        font-size: 12px;
+    }
+}
+
+/* MOBILE PORTRAIT (max-width: 480px) */
+@media (max-width: 480px) {
+    .game-table {
+        width: 98vw;
+        height: 60vh;
+        max-height: 450px;
+        border: 8px solid #4a1a1a;
+    }
+
+    .table-inner-border {
+        top: 15px;
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+        border-width: 2px;
+    }
+
+    .player-seat {
+        width: 100px;
+        height: 130px;
+    }
+
+    .player-avatar {
+        width: 55px;
+        height: 55px;
+        border-width: 2px;
+    }
+
+    .seat-1 {
+        bottom: -80px;
+    }
+
+    .seat-2 {
+        left: -55px;
+    }
+
+    .seat-3 {
+        top: -85px;
+    }
+
+    .seat-4 {
+        right: -55px;
+    }
+
+    .seat-player-info {
+        font-size: 10px;
+        width: 85px;
+    }
+
+    .player-balance {
+        font-size: 9px;
+        margin-top: 3px;
+    }
+
+    .status-badge {
+        font-size: 8px;
+        padding: 2px 6px;
+    }
+
+    .player-hand .card,
+    .community-cards .card {
+        width: 40px;
+        height: 60px;
+    }
+
+    .player-hand {
+        gap: 4px;
+        height: 60px;
+    }
+
+    .community-cards {
+        gap: 6px;
+        transform: translate(-50%, calc(-50% + 55px));
+    }
+
+    .seat-2 .player-hand {
+        transform: translate(15px, -50%) rotate(90deg);
+    }
+
+    .seat-4 .player-hand {
+        transform: translate(-15px, -50%) rotate(-90deg);
+    }
+
+    .action-bar-container {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+        align-items: center;
+    }
+
+    .action-buttons-grid {
+        padding: 8px;
+        gap: 5px;
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+
+    .game-btn {
+        padding: 6px 8px;
+        font-size: 10px;
+        min-width: 60px;
+    }
+
+    .raise-slider-container {
+        padding: 8px;
+        min-width: 200px;
+        max-width: 280px;
+        margin: 0 auto;
+    }
+
+    .slider-values {
+        font-size: 10px;
+        gap: 5px;
+    }
+
+    .slider-label {
+        font-size: 10px;
+    }
+
+    .raise-amount-display {
+        font-size: 16px;
+    }
+
+    .raise-submit-btn,
+    .raise-cancel-btn {
+        padding: 6px 10px;
+        font-size: 10px;
+        min-width: 60px;
+    }
+
+    .pot-display {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+
+    .room-header {
+        top: 8px;
+        left: 8px;
+        right: 8px;
+    }
+
+    .ping-display {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+
+    .exit-btn,
+    .chat-toggle-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 16px;
+    }
+
+    .table-center-message {
+        padding: 12px 20px;
+        border-radius: 10px;
+    }
+
+    .main-message {
+        font-size: 16px;
+    }
+
+    .sub-message {
+        font-size: 12px;
+    }
+
+    .player-bet-badge-floating {
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+
+    .chip-icon {
+        font-size: 12px;
+    }
+
+    .hand-result-badge {
+        font-size: 9px;
+        padding: 3px 6px;
+    }
+
+    .floating-global-messages {
+        bottom: 60px;
+        left: 5px;
+        max-width: 90%;
+    }
+
+    .floating-message {
+        padding: 5px 8px;
+    }
+
+    .floating-message-sender {
+        font-size: 10px;
+    }
+
+    .floating-message-text {
+        font-size: 11px;
+    }
+}
+
+/* LANDSCAPE ORIENTATION ADJUSTMENTS FOR MOBILE */
+@media (max-width: 768px) and (orientation: landscape) {
+    .game-table {
+        height: 75vh;
+        max-height: 90vh;
+    }
+
+    .action-bar-container {
+        bottom: 8px;
+        right: 8px;
+    }
+
+    .action-buttons-grid {
+        padding: 6px;
+    }
+
+    .floating-global-messages {
+        bottom: 50px;
+        max-height: 150px;
+    }
+}

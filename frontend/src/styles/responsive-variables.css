@@ -1,0 +1,69 @@
+/* ========================================
+   RESPONSIVE DESIGN SYSTEM VARIABLES
+   Consistent breakpoints and scaling
+   ======================================== */
+
+:root {
+  /* Breakpoints */
+  --breakpoint-mobile-small: 480px;
+  --breakpoint-mobile: 768px;
+  --breakpoint-tablet: 1024px;
+  --breakpoint-desktop: 1280px;
+  --breakpoint-desktop-large: 1920px;
+
+  /* Font scaling */
+  --font-scale-mobile: 0.875;  /* 87.5% */
+  --font-scale-tablet: 0.95;   /* 95% */
+  --font-scale-desktop: 1;     /* 100% */
+
+  /* Spacing scale */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+
+  /* Touch target minimum (mobile accessibility) */
+  --touch-target-min: 44px;
+
+  /* Modal widths */
+  --modal-width-mobile: 95vw;
+  --modal-width-tablet: 85vw;
+  --modal-width-desktop: 900px;
+
+  /* Card sizes (for poker cards) */
+  --card-width-desktop: 75px;
+  --card-height-desktop: 113px;
+  --card-width-tablet: 65px;
+  --card-height-tablet: 98px;
+  --card-width-mobile: 50px;
+  --card-height-mobile: 75px;
+
+  /* Game table sizes */
+  --table-width-desktop: 85.5vw;
+  --table-height-desktop: 72vh;
+  --table-max-width-desktop: 1170px;
+  --table-max-height-desktop: 675px;
+}
+
+/* Mobile-first utility classes */
+.hide-mobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hide-mobile {
+    display: block;
+  }
+  .hide-tablet-up {
+    display: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hide-desktop {
+    display: none;
+  }
+}
+
