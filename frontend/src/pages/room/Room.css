@@ -832,19 +832,6 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     font-size: 16px;
 }
 
-/* Điều chỉnh vị trí badge cho các ghế xoay */
-/* Ghế bên phải (seat-4 trong map 4 người) */
-.seat-4 .player-bet-badge-floating,
-.seat-3 .player-bet-badge-floating {
-    /* Ghế trên (seat-3) cũng cần chỉnh nếu bị che */
-    /* Giữ nguyên vị trí vì bài xoay nhưng div chứa không xoay */
-    /* Nếu cần chỉnh riêng: */
-}
-
-.seat-2 .player-bet-badge-floating {
-    /* Ghế trái */
-}
-
 
 /* --- HEADER MỚI --- */
 .room-header {

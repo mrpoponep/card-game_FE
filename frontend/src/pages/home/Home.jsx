@@ -58,7 +58,7 @@ function Home() {
   };
 
   const handlePlayWithAI = () => {
-    console.log('Play with AI clicked');
+    navigate('/room-ai');
   };
 
   const handlePlayNow = () => {
