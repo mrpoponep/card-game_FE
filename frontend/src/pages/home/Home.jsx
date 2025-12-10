@@ -62,7 +62,19 @@ function Home() {
   };
 
   const handlePlayNow = () => {
-    console.log('Play now clicked');
+    if (!socket) return;
+    // Pass excludeRoomCode to avoid re-joining the last quick-joined room if user exited during play
+    const lastRoomCode = sessionStorage.getItem('lastQuickJoinRoomCode') || null;
+    socket.emit('quickJoin', { excludeRoomCode: lastRoomCode });
+
+    const onResult = ({ roomCode, settings }) => {
+      // Navigate with initial settings so server can apply blinds
+      navigate(`/room/${roomCode}`, { state: { roomSettings: settings } });
+      // Remember last quick-joined room to avoid immediate rejoin if user backs out
+      try { sessionStorage.setItem('lastQuickJoinRoomCode', roomCode); } catch {}
+      socket.off('quickJoinResult', onResult);
+    };
+    socket.on('quickJoinResult', onResult);
   };
 
   const handlePlayWithFriend = () => {
