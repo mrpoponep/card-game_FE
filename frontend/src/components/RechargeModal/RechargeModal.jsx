@@ -1,54 +1,94 @@
 import React, { useState, useCallback } from 'react';
 import styles from './RechargeModal.module.css';
-import { apiCreatePaymentUrl } from '../../api';
+import { apiCreatePaymentUrl, apiGetTransactionHistory } from '../../api';
 import { useModalAnimation } from '../../hooks/useModalAnimation';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
+import RechargeTab from './RechargeTab';
+import HistoryTab from './HistoryTab';
 
+// 🎯 Tính toán bonus dựa trên amount
+const calculateChips = (amount) => {
+    const bonusRate = {
+        100000: 0.05,   // 5% bonus
+        250000: 0.05,   // 5% bonus
+        500000: 0.10,   // 10% bonus
+        1000000: 0.20,  // 20% bonus
+        2500000: 0.25,  // 25% bonus - VIP
+        5000000: 0.30,  // 30% bonus - BEST VALUE
+    };
+
+    const rate = bonusRate[amount] || 0;
+    const baseChips = amount;
+    const bonusChips = Math.floor(amount * rate);
+    const totalChips = baseChips + bonusChips;
+
+    return {
+        base: baseChips.toLocaleString('vi-VN'),
+        bonus: bonusChips.toLocaleString('vi-VN'),
+        total: totalChips.toLocaleString('vi-VN'),
+        bonusPercent: Math.round(rate * 100)
+    };
+};
+
+// 📦 Danh sách gói nạp tiền
 const rechargePackages = [
-    { id: 1, amount: 100000, priceVND: '100.000vnd', chips: '10,000 CHIP', bonus: '+ 500 Bonus' },
-    { id: 2, amount: 250000, priceVND: '250.000vnd', chips: '28,000 CHIP', bonus: '+ 3,000 Bonus' },
-    { id: 3, amount: 500000, priceVND: '500.000vnd', chips: '60,000 CHIP', bonus: '+ 8,000 Bonus' },
-    { id: 4, amount: 1000000, priceVND: '1.000.000vnd', chips: '150,000 CHIP', bonus: '🔥 2x First Time' },
-    { id: 5, amount: 2500000, priceVND: '2.500.000vnd', chips: '400,000 CHIP', bonus: 'VIP Offer' },
-    { id: 6, amount: 5000000, priceVND: '5.000.000vnd', chips: '900,000 CHIP', bonus: 'BEST VALUE!' },
+    {
+        id: 1,
+        amount: 100000,
+        priceVND: '100.000₫',
+        ...calculateChips(100000),
+        bonusText: '+5%'
+    },
+    {
+        id: 2,
+        amount: 250000,
+        priceVND: '250.000₫',
+        ...calculateChips(250000),
+        bonusText: '+5%'
+    },
+    {
+        id: 3,
+        amount: 500000,
+        priceVND: '500.000₫',
+        ...calculateChips(500000),
+        bonusText: '+10%'
+    },
+    {
+        id: 4,
+        amount: 1000000,
+        priceVND: '1.000.000₫',
+        ...calculateChips(1000000),
+        bonusText: '🔥 +20%'
+    },
+    {
+        id: 5,
+        amount: 2500000,
+        priceVND: '2.500.000₫',
+        ...calculateChips(2500000),
+        bonusText: 'VIP +25%'
+    },
+    {
+        id: 6,
+        amount: 5000000,
+        priceVND: '5.000.000₫',
+        ...calculateChips(5000000),
+        bonusText: 'BEST +30%'
+    },
 ];
 
 const tabs = ['Nạp Chip', 'Lịch Sử'];
-
-const ChipPackageCard = ({ pkg, onBuy, loading }) => {
-    const isBestValue = pkg.bonus.includes('BEST VALUE');
-    const isFirstTime = pkg.bonus.includes('First Time');
-
-    return (
-        <div className={`${styles.chipCard} ${isBestValue ? styles.bestValue : ''}`}>
-            <div className={`${styles.topBanner} ${isBestValue ? styles.topBannerBest : styles.topBannerDefault}`}>
-                {pkg.priceVND}
-            </div>
-
-            <div className={`${styles.bonusTag} ${isFirstTime ? styles.bonusFirstTime : styles.bonusDefault}`}>
-                {pkg.bonus}
-            </div>
-
-            <div className={styles.emojiArea}>
-                <span role="img" aria-label="poker chips" className={styles.emojiGlow}>💰</span>
-            </div>
-
-            <button className={styles.buyButton} disabled={loading} onClick={() => onBuy?.(pkg)}>
-                {loading ? 'Đang tạo...' : pkg.chips}
-            </button>
-        </div>
-    );
-};
 
 const PokerRechargeModal = ({ isOpen, onClose }) => {
     const [activeTab, setActiveTab] = useState('Nạp Chip');
     const [loadingId, setLoadingId] = useState(null);
     const [errorMsg, setErrorMsg] = useState(null);
     const [fallbackUrl, setFallbackUrl] = useState('');
+    const [transactions, setTransactions] = useState([]);
+    const [loadingHistory, setLoadingHistory] = useState(false);
 
     // Sử dụng custom hooks cho animation
     const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 300);
-    
+
     // Xử lý phím ESC
     useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
 
@@ -57,6 +97,28 @@ const PokerRechargeModal = ({ isOpen, onClose }) => {
             handleClose();
         }
     }, [handleClose, styles.overlay]);
+
+    // 🆕 Fetch transaction history
+    const fetchTransactionHistory = useCallback(async () => {
+        setLoadingHistory(true);
+        setErrorMsg(null);
+        try {
+            const data = await apiGetTransactionHistory();
+            setTransactions(data.transactions || []);
+        } catch (error) {
+            console.error('Error fetching history:', error);
+            setErrorMsg('Không thể tải lịch sử giao dịch');
+        } finally {
+            setLoadingHistory(false);
+        }
+    }, []);
+
+    // Load history khi chuyển sang tab "Lịch Sử"
+    React.useEffect(() => {
+        if (isOpen && activeTab === 'Lịch Sử') {
+            fetchTransactionHistory();
+        }
+    }, [isOpen, activeTab, fetchTransactionHistory]);
 
     async function handleBuy(pkg) {
         setErrorMsg(null);
@@ -128,33 +190,21 @@ const PokerRechargeModal = ({ isOpen, onClose }) => {
 
                 <div className={styles.content}>
                     {activeTab === 'Nạp Chip' && (
-                        <div className={styles.panel}>
-                            <h2 className={styles.panelTitle}>CHỌN GÓI CHIP</h2>
-                            {errorMsg && <p style={{ color: '#f87171', fontWeight: 600 }}>{errorMsg}</p>}
-                            <div className={styles.grid}>
-                                {rechargePackages.map((pkg) => (
-                                    <ChipPackageCard
-                                        key={pkg.id}
-                                        pkg={pkg}
-                                        onBuy={handleBuy}
-                                        loading={loadingId === pkg.id}
-                                    />
-                                ))}
-                            </div>
-                            {fallbackUrl && (
-                                <div style={{ marginTop: 12 }}>
-                                    <a href={fallbackUrl} target="_self" rel="noreferrer" className={styles.buyButton}>
-                                        Mở VNPay thủ công
-                                    </a>
-                                </div>
-                            )}
-                        </div>
+                        <RechargeTab
+                            packages={rechargePackages}
+                            onBuyPackage={handleBuy}
+                            loadingId={loadingId}
+                            errorMsg={errorMsg}
+                            fallbackUrl={fallbackUrl}
+                        />
                     )}
 
-                    {activeTab !== 'Nạp Chip' && (
-                        <div className={styles.historyPanel}>
-                            <p>Nội dung cho tab {activeTab} sẽ hiển thị ở đây.</p>
-                        </div>
+                    {activeTab === 'Lịch Sử' && (
+                        <HistoryTab
+                            transactions={transactions}
+                            loading={loadingHistory}
+                            error={errorMsg}
+                        />
                     )}
                 </div>
             </div>

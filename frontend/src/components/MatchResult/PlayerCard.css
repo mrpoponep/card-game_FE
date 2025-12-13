@@ -1,0 +1,165 @@
+.player-card {
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.4) 0%, rgba(70, 0, 0, 0.5) 100%);
+    border: 2px solid #8B0000;
+    border-radius: 8px;
+    padding: 12px;
+    transition: all 0.3s ease;
+    height: 80px;
+    width: 100%;
+    /* Flexbox Settings */
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding-left: 70px;
+    position: relative;   /* Needed for absolute avatar positioning */
+}
+
+.player-card:hover {
+  transform: translateX(3px);
+  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.6);
+  border-color: #dc143c;
+}
+
+.player-card.winner {
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(139, 0, 0, 0.6) 100%);
+  border: 2px solid #ffd700;
+  box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+}
+
+.player-card.loser {
+  opacity: 0.9;
+}
+
+.player-card-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  width: 100%;
+}
+
+.player-card-avatar {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #dc143c;
+    flex-shrink: 0;
+}
+
+.player-card.winner .player-card-avatar {
+  border-color: #ffd700;
+  box-shadow: 0 0 12px rgba(255, 215, 0, 0.6);
+}
+
+.player-card-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #dc143c 0%, #8B0000 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+}
+
+.player-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+}
+
+.player-name {
+  color: #fff;
+  font-size: 13px;
+  font-weight: bold;
+  margin: 0;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-card.winner .player-name {
+  color: #ffd700;
+  font-size: 14px;
+}
+
+.player-id {
+  color: #aaa;
+  font-size: 9px;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-hand-name {
+  color: #ffd700;
+  font-size: 11px;
+  margin: 0;
+  font-weight: 500;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.player-chips-change {
+  font-size: 12px;
+  font-weight: bold;
+  margin: 0;
+}
+
+.player-chips-change.positive {
+  color: #4ade80;
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
+
+.player-chips-change.negative {
+  color: #f87171;
+  text-shadow: 0 0 8px rgba(248, 113, 113, 0.5);
+}
+
+.btn-report {
+    background: linear-gradient(180deg, #dc143c 0%, #8B0000 100%);
+    border: 2px solid #ff6b6b;
+    color: #ffd700;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 0;
+    transition: all 0.3s;
+    flex: 0 0 45px;
+    min-width: 45px;
+    width: 45px;
+    height: 45px;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    cursor: pointer;
+
+    margin-left: auto;
+}
+
+.btn-report:hover {
+  background: linear-gradient(180deg, #ff1744 0%, #dc143c 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 20, 60, 0.6);
+}
+
+.btn-report:active {
+  transform: translateY(0);
+}

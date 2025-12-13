@@ -1,0 +1,184 @@
+/* Modal Overlay */
+.match-result-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Container */
+.match-result-modal {
+  background: linear-gradient(180deg, #8B0000 0%, #5a0000 50%, #2d0000 100%);
+  border-radius: 16px;
+  border: 3px solid #dc143c;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+  max-width: 700px;
+  width: 90%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.4s ease;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Modal Header */
+.match-result-modal-header {
+  background: linear-gradient(180deg, rgba(139, 0, 0, 0.9) 0%, rgba(100, 0, 0, 0.7) 100%);
+  border-bottom: 3px solid #dc143c;
+  padding: 15px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.match-result-modal-header .result-title {
+  color: #ffd700;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+.modal-close-btn {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-close-btn:hover {
+  background: rgba(220, 20, 60, 0.8);
+  border-color: #ffd700;
+  transform: translateY(-50%) scale(1.1);
+}
+
+/* Modal Content */
+.match-result-modal-content {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.match-result-modal-content .players-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+/* Single column for small screens */
+@media (max-width: 500px) {
+  .match-result-modal-content .players-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.match-result-modal-content .result-actions {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+  padding-top: 15px;
+  border-top: 2px solid rgba(139, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.match-result-modal-content .btn-action {
+  width: 150px;
+  height: 45px;
+  padding: 0 15px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.match-result-modal-content .btn-action:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5);
+}
+
+.match-result-modal-content .btn-home {
+  background: linear-gradient(180deg, #666 0%, #444 100%);
+  color: #fff;
+  border: 2px solid #888;
+}
+
+.match-result-modal-content .btn-home:hover {
+  background: linear-gradient(180deg, #777 0%, #555 100%);
+  border-color: #999;
+}
+
+.match-result-modal-content .btn-play-again {
+  background: linear-gradient(180deg, #dc143c 0%, #8B0000 100%);
+  color: #ffd700;
+  border: 2px solid #ff6b6b;
+}
+
+.match-result-modal-content .btn-play-again:hover {
+  background: linear-gradient(180deg, #ff1744 0%, #dc143c 100%);
+  border-color: #ffd700;
+}
+
+/* Scrollbar */
+.match-result-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.match-result-modal-content::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.match-result-modal-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #dc143c 0%, #8B0000 100%);
+  border-radius: 3px;
+}
+
