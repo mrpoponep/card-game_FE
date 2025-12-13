@@ -301,6 +301,14 @@ async function apiGetTransactionHistory() {
   return apiGet('/payment/history', { showErrorModal: false });
 }
 
+/** Lấy danh sách Report từ bảng Report (thay vì Banned_Player) */
+export async function listAllReports() {
+  const data = await apiGet('/reports/'); 
+  // Lưu ý: route trong server.js của bạn có thể là app.use('/api/reports', reportRoutes)
+  // Nếu chưa có, hãy đảm bảo server.js đã mount route này.
+  return data.data; 
+}
+
 export {
   apiGet,
   apiPost,
@@ -310,5 +318,5 @@ export {
   apiPatch,
   fetchActiveTablesSeries,
   fetchTotalActiveTables,
-  apiGetTransactionHistory
+  apiGetTransactionHistory,
 }
