@@ -52,6 +52,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: visible;
 }
 
 /* Vị trí 4 ghế - Điều chỉnh lại một chút cho bàn nhỏ hơn */
@@ -241,6 +242,7 @@
     flex-direction: column;
     align-items: center;
     gap: 4px;
+    z-index: 50;
 }
 
 .player-name {
@@ -301,7 +303,7 @@
 
 .seat-2 .seat-player-info {
     top: calc(50% + 55px);
-    left: -25px;
+    left: 0;
 }
 
 .seat-3 .seat-player-info {
@@ -312,7 +314,7 @@
 
 .seat-4 .seat-player-info {
     top: calc(50% + 55px);
-    right: -30px;
+    right: 0;
 }
 
 
