@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { apiPost } from '../api';
-import { setAccessToken as setApiAccessToken } from '../api';
+import * as api from '../api';
 
 const AuthContext = createContext(null);
 // Module-level shared promise to deduplicate automatic refresh calls across
@@ -16,9 +15,9 @@ export function AuthProvider({ children }) {
   const location = useLocation();
 
   const login = useCallback(async ({ username, password, remember }) => {
-    const res = await apiPost('/auth/login', { username, password, remember: !!remember }, { skipAuth: true });
+    const res = await api.apiPost('/auth/login', { username, password, remember: !!remember }, { skipAuth: true });
     if (res?.success) {
-      setApiAccessToken(res.accessToken);
+      api.setAccessToken(res.accessToken);
       setUser(res.user);
       try {
         if (res.sessionId) {
@@ -34,9 +33,9 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     try {
-      await apiPost('/auth/logout', {}, { sessionId: (() => { try { return sessionStorage.getItem('session_id'); } catch (e) { return null; } })() });
+      await api.apiPost('/auth/logout', {}, { sessionId: (() => { try { return sessionStorage.getItem('session_id'); } catch (e) { return null; } })() });
     } catch { }
-    setApiAccessToken(null);
+    api.setAccessToken(null);
     setUser(null);
     try { sessionStorage.removeItem('session_id'); } catch (e) { /* ignore */ }
     // Clear any pending auto-refresh so future mounts can attempt refresh again
@@ -85,7 +84,7 @@ export function AuthProvider({ children }) {
         if (data?.success && data?.user) {
           setUser(data.user);
           if (data?.accessToken) {
-            setApiAccessToken(data.accessToken);
+            api.setAccessToken(data.accessToken);
           }
           return { success: true, user: data.user };
         }
@@ -143,7 +142,7 @@ export function AuthProvider({ children }) {
         _autoRefreshPromise = (async () => {
           try {
             // Sử dụng apiPost để đảm bảo skipAuth: true
-            const res = await apiPost('/auth/refresh', null, { skipAuth: true, noThrow: true, showErrorModal: false });
+            const res = await api.apiPost('/auth/refresh', null, { skipAuth: true, noThrow: true, showErrorModal: false });
             if (res?.success && res?.accessToken) {
               return res;
             }
@@ -158,7 +157,7 @@ export function AuthProvider({ children }) {
         const data = await _autoRefreshPromise;
         if (data?.success && data?.accessToken) {
           if (!mounted) return;
-          setApiAccessToken(data.accessToken);
+          api.setAccessToken(data.accessToken);
           setUser(data.user || null);
           // Tự động chuyển đến trang chính nếu đang ở trang login
           if (location.pathname === '/login') {
