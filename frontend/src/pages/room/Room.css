@@ -2,13 +2,15 @@
 .room-page-container {
     width: 100vw;
     height: 100vh;
+    min-height: 100vh;
     background: linear-gradient(135deg, #2d1515 0%, #5a1515 50%, #2d1515 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: 'Arial', sans-serif;
     color: white;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
     position: relative;
 }
 
@@ -547,7 +549,6 @@ input[type=range].vertical-slider {
     writing-mode: bt-lr;
     /* IE */
     -webkit-appearance: none;
-    width: 8px;
     height: 100%;
     background: #444;
     border-radius: 5px;
@@ -626,21 +627,24 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 
 /* --- NEW HORIZONTAL ACTION BAR (Bottom Right) --- */
 .action-bar-right {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     right: 20px;
     z-index: 100;
     display: flex;
     flex-direction: row;
-    /* Xếp ngang */
+    flex-wrap: wrap;
+    /* Cho phép xuống hàng nếu cần */
     gap: 12px;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.75);
     padding: 10px 20px;
     border-radius: 16px;
     border: 1px solid rgba(255, 215, 0, 0.3);
     backdrop-filter: blur(4px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     animation: slideInRight 0.3s ease;
+    max-width: calc(100vw - 40px);
+    /* Đảm bảo không tràn màn hình */
 }
 
 @keyframes slideInRight {
@@ -1175,6 +1179,19 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     .sub-message {
         font-size: 15px;
     }
+
+    /* Action bar responsive for tablet */
+    .action-bar-right {
+        bottom: 15px;
+        right: 15px;
+        padding: 8px 15px;
+        gap: 10px;
+        max-width: calc(100vw - 30px);
+    }
+
+    .game-btn {
+        min-width: 75px;
+    }
 }
 
 /* TABLET PORTRAIT & MOBILE LANDSCAPE (max-width: 768px) */
@@ -1349,6 +1366,27 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 
     .floating-message-text {
         font-size: 12px;
+    }
+
+    /* Action bar responsive for tablet portrait */
+    .action-bar-right {
+        bottom: 12px;
+        right: 12px;
+        left: 12px;
+        padding: 8px 12px;
+        gap: 8px;
+        max-width: calc(100vw - 24px);
+        justify-content: center;
+    }
+
+    .game-btn {
+        min-width: 65px;
+        flex: 1 1 auto;
+    }
+
+    .raise-popup-container {
+        width: 180px;
+        padding: 12px;
     }
 }
 
@@ -1550,6 +1588,178 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     .floating-message-text {
         font-size: 11px;
     }
+
+    /* Action bar responsive for mobile */
+    .action-bar-right {
+        bottom: 8px;
+        right: 8px;
+        left: 8px;
+        padding: 6px 10px;
+        gap: 6px;
+        max-width: calc(100vw - 16px);
+        justify-content: space-around;
+        flex-wrap: wrap;
+    }
+
+    .game-btn {
+        min-width: 55px;
+        flex: 1 1 calc(50% - 6px);
+        max-width: calc(50% - 3px);
+        font-size: 9px;
+        padding: 5px 6px;
+    }
+
+    .raise-popup-container {
+        width: 150px;
+        padding: 10px;
+        bottom: 110%;
+    }
+
+    .raise-info-top {
+        font-size: 10px;
+    }
+
+    .raise-value-text {
+        font-size: 12px;
+    }
+
+    .raise-slider {
+        height: 5px;
+    }
+
+    .raise-slider::-webkit-slider-thumb {
+        width: 15px;
+        height: 15px;
+    }
+
+    .raise-confirm-btn {
+        padding: 5px;
+        font-size: 10px;
+    }
+}
+
+/* VERY SMALL MOBILE (max-width: 360px) */
+@media (max-width: 360px) {
+    .game-table {
+        width: 98vw;
+        height: 55vh;
+        max-height: 400px;
+        border: 6px solid #4a1a1a;
+    }
+
+    .table-inner-border {
+        top: 12px;
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+    }
+
+    .player-seat {
+        width: 85px;
+        height: 110px;
+    }
+
+    .player-avatar {
+        width: 45px;
+        height: 45px;
+    }
+
+    .seat-1 {
+        bottom: -70px;
+    }
+
+    .seat-2 {
+        left: -45px;
+    }
+
+    .seat-3 {
+        top: -75px;
+    }
+
+    .seat-4 {
+        right: -45px;
+    }
+
+    .seat-player-info {
+        font-size: 9px;
+        width: 75px;
+    }
+
+    .player-balance {
+        font-size: 8px;
+    }
+
+    .status-badge {
+        font-size: 7px;
+        padding: 2px 4px;
+    }
+
+    .player-hand .card,
+    .community-cards .card {
+        width: 35px;
+        height: 52px;
+    }
+
+    .player-hand {
+        gap: 3px;
+        height: 52px;
+    }
+
+    .community-cards {
+        gap: 5px;
+        transform: translate(-50%, calc(-50% + 45px));
+    }
+
+    .action-bar-right {
+        bottom: 6px;
+        right: 6px;
+        left: 6px;
+        padding: 5px 8px;
+        gap: 5px;
+        max-width: calc(100vw - 12px);
+    }
+
+    .game-btn {
+        min-width: 45px;
+        flex: 1 1 calc(50% - 5px);
+        font-size: 8px;
+        padding: 4px 5px;
+    }
+
+    .raise-popup-container {
+        width: 130px;
+        padding: 8px;
+    }
+
+    .pot-display {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+
+    .room-header {
+        top: 6px;
+        left: 6px;
+        right: 6px;
+    }
+
+    .exit-btn,
+    .chat-toggle-btn {
+        width: 30px;
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .table-center-message {
+        padding: 10px 15px;
+    }
+
+    .main-message {
+        font-size: 14px;
+    }
+
+    .sub-message {
+        font-size: 11px;
+    }
 }
 
 /* LANDSCAPE ORIENTATION ADJUSTMENTS FOR MOBILE */
@@ -1559,17 +1769,52 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
         max-height: 90vh;
     }
 
-    .action-bar-container {
-        bottom: 8px;
-        right: 8px;
+    .action-bar-right {
+        bottom: 6px;
+        right: 6px;
+        left: auto;
+        padding: 5px 10px;
+        gap: 6px;
+        max-width: 50vw;
+        flex-direction: row;
+        flex-wrap: nowrap;
     }
 
     .action-buttons-grid {
         padding: 6px;
     }
 
+    .game-btn {
+        min-width: 50px;
+        font-size: 9px;
+        padding: 4px 6px;
+        flex: 0 1 auto;
+    }
+
+    .raise-popup-container {
+        width: 140px;
+        padding: 8px;
+        bottom: 110%;
+        left: auto;
+        right: 0;
+        transform: none;
+    }
+
     .floating-global-messages {
         bottom: 50px;
         max-height: 150px;
+    }
+
+    .room-header {
+        top: 6px;
+        left: 6px;
+        right: auto;
+    }
+
+    .exit-btn,
+    .chat-toggle-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
     }
 }
