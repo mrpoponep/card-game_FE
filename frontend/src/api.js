@@ -133,15 +133,15 @@ async function request(
   return data;
 }
 
-/* =========================
-   SHORTCUT METHODS
-========================= */
-
-export async function apiGet(path, options = {}) {
-  return request(path, { method: 'GET', ...options });
+async function apiGet(path, options = {}) {
+  const { showErrorModal = true, ...rest } = options;
+  return request(path, { method: 'GET', ...rest }, true, showErrorModal);
 }
 
-export async function apiPost(path, body, options = {}) {
+async function apiPost(path, body, options = {}) {
+  const { showErrorModal = true, ...rest } = options;
+  // Các API auth không hiển thị modal
+  const isAuthAPI = path.includes('/auth/login') || path.includes('/auth/refresh') || path.includes('/auth/logout') || path.includes('/auth/register') || path.includes('/auth/send-email-verification-otp') || path.includes('/auth/verify-email-otp');
   return request(
     path,
     {
