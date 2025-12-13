@@ -64,7 +64,47 @@ export function AuthProvider({ children }) {
       return { ...prevUser, ...updates };
     });
   }, []);
+  // Hàm refresh thông tin user từ server (sau payment, etc.)
+  const refetchUserData = useCallback(async () => {
+    // Guard: Nếu đang refresh thì skip
+    if (_isRefreshing) {
+      console.log('⏳ Already refreshing, skipping duplicate call...');
+      return { success: false, message: 'Already refreshing' };
+    }
 
+    _isRefreshing = true;
+    try {
+      const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
+      const res = await fetch(`${API_BASE}/auth/refresh`, {
+        method: 'POST',
+        credentials: 'include'
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.success && data?.user) {
+          setUser(data.user);
+          if (data?.accessToken) {
+            setApiAccessToken(data.accessToken);
+          }
+          return { success: true, user: data.user };
+        }
+      }
+
+      // Handle 401 or other errors
+      if (res.status === 401) {
+        console.log('Refresh token expired or invalid');
+        setUser(null);
+      }
+    } catch (err) {
+      console.error('Failed to refetch user data:', err);
+    } finally {
+      _isRefreshing = false;
+      }
+
+    return { success: false };
+  }, []);
+  
   // --- MỚI: Hàm tải lại thông tin user từ Server ---
   const reloadUser = useCallback(async () => {
     try {
