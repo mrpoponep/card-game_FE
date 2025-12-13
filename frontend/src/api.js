@@ -295,7 +295,10 @@ async function fetchTotalActiveTables(fromDate, toDate) {
 /** Lấy số lần bị báo cáo của user */
 export async function getUserViolationCount(userId) {
   const data = await apiGet(`/user/${userId}/violation-count`);
-  return data.violation_count;
+  return data.violation_count;}
+// 🆕 Get transaction history
+async function apiGetTransactionHistory() {
+  return apiGet('/payment/history', { showErrorModal: false });
 }
 
 export {
@@ -306,5 +309,6 @@ export {
   apiCreatePaymentUrl,
   apiPatch,
   fetchActiveTablesSeries,
-  fetchTotalActiveTables
+  fetchTotalActiveTables,
+  apiGetTransactionHistory
 }

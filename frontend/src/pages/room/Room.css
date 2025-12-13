@@ -70,7 +70,7 @@
 }
 
 .seat-3 {
-    top: -115px;
+    top: -120px;
     /* Gần bàn hơn chút (từ -120px) */
     left: 50%;
     transform: translateX(-50%);
@@ -231,7 +231,7 @@
 
 
 /* Thông tin người chơi (tên, tiền) - Giữ nguyên kích thước lớn */
-.player-info {
+.seat-player-info {
     position: absolute;
     text-align: center;
     font-size: 16px;
@@ -247,33 +247,33 @@
 }
 
 /* Định vị thông tin cho từng ghế - Giữ nguyên */
-.seat-1 .player-info {
+.seat-1 .seat-player-info {
     bottom: -30px;
     left: 50%;
     transform: translateX(-50%);
 }
 
-.seat-2 .player-info {
+.seat-2 .seat-player-info {
     top: calc(50% + 55px);
-    left: -10px;
+    left: -25px;
 }
 
-.seat-3 .player-info {
-    top: calc(100% + 10px);
+.seat-3 .seat-player-info {
+    top: calc(40% + 10px);
     left: 50%;
     transform: translateX(-50%);
 }
 
-.seat-4 .player-info {
+.seat-4 .seat-player-info {
     top: calc(50% + 55px);
-    right: -10px;
+    right: -30px;
 }
 
 
 /* Thông báo giữa bàn - Giữ nguyên kích thước lớn */
 .table-center-message {
     position: absolute;
-    top: 50%;
+    top: 30%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
@@ -300,7 +300,7 @@
 /* Khu vực bài chung (Community Cards) - Giữ nguyên kích thước lớn */
 .community-cards {
     position: absolute;
-    top: 50%;
+    top: 40%;
     left: 50%;
     transform: translate(-50%, calc(-50% + 90px));
     display: flex;
@@ -382,4 +382,598 @@
 .exit-btn svg {
     width: 32px;
     height: 32px;
+}
+
+/* Nút Chat trong phòng */
+.chat-toggle-btn {
+    background: rgba(0, 0, 0, 0.45);
+    border: 3px solid rgba(255, 215, 0, 0.6);
+    /* Viền vàng */
+    border-radius: 12px;
+    width: 60px;
+    height: 60px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.chat-toggle-btn:hover {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #FFD700;
+    transform: scale(1.05);
+}
+
+.chat-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+/* --- NEW ACTION BAR (BOTTOM RIGHT) --- */
+.action-bar-container {
+    position: absolute;
+    bottom: 30px;
+    right: 30px;
+    /* Góc phải */
+    left: auto;
+    /* Bỏ căn giữa */
+    transform: none;
+    /* Bỏ transform */
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    /* Xếp dọc nếu cần, hoặc ngang */
+    align-items: flex-end;
+    /* Căn phải */
+    gap: 15px;
+}
+
+/* Container cho các nút hành động */
+.action-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 cột */
+    gap: 10px;
+    background: rgba(0, 0, 0, 0.85);
+    padding: 15px;
+    border-radius: 20px;
+    border: 2px solid #FFD700;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(5px);
+}
+
+/* Style chung cho nút */
+.game-btn {
+    padding: 12px 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 90px;
+    position: relative;
+    overflow: hidden;
+}
+
+.game-btn:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+}
+
+.game-btn:active {
+    transform: translateY(0);
+    filter: brightness(0.9);
+}
+
+/* Màu sắc nút */
+.fold-btn {
+    background: linear-gradient(to bottom, #e74c3c, #c0392b);
+    border-bottom: 4px solid #962d22;
+}
+
+.check-btn,
+.call-btn {
+    background: linear-gradient(to bottom, #2ecc71, #27ae60);
+    border-bottom: 4px solid #1e8449;
+}
+
+.raise-toggle-btn {
+    background: linear-gradient(to bottom, #f1c40f, #f39c12);
+    border-bottom: 4px solid #d35400;
+    color: #4a2500;
+}
+
+.allin-btn {
+    background: linear-gradient(to bottom, #9b59b6, #8e44ad);
+    border-bottom: 4px solid #6c3483;
+    grid-column: span 2;
+    /* Nút All-in rộng bằng 2 cột */
+}
+
+/* --- RAISE SLIDER CONTAINER (POPUP) --- */
+.raise-popup {
+    position: absolute;
+    bottom: 100%;
+    /* Hiện phía trên các nút */
+    right: 0;
+    margin-bottom: 15px;
+    background: rgba(20, 20, 20, 0.95);
+    padding: 20px 15px;
+    border-radius: 15px;
+    border: 2px solid #f39c12;
+    display: flex;
+    flex-direction: row;
+    /* Layout ngang: Slider bên trái, Info bên phải */
+    align-items: center;
+    gap: 15px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Thanh trượt dọc */
+.raise-slider-wrapper {
+    height: 180px;
+    /* Chiều cao thanh trượt */
+    display: flex;
+    align-items: center;
+}
+
+/* Custom Range Input (Vertical) */
+input[type=range].vertical-slider {
+    writing-mode: bt-lr;
+    /* IE */
+    -webkit-appearance: none;
+    width: 8px;
+    height: 100%;
+    background: #444;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    /* Transform để xoay dọc cho các trình duyệt hỗ trợ kém writing-mode */
+    transform: rotate(-90deg);
+    width: 180px;
+    /* Chiều rộng khi xoay ngang = chiều cao khi dọc */
+    margin: 0 -86px;
+    /* Căn chỉnh lại vị trí sau khi xoay */
+}
+
+/* Slider Thumb */
+input[type=range].vertical-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #f39c12;
+    border: 2px solid #fff;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(243, 156, 18, 0.8);
+    transition: transform 0.1s;
+}
+
+input[type=range].vertical-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+/* Raise Info (Số tiền) */
+.raise-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    height: 180px;
+    min-width: 80px;
+}
+
+.raise-amount-display {
+    font-size: 20px;
+    color: #f39c12;
+    font-weight: bold;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid #f39c12;
+}
+
+.raise-confirm-btn {
+    background: #f39c12;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    animation: pulse-orange 1.5s infinite;
+}
+
+@keyframes pulse-orange {
+    0% {
+        box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.7);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(243, 156, 18, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(243, 156, 18, 0);
+    }
+}
+
+/* --- NEW HORIZONTAL ACTION BAR (Bottom Right) --- */
+.action-bar-right {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    flex-direction: row;
+    /* Xếp ngang */
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 20px;
+    border-radius: 16px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(50px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Style chung cho nút */
+.game-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    color: white;
+    text-transform: uppercase;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    min-width: 90px;
+    box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
+}
+
+.game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 0 rgba(0, 0, 0, 0.2);
+    filter: brightness(1.1);
+}
+
+.game-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 rgba(0, 0, 0, 0.2);
+}
+
+.game-btn:disabled {
+    filter: grayscale(1);
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Màu sắc nút (Theme hiện đại) */
+.fold-btn {
+    background-color: #e74c3c;
+    /* Đỏ */
+    border-bottom: 3px solid #c0392b;
+}
+
+.check-btn,
+.call-btn {
+    background-color: #2ecc71;
+    /* Xanh lá */
+    border-bottom: 3px solid #27ae60;
+}
+
+.raise-btn {
+    background-color: #f1c40f;
+    /* Vàng */
+    color: #5a4a00;
+    border-bottom: 3px solid #d4ac0d;
+}
+
+.allin-btn {
+    background-color: #9b59b6;
+    /* Tím */
+    border-bottom: 3px solid #8e44ad;
+}
+
+/* --- RAISE POPUP (Thanh trượt) --- */
+.raise-popup-container {
+    position: absolute;
+    bottom: 115%;
+    /* Hiện ngay trên nút Tố */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    background: rgba(30, 30, 30, 0.95);
+    border: 1px solid #FFD700;
+    border-radius: 12px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.6);
+}
+
+/* Mũi tên nhỏ chỉ xuống nút */
+.raise-popup-container::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%) rotate(45deg);
+    width: 10px;
+    height: 10px;
+    background: #1e1e1e;
+    border-bottom: 1px solid #FFD700;
+    border-right: 1px solid #FFD700;
+}
+
+.raise-info-top {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 12px;
+    color: #aaa;
+}
+
+.raise-value-text {
+    color: #FFD700;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.raise-slider {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    background: #444;
+    border-radius: 3px;
+    outline: none;
+}
+
+.raise-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #FFD700;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5);
+}
+
+.raise-confirm-btn {
+    width: 100%;
+    padding: 6px;
+    background: linear-gradient(135deg, #FFD700, #FFA500);
+    border: none;
+    border-radius: 6px;
+    color: #4a1a1a;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.raise-confirm-btn:hover {
+    filter: brightness(1.1);
+}
+
+.player-bet-badge-floating {
+    position: absolute;
+    top: 100px;
+    left: -10%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.85);
+    color: #FFD700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #FFD700;
+    font-size: 14px;
+    font-weight: bold;
+    z-index: 30;
+    /* Cao hơn mọi thứ */
+    white-space: nowrap;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+    from {
+        transform: translateX(-50%) scale(0);
+    }
+
+    to {
+        transform: translateX(-50%) scale(1);
+    }
+}
+
+.chip-icon {
+    font-size: 16px;
+}
+
+/* Điều chỉnh vị trí badge cho các ghế xoay */
+/* Ghế bên phải (seat-4 trong map 4 người) */
+.seat-4 .player-bet-badge-floating,
+.seat-3 .player-bet-badge-floating {
+    /* Ghế trên (seat-3) cũng cần chỉnh nếu bị che */
+    /* Giữ nguyên vị trí vì bài xoay nhưng div chứa không xoay */
+    /* Nếu cần chỉnh riêng: */
+}
+
+.seat-2 .player-bet-badge-floating {
+    /* Ghế trái */
+}
+
+
+/* --- HEADER MỚI --- */
+.room-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 20px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 100;
+    pointer-events: none;
+    /* Click xuyên qua vùng trống */
+}
+
+.room-header>* {
+    pointer-events: auto;
+    /* Bật click cho các nút */
+}
+
+/* KHỐI TRÁI: Nút Thoát + Info */
+.left-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Khoảng cách giữa nút thoát và bảng info */
+}
+
+/* KHỐI PHẢI: Chat */
+.right-controls {
+    display: flex;
+    gap: 10px;
+}
+
+/* Nút Thoát */
+.exit-btn {
+    background: rgba(0, 0, 0, 0.45);
+    border: 3px solid rgba(255, 255, 255, 0.35);
+    border-radius: 12px;
+    width: 50px;
+    height: 50px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    transition: all 0.2s ease;
+}
+
+.exit-btn:hover {
+    background: rgba(255, 0, 0, 0.45);
+    border-color: rgba(255, 0, 0, 0.65);
+    transform: scale(1.05);
+}
+
+/* Info Box (Ping, Room, Bet) */
+.room-info-box {
+    /* Bỏ position absolute cũ */
+    position: static;
+    background: rgba(0, 0, 0, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    /* Khoảng cách giữa các mục info */
+    backdrop-filter: blur(4px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    height: 50px;
+    /* Bằng chiều cao nút thoát */
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.info-label {
+    font-size: 10px;
+    color: #aaa;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    line-height: 1;
+    margin-bottom: 2px;
+}
+
+.info-value {
+    font-size: 14px;
+    color: white;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.ping-value {
+    color: #2ecc71;
+}
+
+.info-divider {
+    width: 1px;
+    height: 24px;
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Nút Chat */
+.chat-toggle-btn {
+    background: rgba(0, 0, 0, 0.45);
+    border: 3px solid rgba(255, 215, 0, 0.6);
+    border-radius: 12px;
+    width: 50px;
+    height: 50px;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.chat-toggle-btn:hover {
+    background: rgba(255, 215, 0, 0.2);
+    border-color: #FFD700;
+    transform: scale(1.05);
 }

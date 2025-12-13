@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState, useRef } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { apiPost } from '../api';
 import { setAccessToken as setApiAccessToken } from '../api';
@@ -7,12 +7,11 @@ const AuthContext = createContext(null);
 // Module-level shared promise to deduplicate automatic refresh calls across
 // component remounts (React StrictMode may mount/unmount twice in dev).
 let _autoRefreshPromise = null;
-let _isRefreshing = false; // Global flag to prevent concurrent refresh calls
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
-  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(true); // Flag cho auto-login
+  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(true); 
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -35,18 +34,16 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     try {
-      await apiPost('/auth/logout', {}, { sessionId: (() => { try { return sessionStorage.getItem('session_id'); } catch (e) { return null; } })() });
-    } catch { }
+      await apiPost('/auth/logout', {}, {sessionId: (() => { try { return sessionStorage.getItem('session_id'); } catch (e) { return null; } })() });
+    } catch {}
     setApiAccessToken(null);
     setUser(null);
     try { sessionStorage.removeItem('session_id'); } catch (e) { /* ignore */ }
     // Clear any pending auto-refresh so future mounts can attempt refresh again
     try { _autoRefreshPromise = null; } catch (e) { /* ignore */ }
-    // Đưa về trang đăng nhập
     navigate('/login', { replace: true });
   }, [navigate]);
 
-  // Hàm cập nhật balance sau khi nhận thưởng
   const updateBalance = useCallback((newBalance) => {
     setUser(prevUser => {
       if (!prevUser) return prevUser;
@@ -54,7 +51,6 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  // Hàm cập nhật gems sau khi nhận thưởng
   const updateGems = useCallback((newGems) => {
     setUser(prevUser => {
       if (!prevUser) return prevUser;
@@ -62,7 +58,6 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  // Hàm cập nhật cả balance và gems
   const updateUser = useCallback((updates) => {
     setUser(prevUser => {
       if (!prevUser) return prevUser;
@@ -70,49 +65,36 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  // Hàm refresh thông tin user từ server (sau payment, etc.)
-  const refetchUserData = useCallback(async () => {
-    // Guard: Nếu đang refresh thì skip
-    if (_isRefreshing) {
-      console.log('⏳ Already refreshing, skipping duplicate call...');
-      return { success: false, message: 'Already refreshing' };
-    }
-
-    _isRefreshing = true;
-
+  // --- MỚI: Hàm tải lại thông tin user từ Server ---
+  const reloadUser = useCallback(async () => {
     try {
-      const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
-      const res = await fetch(`${API_BASE}/auth/refresh`, {
-        method: 'POST',
-        credentials: 'include'
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data?.success && data?.user) {
-          setUser(data.user);
-          if (data?.accessToken) {
-            setApiAccessToken(data.accessToken);
+        const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
+        // Thêm timestamp để tránh cache trình duyệt
+        const res = await fetch(`${API_BASE}/auth/refresh?t=${Date.now()}`, {
+          method: 'POST',
+          credentials: 'include',
+          headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              'Pragma': 'no-cache',
+              'Expires': '0'
           }
-          return { success: true, user: data.user };
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          if (data?.success && data?.user) {
+            console.log("User reloaded:", data.user); // Log kiểm tra
+            setUser(data.user); 
+            return true;
+          }
         }
-      }
-
-      // Handle 401 or other errors
-      if (res.status === 401) {
-        console.log('Refresh token expired or invalid');
-        setUser(null);
-      }
-    } catch (err) {
-      console.error('Failed to refetch user data:', err);
-    } finally {
-      _isRefreshing = false;
+    } catch (e) {
+        console.error("Reload user failed", e);
     }
-
-    return { success: false };
+    return false;
   }, []);
 
-  // Khởi tạo: thự refresh nếu có cookie refresh_token (auto-login)
+  // Khởi tạo: thực hiện refresh nếu có cookie refresh_token (auto-login)
   useEffect(() => {
     let mounted = true;
     (async () => {
@@ -159,19 +141,18 @@ export function AuthProvider({ children }) {
     return () => { mounted = false; };
   }, []); // Chỉ chạy 1 lần khi mount
 
-  const value = useMemo(() => ({
-    user,
-    ready,
-    isAutoLoggingIn,
-    login,
-    logout,
+  const value = useMemo(() => ({ 
+    user, 
+    ready, 
+    isAutoLoggingIn, 
+    login, 
+    logout, 
     updateBalance,
     updateGems,
     updateUser,
-    refetchUserData
-  }), [user, ready, isAutoLoggingIn, login, logout, updateBalance, updateGems, updateUser]);
-  // 🔥 BỎ refetchUserData khỏi dependencies để tránh recreate function liên tục
-
+    reloadUser // Export hàm này
+  }), [user, ready, isAutoLoggingIn, login, logout, updateBalance, updateGems, updateUser, reloadUser]);
+  
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
@@ -184,13 +165,13 @@ export function useAuth() {
 export function RequireAuth({ children }) {
   const { user, ready } = useAuth();
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     if (ready && !user) {
       navigate('/login', { replace: true });
     }
   }, [ready, user, navigate]);
-
+  
   if (!ready) return null; // hoặc spinner
   if (!user) return null;
   return children;
