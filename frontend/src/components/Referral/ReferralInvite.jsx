@@ -101,13 +101,6 @@ const ReferralInvite = ({ isOpen, onClose }) => {
         }
     };
 
-    // Xem lịch sử thưởng
-    const viewRewardHistory = () => {
-        if (onClose) onClose();
-        // Navigate to history page (implement later)
-        alert('Tính năng lịch sử thưởng đang được phát triển!');
-    };
-
     if (!isOpen) return null;
 
     const statsData = stats?.stats || {};
@@ -115,20 +108,23 @@ const ReferralInvite = ({ isOpen, onClose }) => {
     const totalActivations = statsData.totalActivations || 0;
     const totalRewards = statsData.totalRewards || 0;
 
+    // Tính chip đã nhận = 10000 * số người đăng ký thành công
+    const totalChips = totalActivations * 10000;
+
     return (
         <div className="referral-overlay" onClick={(e) => {
             if (e.target.classList.contains('referral-overlay')) {
                 onClose();
             }
         }}>
-            <div className="referral-container">
+            <div className="referral-container referral-redblackgold">
                 {/* Close Button */}
                 <button className="close-btn" onClick={onClose}>✕</button>
 
                 {/* Header */}
                 <div className="referral-header">
-                    <h2>💰 Mời Bạn Bè, Nhận Thưởng Chip!</h2>
-                    <p>Chia sẻ link của bạn để nhận ngay <strong>50,000 Chip</strong> cho mỗi người bạn đăng ký thành công!</p>
+                    <h2 style={{ color: '#e60000' }}>💰 Mời Bạn Bè, Nhận Thưởng Chip!</h2>
+                    <p>Chia sẻ link của bạn để nhận ngay <strong>10,000 Chip</strong> cho mỗi người bạn đăng ký thành công!</p>
                 </div>
 
                 {/* Link Section */}
@@ -142,7 +138,7 @@ const ReferralInvite = ({ isOpen, onClose }) => {
                             readOnly
                         />
                         <button
-                            className={`btn btn-copy ${copySuccess ? 'success' : ''}`}
+                            className={`btn btn-copy-red ${copySuccess ? 'success' : ''}`}
                             onClick={copyLink}
                             disabled={!referralLink}
                         >
@@ -191,13 +187,10 @@ const ReferralInvite = ({ isOpen, onClose }) => {
                             <span className="stat-label">Đăng ký thành công</span>
                         </div>
                         <div className="stat-box">
-                            <span className="stat-value chip-icon">{totalRewards.toLocaleString()}</span>
+                            <span className="stat-value chip-icon">{totalChips.toLocaleString()}</span>
                             <span className="stat-label">Chip đã nhận</span>
                         </div>
                     </div>
-                    <button className="btn btn-claim-reward" onClick={viewRewardHistory}>
-                        Lịch sử nhận thưởng <i className="fas fa-chevron-right"></i>
-                    </button>
                 </div>
 
                 {/* Loading/Error States */}

@@ -136,7 +136,13 @@ export default function Login() {
           {error && <div className="error">{error}</div>}
 
           <p className="signup-text">
-            Mới tham gia? <Link to="/register" className="link">Tạo tài khoản</Link>
+            Mới tham gia? <Link to="/register" className="link" onClick={() => {
+              // Nếu có refCode trong localStorage, truyền sang Register qua state
+              const refCode = localStorage.getItem('refCode');
+              if (refCode) {
+                navigate('/register', { state: { refCode } });
+              }
+            }}>Tạo tài khoản</Link>
           </p>
         </form>
       </div>

@@ -40,6 +40,44 @@
     overflow-y: auto;
 }
 
+.referral-container.referral-redblackgold {
+    max-width: 600px;
+    background: linear-gradient(135deg, #1a0000 0%, #222 60%, #ffcc00 100%);
+    border: 3px solid #ff0000;
+    box-shadow: 0 8px 40px 0 rgba(255, 0, 0, 0.25), 0 0 0 8px #ffcc0033;
+    color: #fff;
+}
+
+.referral-container.referral-redblackgold .referral-header h2 {
+    color: #ff0000;
+    text-shadow: 0 2px 8px #ffcc0099, 0 0 2px #000;
+}
+
+.referral-container.referral-redblackgold .referral-header strong,
+.referral-container.referral-redblackgold .stat-value,
+.referral-container.referral-redblackgold .btn-claim-reward {
+    color: #ffcc00;
+}
+
+.referral-container.referral-redblackgold .stat-box {
+    border-left: 4px solid #ff0000;
+    background: linear-gradient(135deg, #2a0000 0%, #3a3a3a 80%);
+}
+
+.referral-container.referral-redblackgold .btn-copy {
+    background: #ff0000;
+    color: #fff;
+}
+
+.referral-container.referral-redblackgold .btn-copy:hover {
+    background: #b30000;
+}
+
+.referral-container.referral-redblackgold .btn-copy.success {
+    background: #ffcc00;
+    color: #222;
+}
+
 @keyframes slideUp {
     from {
         transform: translateY(30px);
@@ -213,6 +251,22 @@
 
 .btn-copy.success {
     background: #28a745;
+}
+
+/* Red Copy Button */
+.btn-copy-red {
+    background: #e60000;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.btn-copy-red:hover {
+    background: #b30000;
+}
+
+.btn-copy-red.success {
+    background: #ffcc00;
+    color: #222;
 }
 
 /* Share Buttons Grid */
