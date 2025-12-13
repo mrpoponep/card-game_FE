@@ -2,15 +2,13 @@
 .room-page-container {
     width: 100vw;
     height: 100vh;
-    min-height: 100vh;
     background: linear-gradient(135deg, #2d1515 0%, #5a1515 50%, #2d1515 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: 'Arial', sans-serif;
     color: white;
-    overflow-x: hidden;
-    overflow-y: auto;
+    overflow: hidden;
     position: relative;
 }
 
@@ -58,8 +56,7 @@
 
 /* Vị trí 4 ghế - Điều chỉnh lại một chút cho bàn nhỏ hơn */
 .seat-1 {
-    bottom: -115px;
-    /* Gần bàn hơn chút (từ -120px) */
+    bottom: -95px;
     left: 50%;
     transform: translateX(-50%);
 }
@@ -240,6 +237,23 @@
     font-weight: bold;
     text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9);
     width: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.player-name {
+    font-size: 16px;
+    color: white;
+    font-weight: bold;
+    text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9);
+}
+
+.player-chips {
+    font-size: 14px;
+    color: #FFD700;
+    font-weight: bold;
 }
 
 .player-balance {
@@ -248,9 +262,39 @@
     margin-top: 5px;
 }
 
+.status-badge {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-top: 2px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.status-badge.folded {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.status-badge.allin {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.status-badge.waiting {
+    background-color: #f39c12;
+    color: white;
+}
+
+.status-badge.ready {
+    background-color: #2ecc71;
+    color: white;
+}
+
 /* Định vị thông tin cho từng ghế - Giữ nguyên */
 .seat-1 .seat-player-info {
-    bottom: -30px;
+    bottom: -20px;
     left: 50%;
     transform: translateX(-50%);
 }
@@ -346,9 +390,9 @@
 /* Header (Ping, Thoát) - Giữ nguyên kích thước lớn */
 .room-header {
     position: absolute;
-    top: 25px;
-    left: 25px;
-    right: 25px;
+    top: 15px;
+    left: 15px;
+    right: 15px;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -627,24 +671,22 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 
 /* --- NEW HORIZONTAL ACTION BAR (Bottom Right) --- */
 .action-bar-right {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
     z-index: 100;
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    /* Cho phép xuống hàng nếu cần */
-    gap: 12px;
+    gap: 10px;
     background: rgba(0, 0, 0, 0.75);
-    padding: 10px 20px;
-    border-radius: 16px;
+    padding: 8px 15px;
+    border-radius: 14px;
     border: 1px solid rgba(255, 215, 0, 0.3);
     backdrop-filter: blur(4px);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
     animation: slideInRight 0.3s ease;
-    max-width: calc(100vw - 40px);
-    /* Đảm bảo không tràn màn hình */
+    max-width: calc(100vw - 20px);
 }
 
 @keyframes slideInRight {
@@ -1156,9 +1198,9 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .room-header {
-        top: 15px;
-        left: 15px;
-        right: 15px;
+        top: 12px;
+        left: 12px;
+        right: 12px;
     }
 
     .exit-btn,
@@ -1182,15 +1224,15 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 
     /* Action bar responsive for tablet */
     .action-bar-right {
-        bottom: 15px;
-        right: 15px;
-        padding: 8px 15px;
-        gap: 10px;
-        max-width: calc(100vw - 30px);
+        bottom: 12px;
+        right: 12px;
+        padding: 8px 12px;
+        gap: 8px;
+        max-width: calc(100vw - 24px);
     }
 
     .game-btn {
-        min-width: 75px;
+        min-width: 70px;
     }
 }
 
@@ -1315,9 +1357,9 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .room-header {
-        top: 10px;
-        left: 10px;
-        right: 10px;
+        top: 8px;
+        left: 8px;
+        right: 8px;
     }
 
     .ping-display {
@@ -1351,7 +1393,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .floating-global-messages {
-        bottom: 70px;
+        bottom: 60px;
         left: 8px;
         max-width: 85%;
     }
@@ -1370,23 +1412,23 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 
     /* Action bar responsive for tablet portrait */
     .action-bar-right {
-        bottom: 12px;
-        right: 12px;
-        left: 12px;
-        padding: 8px 12px;
-        gap: 8px;
-        max-width: calc(100vw - 24px);
+        bottom: 8px;
+        right: 8px;
+        left: 8px;
+        padding: 6px 10px;
+        gap: 6px;
+        max-width: calc(100vw - 16px);
         justify-content: center;
     }
 
     .game-btn {
-        min-width: 65px;
+        min-width: 60px;
         flex: 1 1 auto;
     }
 
     .raise-popup-container {
-        width: 180px;
-        padding: 12px;
+        width: 170px;
+        padding: 10px;
     }
 }
 
@@ -1527,9 +1569,9 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .room-header {
-        top: 8px;
-        left: 8px;
-        right: 8px;
+        top: 6px;
+        left: 6px;
+        right: 6px;
     }
 
     .ping-display {
@@ -1572,7 +1614,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .floating-global-messages {
-        bottom: 60px;
+        bottom: 55px;
         left: 5px;
         max-width: 90%;
     }
@@ -1591,27 +1633,27 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 
     /* Action bar responsive for mobile */
     .action-bar-right {
-        bottom: 8px;
-        right: 8px;
-        left: 8px;
-        padding: 6px 10px;
-        gap: 6px;
-        max-width: calc(100vw - 16px);
+        bottom: 6px;
+        right: 6px;
+        left: 6px;
+        padding: 5px 8px;
+        gap: 5px;
+        max-width: calc(100vw - 12px);
         justify-content: space-around;
         flex-wrap: wrap;
     }
 
     .game-btn {
-        min-width: 55px;
-        flex: 1 1 calc(50% - 6px);
+        min-width: 50px;
+        flex: 1 1 calc(50% - 5px);
         max-width: calc(50% - 3px);
         font-size: 9px;
         padding: 5px 6px;
     }
 
     .raise-popup-container {
-        width: 150px;
-        padding: 10px;
+        width: 140px;
+        padding: 8px;
         bottom: 110%;
     }
 
@@ -1711,24 +1753,24 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .action-bar-right {
-        bottom: 6px;
-        right: 6px;
-        left: 6px;
-        padding: 5px 8px;
-        gap: 5px;
-        max-width: calc(100vw - 12px);
+        bottom: 5px;
+        right: 5px;
+        left: 5px;
+        padding: 4px 6px;
+        gap: 4px;
+        max-width: calc(100vw - 10px);
     }
 
     .game-btn {
         min-width: 45px;
-        flex: 1 1 calc(50% - 5px);
+        flex: 1 1 calc(50% - 4px);
         font-size: 8px;
         padding: 4px 5px;
     }
 
     .raise-popup-container {
-        width: 130px;
-        padding: 8px;
+        width: 120px;
+        padding: 6px;
     }
 
     .pot-display {
@@ -1737,9 +1779,9 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .room-header {
-        top: 6px;
-        left: 6px;
-        right: 6px;
+        top: 5px;
+        left: 5px;
+        right: 5px;
     }
 
     .exit-btn,
@@ -1770,11 +1812,11 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .action-bar-right {
-        bottom: 6px;
-        right: 6px;
+        bottom: 5px;
+        right: 5px;
         left: auto;
-        padding: 5px 10px;
-        gap: 6px;
+        padding: 4px 8px;
+        gap: 5px;
         max-width: 50vw;
         flex-direction: row;
         flex-wrap: nowrap;
@@ -1785,15 +1827,15 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .game-btn {
-        min-width: 50px;
+        min-width: 45px;
         font-size: 9px;
         padding: 4px 6px;
         flex: 0 1 auto;
     }
 
     .raise-popup-container {
-        width: 140px;
-        padding: 8px;
+        width: 130px;
+        padding: 6px;
         bottom: 110%;
         left: auto;
         right: 0;
@@ -1801,13 +1843,13 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .floating-global-messages {
-        bottom: 50px;
-        max-height: 150px;
+        bottom: 45px;
+        max-height: 120px;
     }
 
     .room-header {
-        top: 6px;
-        left: 6px;
+        top: 5px;
+        left: 5px;
         right: auto;
     }
 
