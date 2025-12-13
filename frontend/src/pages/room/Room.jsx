@@ -1,269 +1,410 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import Card from '../../components/Card/Card';
-import './Room.css'; // Import CSS
+import RoomChat from '../../components/RoomChat/RoomChat';
+import MatchResultModal from '../../components/MatchResult/MatchResultModal';
+import './Room.css';
 
-// Hàm helper để định dạng tiền tệ
+// Format tiền (1000 -> 1K)
 const formatMoney = (amount) => {
   if (amount >= 1000000) return `${(amount / 1000000).toFixed(2)}M`;
   if (amount >= 1000) return `${(amount / 1000).toFixed(0)}K`;
   return amount;
 };
 
-// Component Ghế ngồi (đã cập nhật để hiển thị bài)
-const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false }) => {
-  // Chỉ hiển thị bài ngửa cho người chơi hiện tại
+// Component Ghế ngồi
+// THÊM PROP: gameStatus
+const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false, isActive, gameStatus }) => {
   const showCardsFaceUp = isLocalPlayer;
   const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
+  const activeClass = isActive ? 'active-turn-glow' : '';
+
+  // Kiểm tra xem game có đang diễn ra hay không (để hiện trạng thái Chờ ván sau)
+  const isGameRunning = ['playing', 'preflop', 'flop', 'turn', 'river', 'showdown'].includes(gameStatus);
+
   return (
     <div className={`player-seat ${seatPosition}`}>
-      {/* Hiển thị bài của người chơi */}
-      <div className="player-hand">
+      
+      {/* Badge Tiền Cược */}
+      {player && player.betThisRound > 0 && (
+        <div className="player-bet-badge-floating">
+           <span className="chip-icon">🪙</span> {formatMoney(player.betThisRound)}
+        </div>
+      )}
+
+      <div className={`player-hand ${player?.folded ? 'hand-folded' : ''}`}>
         {hand && hand.length > 0 ? (
           hand.map((card, index) => (
             <Card
               key={index}
               suit={card.suit}
               rank={card.rank}
-              faceUp={showCardsFaceUp} // Ngửa bài nếu là người chơi hiện tại
+              faceUp={isLocalPlayer || (card.rank && card.suit)} 
             />
           ))
         ) : (
-          // Chỗ trống chờ chia bài hoặc khi không có bài
-          <>
-            <div className="card-placeholder"></div>
-            <div className="card-placeholder"></div>
-          </>
+          player && !player.folded && player.inHand && (
+            <>
+               <Card faceUp={false} />
+               <Card faceUp={false} />
+            </>
+          )
+        )}
+        
+        {player?.handName && (
+            <div className="hand-result-badge">{player.handName}</div>
         )}
       </div>
 
-      {/* Avatar và thông tin */}
-      <div className={`player-avatar ${!player ? 'empty' : ''}`}>
+      <div className={`player-avatar ${!player ? 'empty' : ''} ${activeClass}`}>
         {player ? (
           <img src={`${SERVER_URL}/avatar/${player.user_id}`} alt="Avatar" />
         ) : null}
       </div>
-      <div className="player-info">
-        <div>{player ? player.username : 'Chờ...'}</div>
+      
+      <div className="seat-player-info">
+        <div className="player-name">{player ? player.username : 'Ghế Trống'}</div>
         {player && (
-          <div className="player-balance">
-            {formatMoney(player.balance)}
-          </div>
+          <>
+            <div className="player-chips">💰 {formatMoney(player.chips)}</div>
+            {player.folded && <div className="status-badge folded">Bỏ bài</div>}
+            {player.allIn && <div className="status-badge allin">All-in</div>}
+            
+            {/* --- LOGIC HIỂN THỊ TRẠNG THÁI MỚI --- */}
+            {/* 1. Nếu game đang chạy mà không inHand -> Chờ ván sau */}
+            {!player.inHand && !player.folded && isGameRunning && (
+                <div className="status-badge waiting">Chờ ván sau</div>
+            )}
+            {/* 2. Nếu game đang waiting/countdown -> Sẵn sàng */}
+            {(gameStatus === 'waiting' || gameStatus === 'countdown') && (
+                 <div className="status-badge ready" style={{backgroundColor: '#2ecc71', color: 'white'}}>Sẵn sàng</div>
+            )}
+          </>
         )}
       </div>
     </div>
   );
 };
 
-
 function Room() {
-  const { roomCode } = useParams(); // Mã phòng từ URL
-  const { user } = useAuth(); // Người chơi hiện tại
-  const { socket } = useSocket(); // Kết nối Socket
+  const { roomCode } = useParams();
+  const { user } = useAuth();
+  const { socket } = useSocket();
   const navigate = useNavigate();
-  const location = useLocation(); 
-  console.log('Vào phòng với mã:', roomCode);
-  const [seats, setSeats] = useState([]); // Danh sách seat trong phòng
-  const [roomSettings, setRoomSettings] = useState(location.state?.roomSettings || null); // Cài đặt phòng
-  const [gameState, setGameState] = useState({ status: 'waiting' }); // Trạng thái game từ server
-  const [myHand, setMyHand] = useState([]); // Bài của người chơi hiện tại
-  const [isSpectator, setIsSpectator] = useState(false); // Trạng thái xem
+  const location = useLocation();
+  
+  const [seats, setSeats] = useState([]);
+  const [roomSettings, setRoomSettings] = useState(location.state?.roomSettings || null);
+  const [gameState, setGameState] = useState({ status: 'waiting' });
+  const [myHand, setMyHand] = useState([]);
+  const [isSpectator, setIsSpectator] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [showRaisePopup, setShowRaisePopup] = useState(false);
+  const [raiseValue, setRaiseValue] = useState(0);
 
+  // Match result modal state
+  const [showMatchResult, setShowMatchResult] = useState(false);
+  const [matchResultData, setMatchResultData] = useState(null);
+  const prevGameStatusRef = useRef(null);
+
+  const localPlayerSeat = seats.find(s => s && s.user_id === user?.userId);
+  const isMyTurn = localPlayerSeat?.isActing || false;
+  const isInHand = localPlayerSeat?.inHand || false;
+
+  const minRaise = (gameState.currentBet || 0) + (gameState.minRaise || 0);
+  const maxRaise = localPlayerSeat?.chips || 0;
+  const currentCallAmount = (gameState.currentBet || 0) - (localPlayerSeat?.betThisRound || 0);
 
   useEffect(() => {
-    // Chỉ chạy khi có đủ thông tin
+      if (isMyTurn) {
+          setRaiseValue(Math.min(minRaise, maxRaise));
+      } else {
+          setShowRaisePopup(false); 
+      }
+  }, [isMyTurn, minRaise, maxRaise]);
+
+  const handleAction = (action, amount = 0) => {
+      if(!socket) return;
+      socket.emit('playerAction', { action, amount });
+      setShowRaisePopup(false);
+  };
+
+  // Store seats ref for use in handleGameResult
+  const seatsRef = useRef([]);
+  useEffect(() => {
+    seatsRef.current = seats;
+  }, [seats]);
+
+  useEffect(() => {
     if (!socket || !user || !roomCode) return;
-
-    // Lấy cài đặt ban đầu từ location state (chỉ dùng 1 lần khi mới vào)
     const initialSettings = location.state?.roomSettings || null;
+    socket.emit('joinRoom', { roomCode, settings: initialSettings });
 
-    // 1. Gửi sự kiện: "Tôi đã vào phòng" (không gửi đối tượng user nữa; server dùng socket.user)
-    socket.emit('joinRoom', {
-      roomCode,
-      settings: initialSettings // Gửi cài đặt ban đầu (hoặc null nếu là người vào sau)
-    });
-    console.log(`Gửi joinRoom (no user) cho ${user.username} trong phòng ${roomCode}`);
-
-    // --- Lắng nghe các sự kiện từ server ---
-
-    // Cập nhật toàn bộ trạng thái phòng
     const handleRoomUpdate = (data) => {
-      console.log('Nhận cập nhật trạng thái phòng:', data);
-      setSeats(data.seats || []); // Cập nhật danh sách seat công khai
-      setRoomSettings(data.settings); // Cập nhật cài đặt phòng
-      setGameState(data.gameState); // Cập nhật trạng thái game (status, countdown, bài chung, pot)
-      setIsSpectator(false); // Reset trạng thái xem, trừ khi server bảo khác
+      setSeats(data.seats || []);
+      setRoomSettings(data.settings);
+      setGameState(data.gameState);
+      setIsSpectator(false);
     };
+    const handleHandUpdate = (hand) => { setMyHand(hand); };
+    const handleSpectatorMode = (status) => { setIsSpectator(status); setMyHand([]); };
+
+    const handleGameResult = (result) => {
+      const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
+      const winnerIds = result.winners.map(w => w.userId);
+
+      // Build players list from current seats
+      const players = seatsRef.current
+        .filter(s => s !== null)
+        .map(seat => {
+          const isWinner = winnerIds.includes(seat.user_id);
+          const winnerInfo = result.winners.find(w => w.userId === seat.user_id);
+          return {
+            id: seat.user_id,
+            name: seat.username,
+            avatar: `${SERVER_URL}/avatar/${seat.user_id}`,
+            isWinner: isWinner,
+            handName: winnerInfo?.handName || seat.handName || null,
+            chipsChange: isWinner ? (winnerInfo?.amount || 0) : -(seat.totalBet || 0)
+          };
+        });
+
+      setMatchResultData({
+        roomCode: roomCode,
+        players: players,
+        winners: result.winners
+      });
+      setShowMatchResult(true);
+    };
+
     socket.on('updateRoomState', handleRoomUpdate);
-
-    // Cập nhật bài riêng của mình
-    const handleHandUpdate = (hand) => {
-      console.log('Nhận bài của mình:', hand);
-      setMyHand(hand);
-    };
     socket.on('updateMyHand', handleHandUpdate);
-
-    // Cập nhật trạng thái xem
-    const handleSpectatorMode = (status) => {
-        console.log('Nhận trạng thái xem:', status);
-        setIsSpectator(status);
-        setMyHand([]); // Người xem không có bài
-    };
     socket.on('spectatorMode', handleSpectatorMode);
+    socket.on('game:result', handleGameResult);
 
-
-    // --- Hàm dọn dẹp khi rời phòng ---
     return () => {
-      console.log(`Gửi leaveRoom cho ${user.username}`);
       socket.emit('leaveRoom');
-      // Gỡ bỏ các listener
       socket.off('updateRoomState', handleRoomUpdate);
       socket.off('updateMyHand', handleHandUpdate);
       socket.off('spectatorMode', handleSpectatorMode);
+      socket.off('game:result', handleGameResult);
     };
-
-  // Mảng dependency này đảm bảo useEffect chỉ chạy 1 lần khi vào phòng
   }, [socket, roomCode, user, navigate]);
 
+  // Auto-close match result modal when countdown starts
+  useEffect(() => {
+    if (gameState.status === 'countdown' && prevGameStatusRef.current === 'finished') {
+      setShowMatchResult(false);
+      setMatchResultData(null);
+    }
+    prevGameStatusRef.current = gameState.status;
+  }, [gameState.status]);
 
-  // Hàm xử lý khi bấm nút thoát
   const handleExit = () => {
-    navigate('/'); // Hàm dọn dẹp của useEffect sẽ tự động gửi 'leaveRoom'
+    if (socket) {
+      socket.emit('leaveRoom', () => {
+         navigate('/');
+      });
+    } else {
+      navigate('/');
+    }
   };
 
-  // --- Logic Render ---
-  // Tìm người chơi hiện tại và những người khác
-  // const localUser = players.find(p => p.user_id === user.user_id);
-  // const otherPlayers = players.filter(p => p.user_id !== user.user_id);
-
-  // Hàm lấy bài cho người chơi (để hiển thị bài úp của đối thủ)
-  const getHandForPlayer = (playerId) => {
-      // Nếu đang chia bài hoặc đang chơi
-      if (gameState.status === 'dealing' || gameState.status === 'playing') {
-          // Nếu là người chơi hiện tại, trả về bài thật
-          if (playerId === user.userId) {
-              return myHand;
-          }
-          // Với người khác, trả về 2 lá bài úp (dùng dữ liệu giả)
-          return [{ rank: '?', suit: '?' }, { rank: '?', suit: '?' }];
+  const getHandForPlayer = (playerId, player) => {
+      if (gameState.status === 'finished') {
+          if (player?.cards && player.cards.length > 0) return player.cards;
+          return [{ rank: '', suit: '' }, { rank: '', suit: '' }];
       }
-      return []; // Không có bài nếu chưa bắt đầu/chia
+      const activeStates = ['playing', 'preflop', 'flop', 'turn', 'river'];
+      if (activeStates.includes(gameState.status) && player?.inHand) {
+          if (playerId === user.userId) return myHand;
+          return [{ rank: '', suit: '' }, { rank: '', suit: '' }];
+      }
+      return []; 
   };
 
-
-  // Hàm render các ghế ngồi dựa trên số người tối đa
   const renderSeats = () => {
-    if(!roomSettings || !seats.length) return null;
+    if (!roomSettings || !seats.length) return null;
     const renderedSeats = [];
     const max = parseInt(roomSettings.max_players, 10);
     const localPlayerId = user?.userId;
     const mySeatIndex = seats.findIndex(p => p?.user_id === localPlayerId);
-    if(isSpectator || mySeatIndex === -1){
-      const visualMap = {
+    
+    const visualPositionMap = {
         4: ["seat-1", "seat-2", "seat-3", "seat-4"],
         3: ["seat-1", "seat-2", "seat-4"],
         2: ["seat-1", "seat-3"],
-      };
-      const positions = visualMap[max] || visualMap[4];
-      for(let i = 0; i < max; i++){
-        const player = seats[i] || null;
-        if(positions[i]){
-          renderedSeats.push(
-            <PlayerSeat
-              key={`seat-${i}`}
-              seatPosition={positions[i]}
-              player={player}
-              hand={player ? getHandForPlayer(player.user_id) : []}
-              isLocalPlayer={player?.user_id === localPlayerId}
-            />
-          );
-        }
-      }
-      return renderedSeats;
-    }
-    const visualPositionMap = {
-      4: ["seat-1", "seat-2", "seat-3", "seat-4"],
-      3: ["seat-1", "seat-2", "seat-4"],
-      2: ["seat-1", "seat-3"],
     };
     const visualPositions = visualPositionMap[max] || visualPositionMap[4];
-    for(let i = 0; i < max; i++){
-      const player = seats[i];
-      const visualOffset = (i - mySeatIndex + max) % max;
-      const cssClass = visualPositions[visualOffset];
-      if(cssClass){
-        renderedSeats.push(
-          <PlayerSeat
-            key={`seat-${i}`}
-            seatPosition={cssClass}
-            player={player}
-            hand={player ? getHandForPlayer(player.user_id) : []}
-            isLocalPlayer={i === mySeatIndex}
-          />
-        );
-      }
+    const startIndex = (isSpectator || mySeatIndex === -1) ? 0 : mySeatIndex;
+
+    for (let i = 0; i < max; i++) {
+        const dataIndex = (startIndex + i) % max;
+        const player = seats[dataIndex];
+        const cssClass = visualPositions[i];
+        if (cssClass) {
+            renderedSeats.push(
+                <PlayerSeat
+                    key={`seat-${dataIndex}`}
+                    seatPosition={cssClass}
+                    player={player}
+                    hand={player ? getHandForPlayer(player.user_id, player) : []}
+                    isLocalPlayer={player?.user_id === localPlayerId}
+                    isActive={player?.isActing}
+                    gameStatus={gameState.status} // TRUYỀN STATUS VÀO ĐÂY
+                />
+            );
+        }
     }
     return renderedSeats;
   };
 
-  // Xác định thông báo hiển thị ở giữa bàn
+  // --- LOGIC CENTER MESSAGE ĐÃ SỬA ---
   const getCenterMessage = () => {
-    const playerCount = seats.filter(p => p).length;
-      if (isSpectator) {
-          return { main: "Đang xem...", sub: `Vui lòng chờ ván sau` };
+      const playerCount = seats.filter(p => p).length;
+      if (isSpectator) return { main: "Đang xem...", sub: "Vui lòng chờ ván sau" };
+      
+      // Kiểm tra xem game có đang chạy không
+      const isGameRunning = ['playing', 'preflop', 'flop', 'turn', 'river', 'showdown'].includes(gameState.status);
+
+      // Chỉ hiển thị "Vui lòng chờ" nếu game ĐANG CHẠY và mình không inHand
+      if (isGameRunning && localPlayerSeat && !localPlayerSeat.inHand) {
+          return { main: "Vui lòng chờ...", sub: "Bạn sẽ chơi ở ván sau" };
       }
+
       switch (gameState.status) {
           case 'countdown':
-              return { main: `Bắt đầu sau: ${gameState.countdown}s`, sub: `Mã phòng: ${roomCode}` };
-          case 'dealing':
-              return { main: "Đang chia bài...", sub: `Mã phòng: ${roomCode}` };
-          case 'playing':
-              // Hiển thị Pot trong khi chơi (nếu có)
-              return { main: `Pot: ${gameState.pot || 0}`, sub: `Mã phòng: ${roomCode}` };
+              return { main: `Bắt đầu: ${gameState.countdown}s`, sub: "Chuẩn bị..." };
+          case 'playing': case 'preflop': case 'flop': case 'turn': case 'river':
+              return { main: `Pot: ${formatMoney(gameState.pot)}`, sub: gameState.lastAction || "" };
           case 'finished':
-              return { main: "Ván bài kết thúc", sub: `Mã phòng: ${roomCode}` }; // Có thể hiển thị người thắng sau
+              return { main: "Kết thúc", sub: gameState.lastAction || "Đang chia thưởng..." };
           case 'waiting':
           default:
-              // Chờ đủ người hoặc chờ ván mới
-              return { main: playerCount >= 2 ? "Chuẩn bị ván mới..." : "Chờ người chơi...", sub: `Mã phòng: ${roomCode}` };
+              // Logic hiển thị khi chờ
+              if (playerCount < 2) {
+                  return { main: "Chờ người chơi...", sub: "Ván chơi bắt đầu khi có 2 người trở lên" };
+              }
+              // Khi đủ người, server sẽ chuyển sang countdown rất nhanh, nhưng hiển thị Sẵn sàng là hợp lý
+              return { main: "Sẵn sàng", sub: "Đang chuẩn bị bắt đầu..." };
       }
   };
   const centerMsg = getCenterMessage();
 
-
   return (
     <div className="room-page-container">
-      {/* Header: Ping và Nút Thoát */}
       <div className="room-header">
-        <div className="ping">📶 --ms</div> {/* TODO: Cập nhật Ping sau */}
-        <button className="exit-btn" onClick={handleExit} title="Thoát phòng">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M10.09 15.59L11.5 17L16.5 12L11.5 7L10.09 8.41L12.67 11H3V13H12.67L10.09 15.59M19 3H5C3.9 3 3 3.9 3 5V9H5V5H19V19H5V15H3V19C3 20.1 3.9 21 5 21H19C20.1 21 21 20.1 21 19V5C21 3.9 20.1 3 19 3Z" /></svg>
-        </button>
+        <div className="left-controls">
+            <button className="exit-btn" onClick={handleExit} title="Thoát phòng">✕</button>
+            <div className="room-info-box">
+                <div className="info-item">
+                    <span className="info-label">Ping</span>
+                    <span className="info-value ping-value">24ms</span>
+                </div>
+                <div className="info-divider"></div>
+                <div className="info-item">
+                    <span className="info-label">Phòng</span>
+                    <span className="info-value">#{roomCode}</span>
+                </div>
+                <div className="info-divider"></div>
+                <div className="info-item">
+                    <span className="info-label">Cược</span>
+                    <span className="info-value">{formatMoney(roomSettings?.small_blind || 0)}/{formatMoney((roomSettings?.small_blind || 0) * 2)}</span>
+                </div>
+            </div>
+        </div>
+        <div className="right-controls">
+            <button className="chat-toggle-btn" onClick={() => setIsChatOpen(!isChatOpen)}>💬</button>
+        </div>
       </div>
 
-      {/* Bàn chơi */}
       <div className="game-table">
         <div className="table-inner-border"></div>
-
-        {/* Thông báo giữa bàn */}
-        <div className="table-center-message">
+        
+        <div className={`table-center-message ${gameState.status !== 'waiting' && gameState.status !== 'countdown' && gameState.status !== 'finished' ? 'transparent-msg' : ''}`}>
           <div className="main-message">{centerMsg.main}</div>
           <div className="sub-message">{centerMsg.sub}</div>
         </div>
 
-        {/* Khu vực hiển thị bài chung (Community Cards) - Tạm ẩn */}
         <div className="community-cards">
-            {/* {gameState.communityCards?.map((card, index) => (
-                <Card key={index} suit={card.suit} rank={card.rank} faceUp={true} />
-            ))} */}
+            {gameState.communityCards?.map((card, index) => (
+                <Card key={`comm-${index}`} suit={card.slice(1).toUpperCase()} rank={card.slice(0,1)} faceUp={true} />
+            ))}
         </div>
-
-        {/* Render các ghế ngồi */}
         {renderSeats()}
-
       </div>
+
+      {isMyTurn && !isSpectator && isInHand && (
+          <div className="action-bar-right">
+              <button className="game-btn fold-btn" onClick={() => handleAction('fold')}>BỎ BÀI</button>
+              
+              {currentCallAmount <= 0 ? (
+                  <button className="game-btn check-btn" onClick={() => handleAction('check')}>XEM</button>
+              ) : (
+                  <button className="game-btn call-btn" onClick={() => handleAction('call')}>THEO {formatMoney(currentCallAmount)}</button>
+              )}
+
+              <div style={{ position: 'relative' }}>
+                  {showRaisePopup && (
+                      <div className="raise-popup-container">
+                          <div className="raise-info-top">
+                              <span>Tố thêm:</span>
+                              <span className="raise-value-text">{formatMoney(raiseValue)}</span>
+                          </div>
+                          <input 
+                              type="range" 
+                              min={minRaise} 
+                              max={maxRaise} 
+                              step={100} 
+                              value={raiseValue}
+                              onChange={(e) => setRaiseValue(Number(e.target.value))}
+                              className="raise-slider"
+                          />
+                          <button className="raise-confirm-btn" onClick={() => handleAction('raise', raiseValue)}>OK</button>
+                      </div>
+                  )}
+                  <button 
+                    className="game-btn raise-btn" 
+                    onClick={() => setShowRaisePopup(!showRaisePopup)}
+                    disabled={maxRaise <= minRaise}
+                  >
+                      TỐ THÊM...
+                  </button>
+              </div>
+              
+              <button className="game-btn allin-btn" onClick={() => handleAction('allin')}>TẤT TAY</button>
+          </div>
+      )}
+
+      {/* Match Result Modal */}
+      {showMatchResult && matchResultData && (
+        <MatchResultModal
+          matchData={matchResultData}
+          onClose={() => {
+            setShowMatchResult(false);
+            setMatchResultData(null);
+          }}
+          onPlayAgain={() => {
+            setShowMatchResult(false);
+            setMatchResultData(null);
+          }}
+          onBackToMenu={() => {
+            setShowMatchResult(false);
+            setMatchResultData(null);
+            if (socket) {
+              socket.emit('leaveRoom', () => {
+                navigate('/');
+              });
+            } else {
+              navigate('/');
+            }
+          }}
+        />
+      )}
+
+      <RoomChat isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} roomCode={roomCode} />
     </div>
   );
 }

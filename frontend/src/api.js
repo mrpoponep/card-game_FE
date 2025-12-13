@@ -137,10 +137,16 @@ async function apiCreatePaymentUrl({ amount, orderDescription, bankCode }) {
   return apiPost('/payment/create_payment_url', { amount, orderDescription, bankCode }, { showErrorModal: false });
 }
 
+// 🆕 Get transaction history
+async function apiGetTransactionHistory() {
+  return apiGet('/payment/history', { showErrorModal: false });
+}
+
 export {
   apiGet,
   apiPost,
   apiCreateRoom,
   apiFindAndJoinRoom,
-  apiCreatePaymentUrl
+  apiCreatePaymentUrl,
+  apiGetTransactionHistory
 };

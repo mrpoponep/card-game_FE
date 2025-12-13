@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Ranking from '../../components/ranking/Ranking';
 import PokerRules from '../../components/RuleScreen/PokerRules';
 import RoomModal from '../../components/RoomModal/RoomModal';
+import TableSelect from '../../components/TableSelect/TableSelect';
+import GlobalChat from '../../components/GlobalChat/GlobalChat';
 import { useAuth } from '../../context/AuthContext';
 import { useSocket } from '../../context/SocketContext';
 import { apiPost } from '../../api';
@@ -15,12 +17,18 @@ import LuckyWheel from '../../components/LuckyWheel/LuckyWheel';
 
 function Home() {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const { user, logout, reloadUser } = useAuth();
+  const { socket } = useSocket();
+
   const { onRewardNotification } = useSocket();
   const [showRanking, setShowRanking] = useState(false);
   const [showRules, setShowRules] = useState(false);
   const [showRoomModal, setShowRoomModal] = useState(false);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  // State lưu trữ tin nhắn chat tổng (Persistent)
+  const [globalMessages, setGlobalMessages] = useState([]);
   const [showRechargeModal, setShowRechargeModal] = useState(false);
+  const [showTableSelect, setShowTableSelect] = useState(false);
   const [showDailyReward, setShowDailyReward] = useState(false);
   const [showEloReward, setShowEloReward] = useState(false);
   const [showGiftReward, setShowGiftReward] = useState(false);
@@ -48,12 +56,37 @@ function Home() {
   const rankingOverlayRef = useRef(null);
   const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
 
-  // HÀM XỬ LÝ ĐĂNG XUẤT
+  // 1. Tự động cập nhật số dư khi vào trang Home
+  useEffect(() => {
+    if (reloadUser) {
+      reloadUser();
+    }
+  }, [reloadUser]);
+
+  // 2. Logic Global Chat: Lắng nghe ngay tại Home
+  useEffect(() => {
+    if (!socket) return;
+
+    // Join phòng chat tổng ngay khi vào Home
+    socket.emit('joinGlobalChat');
+
+    const handleReceiveMessage = (newMessage) => {
+      setGlobalMessages(prev => [...prev, newMessage]);
+    };
+
+    socket.on('receiveGlobalMessage', handleReceiveMessage);
+
+    return () => {
+      socket.off('receiveGlobalMessage', handleReceiveMessage);
+      // Không leave phòng để giữ kết nối ngầm nếu cần, hoặc leave nếu muốn tiết kiệm resource
+      // socket.emit('leaveGlobalChat');
+    };
+  }, [socket]);
+
   const handleLogout = () => {
-    logout(); // Từ useAuth - đã gửi API và navigate
+    logout();
   };
 
-  // --- Các hàm xử lý sự kiện của bạn ---
   const handlePlayWithAI = () => {
     console.log('Play with AI clicked');
   };
@@ -63,7 +96,7 @@ function Home() {
   };
 
   const handlePlayWithFriend = () => {
-    setShowRoomModal(true); // Mở modal
+    setShowRoomModal(true);
   };
 
   const handleShowRanking = () => {
@@ -75,6 +108,8 @@ function Home() {
   };
 
   const handleTopUp = () => setShowRechargeModal(true);
+
+  const handleSelectTable = () => setShowTableSelect(true);
 
   // Hàm kiểm tra notification (tách riêng để tái sử dụng)
   const checkRewardNotifications = async () => {
@@ -171,18 +206,19 @@ function Home() {
       {/* User Info Section */}
       <div className="user-info">
         <div className="user-avatar">
-          <img
-            src={`${SERVER_URL}/avatar/${user.userId}`}
-            alt="Avatar"
-            className="avatar-placeholder"
-            style={{ objectFit: 'cover' }}
-          />
+            <img
+              src={`${SERVER_URL}/avatar/${user?.userId}`}
+              alt="Avatar"
+              className="avatar-placeholder"
+              style={{ objectFit: 'cover' }}
+              onError={(e) => { e.target.src = `${SERVER_URL}/avatar/default.png`; }}
+            />
         </div>
 
         <div className="user-details">
-          <div className="username">{user.username}</div>
+          <div className="username">{user?.username}</div>
           <div className="user-stats">
-            <span className="elo-badge">Elo: {user.elo}</span>
+            <span className="elo-badge">Elo: {user?.elo}</span>
           </div>
         </div>
 
@@ -233,7 +269,7 @@ function Home() {
       <div className="balance-section">
         <div className="balance-icon">
           <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z" />
+            <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
           </svg>
         </div>
         <span className="balance-amount">Coin: {user?.balance?.toLocaleString() || '0'}</span>
@@ -269,14 +305,14 @@ function Home() {
 
       {/* Bottom Actions */}
       <div className="bottom-actions">
-        <button className="bottom-btn chat-btn">
+        <button className="bottom-btn chat-btn" onClick={() => setIsChatOpen(true)}>
           <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12,3C6.5,3 2,6.58 2,11C2.05,13.15 3.06,15.17 4.75,16.5C4.75,17.1 4.33,18.67 2,21C4.37,20.89 6.64,20 8.47,18.5C9.61,18.83 10.81,19 12,19C17.5,19 22,15.42 22,11C22,6.58 17.5,3 12,3M12,17C7.58,17 4,14.31 4,11C4,7.69 7.58,5 12,5C16.42,5 20,7.69 20,11C20,14.31 16.42,17 12,17Z" />
+            <path d="M12,3C6.5,3 2,6.58 2,11C2.05,13.15 3.06,15.17 4.75,16.5C4.75,17.1 4.33,18.67 2,21C4.37,20.89 6.64,20 8.47,18.5C9.61,18.83 10.81,19 12,19C17.5,19 22,15.42 22,11C22,6.58 17.5,3 12,3M12,17C7.58,17 4,14.31 4,11C4,7.69 7.58,5 12,5C16.42,5 20,7.69 20,11C20,14.31 16.42,17 12,17Z"/>
           </svg>
           <span>CHAT TỔNG</span>
         </button>
 
-        <button className="bottom-btn select-table-btn">
+        <button className="bottom-btn select-table-btn" onClick={handleSelectTable}>
           <div className="table-icon">
             <span>CHỌN</span>
             <span>BÀN</span>
@@ -285,7 +321,7 @@ function Home() {
 
         <button className="bottom-btn ranking-btn" onClick={handleShowRanking}>
           <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M5,16L3,5L8.5,10L12,4L15.5,10L21,5L19,16H5M19,19A1,1 0 0,1 18,20H6A1,1 0 0,1 5,19V18H19V19Z" />
+            <path d="M5,16L3,5L8.5,10L12,4L15.5,10L21,5L19,16H5M19,19A1,1 0 0,1 18,20H6A1,1 0 0,1 5,19V18H19V19Z"/>
           </svg>
           <span>BXH</span>
         </button>
@@ -303,9 +339,9 @@ function Home() {
         onClose={() => setShowRoomModal(false)}
       />
 
-      <RechargeModal 
-        isOpen={showRechargeModal} 
-        onClose={() => setShowRechargeModal(false)} 
+      <RechargeModal
+        isOpen={showRechargeModal}
+        onClose={() => setShowRechargeModal(false)}
       />
 
       <DailyReward 
@@ -339,6 +375,18 @@ function Home() {
           <button className="toast-close" onClick={() => setShowRewardToast(false)}>×</button>
         </div>
       )}
+
+      {/* Truyền tin nhắn xuống GlobalChat */}
+      <GlobalChat
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        externalMessages={globalMessages}
+      />
+
+      <TableSelect
+        isOpen={showTableSelect}
+        onClose={() => setShowTableSelect(false)}
+      />
     </div>
   );
 }
