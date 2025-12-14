@@ -14,6 +14,7 @@ import DailyReward from '../../components/dailyReward/DailyReward';
 import EloReward from '../../components/eloReward/EloReward';
 import GiftReward from '../../components/giftReward/GiftReward';
 import LuckyWheel from '../../components/LuckyWheel/LuckyWheel';
+import ReferralInvite from '../../components/Referral/ReferralInvite';
 
 function Home() {
   const navigate = useNavigate();
@@ -38,6 +39,7 @@ function Home() {
   const [showEloReward, setShowEloReward] = useState(false);
   const [showGiftReward, setShowGiftReward] = useState(false);
   const [showLuckyWheel, setShowLuckyWheel] = useState(false);
+  const [showReferralInvite, setShowReferralInvite] = useState(false);
   const [hasNotifications, setHasNotifications] = useState({
     daily: false,
     elo: false,
@@ -66,6 +68,14 @@ function Home() {
     if (reloadUser) {
       reloadUser();
     }
+  }, [reloadUser]);
+
+  // Tự động polling số dư coin mỗi 15 giây
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (reloadUser) reloadUser();
+    }, 15000); // 15 giây/lần
+    return () => clearInterval(interval);
   }, [reloadUser]);
 
   // 2. Logic Global Chat: Lắng nghe ngay tại Home
@@ -150,7 +160,7 @@ function Home() {
     console.log('🔍 Checking reward notifications...');
     try {
       const notifications = { daily: false, elo: false, gift: false };
-      
+
       // Kiểm tra Daily Reward
       try {
         const dailyCheck = await apiPost('/daily-reward/check', {});
@@ -176,10 +186,10 @@ function Home() {
       try {
         const weeklyCheck = await apiPost('/weekly-reward/check', {});
         const monthlyCheck = await apiPost('/monthly-reward/check', {});
-        
+
         // Hiển thị notification nếu có thể nhận thưởng tuần HOẶC thưởng tháng
-        if ((weeklyCheck.success && weeklyCheck.data.canClaim) || 
-            (monthlyCheck.success && monthlyCheck.data.canClaim)) {
+        if ((weeklyCheck.success && weeklyCheck.data.canClaim) ||
+          (monthlyCheck.success && monthlyCheck.data.canClaim)) {
           notifications.gift = true;
         }
       } catch (err) {
@@ -211,16 +221,16 @@ function Home() {
 
     const unsubscribe = onRewardNotification((data) => {
       console.log('🎁 Received reward notification:', data);
-      
+
       // Hiển thị toast message
       setToastMessage(data.message || 'Có phần thưởng mới!');
       setShowRewardToast(true);
-      
+
       // Tự động ẩn toast sau 5 giây
       setTimeout(() => {
         setShowRewardToast(false);
       }, 5000);
-      
+
       // Refresh notification dots
       console.log('🔄 Refreshing notification dots...');
       checkRewardNotifications();
@@ -302,7 +312,7 @@ function Home() {
       <div className="balance-section">
         <div className="balance-icon">
           <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z"/>
+            <path d="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12A8,8 0 0,0 12,4M12,6A6,6 0 0,1 18,12A6,6 0 0,1 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6M12,8A4,4 0 0,0 8,12A4,4 0 0,0 12,16A4,4 0 0,0 16,12A4,4 0 0,0 12,8Z" />
           </svg>
         </div>
         <span className="balance-amount">Coin: {user?.balance?.toLocaleString() || '0'}</span>
@@ -340,7 +350,7 @@ function Home() {
       <div className="bottom-actions">
         <button className="bottom-btn chat-btn" onClick={() => setIsChatOpen(true)}>
           <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12,3C6.5,3 2,6.58 2,11C2.05,13.15 3.06,15.17 4.75,16.5C4.75,17.1 4.33,18.67 2,21C4.37,20.89 6.64,20 8.47,18.5C9.61,18.83 10.81,19 12,19C17.5,19 22,15.42 22,11C22,6.58 17.5,3 12,3M12,17C7.58,17 4,14.31 4,11C4,7.69 7.58,5 12,5C16.42,5 20,7.69 20,11C20,14.31 16.42,17 12,17Z"/>
+            <path d="M12,3C6.5,3 2,6.58 2,11C2.05,13.15 3.06,15.17 4.75,16.5C4.75,17.1 4.33,18.67 2,21C4.37,20.89 6.64,20 8.47,18.5C9.61,18.83 10.81,19 12,19C17.5,19 22,15.42 22,11C22,6.58 17.5,3 12,3M12,17C7.58,17 4,14.31 4,11C4,7.69 7.58,5 12,5C16.42,5 20,7.69 20,11C20,14.31 16.42,17 12,17Z" />
           </svg>
           <span>CHAT TỔNG</span>
         </button>
@@ -352,9 +362,16 @@ function Home() {
           </div>
         </button>
 
+        <button className="bottom-btn invite-btn" onClick={() => setShowReferralInvite(true)}>
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05C15.64 13.36 17 14.28 17 15.5V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z" />
+          </svg>
+          <span>MỜI BẠN BÈ</span>
+        </button>
+
         <button className="bottom-btn ranking-btn" onClick={handleShowRanking}>
           <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M5,16L3,5L8.5,10L12,4L15.5,10L21,5L19,16H5M19,19A1,1 0 0,1 18,20H6A1,1 0 0,1 5,19V18H19V19Z"/>
+            <path d="M5,16L3,5L8.5,10L12,4L15.5,10L21,5L19,16H5M19,19A1,1 0 0,1 18,20H6A1,1 0 0,1 5,19V18H19V19Z" />
           </svg>
           <span>BXH</span>
         </button>
@@ -377,27 +394,32 @@ function Home() {
         onClose={() => setShowRechargeModal(false)}
       />
 
-      <DailyReward 
-        isOpen={showDailyReward} 
+      <DailyReward
+        isOpen={showDailyReward}
         onClose={() => setShowDailyReward(false)}
         onClaimed={handleDailyRewardClaimed}
       />
 
-      <EloReward 
-        isOpen={showEloReward} 
+      <EloReward
+        isOpen={showEloReward}
         onClose={() => setShowEloReward(false)}
         onClaimed={handleEloRewardClaimed}
       />
 
-      <GiftReward 
-        isOpen={showGiftReward} 
+      <GiftReward
+        isOpen={showGiftReward}
         onClose={() => setShowGiftReward(false)}
         onClaimed={handleGiftRewardClaimed}
       />
 
-      <LuckyWheel 
-        isOpen={showLuckyWheel} 
-        onClose={() => setShowLuckyWheel(false)} 
+      <LuckyWheel
+        isOpen={showLuckyWheel}
+        onClose={() => setShowLuckyWheel(false)}
+      />
+
+      <ReferralInvite
+        isOpen={showReferralInvite}
+        onClose={() => setShowReferralInvite(false)}
       />
 
       {/* Toast notification cho phần thưởng mới */}

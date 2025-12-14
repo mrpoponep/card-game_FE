@@ -188,25 +188,23 @@ body {
     inset: -3px;
     border-radius: 50%;
     padding: 5px;
-    background: conic-gradient(
-        from 0deg,
-        transparent 0deg 240deg,
-        rgba(255, 215, 0, 0.1) 245deg,
-        rgba(255, 215, 0, 0.2) 255deg,
-        rgba(255, 215, 0, 0.35) 265deg,
-        rgba(255, 215, 0, 0.5) 275deg,
-        rgba(255, 215, 0, 0.65) 285deg,
-        rgba(255, 215, 0, 0.8) 295deg,
-        rgba(255, 215, 0, 0.9) 305deg,
-        #FFD700 315deg,
-        #FFD700 330deg,
-        rgba(255, 215, 0, 0.95) 340deg,
-        rgba(255, 215, 0, 0.85) 347deg,
-        rgba(255, 215, 0, 0.7) 353deg,
-        rgba(255, 215, 0, 0.5) 357deg,
-        rgba(255, 215, 0, 0.3) 359deg,
-        transparent 360deg
-    );
+    background: conic-gradient(from 0deg,
+            transparent 0deg 240deg,
+            rgba(255, 215, 0, 0.1) 245deg,
+            rgba(255, 215, 0, 0.2) 255deg,
+            rgba(255, 215, 0, 0.35) 265deg,
+            rgba(255, 215, 0, 0.5) 275deg,
+            rgba(255, 215, 0, 0.65) 285deg,
+            rgba(255, 215, 0, 0.8) 295deg,
+            rgba(255, 215, 0, 0.9) 305deg,
+            #FFD700 315deg,
+            #FFD700 330deg,
+            rgba(255, 215, 0, 0.95) 340deg,
+            rgba(255, 215, 0, 0.85) 347deg,
+            rgba(255, 215, 0, 0.7) 353deg,
+            rgba(255, 215, 0, 0.5) 357deg,
+            rgba(255, 215, 0, 0.3) 359deg,
+            transparent 360deg);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -220,21 +218,19 @@ body {
     inset: -3px;
     border-radius: 50%;
     padding: 5px;
-    background: conic-gradient(
-        from 0deg,
-        transparent 0deg 240deg,
-        rgba(255, 215, 0, 0.05) 250deg,
-        rgba(255, 215, 0, 0.15) 265deg,
-        rgba(255, 215, 0, 0.3) 280deg,
-        rgba(255, 215, 0, 0.5) 295deg,
-        rgba(255, 215, 0, 0.7) 310deg,
-        #FFD700 325deg,
-        #FFD700 335deg,
-        rgba(255, 215, 0, 0.75) 345deg,
-        rgba(255, 215, 0, 0.5) 353deg,
-        rgba(255, 215, 0, 0.25) 358deg,
-        transparent 360deg
-    );
+    background: conic-gradient(from 0deg,
+            transparent 0deg 240deg,
+            rgba(255, 215, 0, 0.05) 250deg,
+            rgba(255, 215, 0, 0.15) 265deg,
+            rgba(255, 215, 0, 0.3) 280deg,
+            rgba(255, 215, 0, 0.5) 295deg,
+            rgba(255, 215, 0, 0.7) 310deg,
+            #FFD700 325deg,
+            #FFD700 335deg,
+            rgba(255, 215, 0, 0.75) 345deg,
+            rgba(255, 215, 0, 0.5) 353deg,
+            rgba(255, 215, 0, 0.25) 358deg,
+            transparent 360deg);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -246,6 +242,7 @@ body {
     0% {
         transform: rotate(0deg);
     }
+
     100% {
         transform: rotate(360deg);
     }
@@ -265,10 +262,13 @@ body {
 }
 
 @keyframes pulse-dot {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
         opacity: 1;
     }
+
     50% {
         transform: scale(1.2);
         opacity: 0.8;
@@ -292,6 +292,7 @@ body {
         opacity: 0;
         transform: translateX(-20px);
     }
+
     to {
         opacity: 1;
         transform: translateX(0);
@@ -303,6 +304,7 @@ body {
         opacity: 1;
         transform: translateX(0);
     }
+
     to {
         opacity: 0;
         transform: translateX(-20px);
@@ -1336,6 +1338,42 @@ body {
     text-transform: uppercase;
 }
 
+.bottom-btn.invite-btn {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #8B1A1A 0%, #5a1515 100%);
+    border: 3px solid #FFD700;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    gap: 5px;
+}
+
+.bottom-btn.invite-btn:hover {
+    background: rgba(139, 26, 26, 0.9);
+    border-color: #FFD700;
+    transform: scale(1.1);
+    box-shadow: 0 6px 18px rgba(255, 215, 0, 0.4);
+}
+
+.bottom-btn.invite-btn span {
+    font-size: 11px;
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    text-transform: uppercase;
+}
+
+.bottom-btn.invite-btn svg {
+    width: 30px;
+    height: 30px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
 .select-table-btn {
     background: linear-gradient(135deg, #8B1A1A 0%, #5a1515 100%);
     border: 3px solid #FFD700;
@@ -1678,6 +1716,7 @@ body {
         transform: translateX(400px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -1685,9 +1724,12 @@ body {
 }
 
 @keyframes bounce {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: translateY(0);
     }
+
     50% {
         transform: translateY(-4px);
     }

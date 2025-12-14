@@ -1,12 +1,12 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { apiPost } from '../../api';
-import { useAuth } from '../../context/AuthContext';
 import './Register.css';
 
 function Register() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const location = useLocation();
+
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -27,7 +27,7 @@ function Register() {
     e.preventDefault();
     setError('');
 
-    // Validate
+    // ===== Validate =====
     if (!formData.username || !formData.password || !formData.confirmPassword) {
       setError('Vui lòng nhập đầy đủ thông tin');
       return;
@@ -51,19 +51,26 @@ function Register() {
     setLoading(true);
 
     try {
+      // Lấy refCode từ URL nếu có
+      const params = new URLSearchParams(window.location.search);
+      let refCode = params.get('ref');
+      if (!refCode) {
+        refCode = localStorage.getItem('refCode') || undefined;
+      }
       const data = await apiPost('/auth/register', {
         username: formData.username,
-        password: formData.password
+        password: formData.password,
+        refCode // gửi refCode lên backend nếu có, nếu không thì undefined
       });
 
       if (data.success) {
-        // Chuyển đến trang liên kết email với userId, username VÀ password để tự động đăng nhập sau
-        navigate('/link-email', { 
-          state: { 
-            userId: data.user.userId,
-            username: data.user.username,
-            password: formData.password // Truyền password để auto-login sau
-          } 
+        // 🔑 LƯU refCode để login xử lý activate
+        navigate('/login', {
+          replace: true,
+          state: {
+            message: 'Đăng ký thành công! Vui lòng đăng nhập để nhận thưởng.',
+            refCode // ⬅️ truyền sang Login
+          }
         });
       } else {
         setError(data.message || 'Đăng ký thất bại');
@@ -96,7 +103,6 @@ function Register() {
               onChange={handleChange}
               placeholder="Nhập tên đăng nhập (tối thiểu 3 ký tự)"
               disabled={loading}
-              autoComplete="username"
             />
           </div>
 
@@ -110,7 +116,6 @@ function Register() {
               onChange={handleChange}
               placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)"
               disabled={loading}
-              autoComplete="new-password"
             />
           </div>
 
@@ -124,15 +129,10 @@ function Register() {
               onChange={handleChange}
               placeholder="Nhập lại mật khẩu"
               disabled={loading}
-              autoComplete="new-password"
             />
           </div>
 
-          <button 
-            type="submit" 
-            className="register-button"
-            disabled={loading}
-          >
+          <button type="submit" className="register-button" disabled={loading}>
             {loading ? 'Đang xử lý...' : 'Đăng Ký'}
           </button>
 

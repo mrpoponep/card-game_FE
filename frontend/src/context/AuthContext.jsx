@@ -1,7 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { apiPost } from '../api';
-import { setAccessToken as setApiAccessToken } from '../api';
+import * as api from '../api';
 
 const AuthContext = createContext(null);
 // Module-level shared promise to deduplicate automatic refresh calls across
@@ -11,14 +10,14 @@ let _autoRefreshPromise = null;
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [ready, setReady] = useState(false);
-  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(true); 
+  const [isAutoLoggingIn, setIsAutoLoggingIn] = useState(true);
   const navigate = useNavigate();
   const location = useLocation();
 
   const login = useCallback(async ({ username, password, remember }) => {
-    const res = await apiPost('/auth/login', { username, password, remember: !!remember });
+    const res = await api.apiPost('/auth/login', { username, password, remember: !!remember }, { skipAuth: true });
     if (res?.success) {
-      setApiAccessToken(res.accessToken);
+      api.setAccessToken(res.accessToken);
       setUser(res.user);
       try {
         if (res.sessionId) {
@@ -34,9 +33,9 @@ export function AuthProvider({ children }) {
 
   const logout = useCallback(async () => {
     try {
-      await apiPost('/auth/logout', {}, {sessionId: (() => { try { return sessionStorage.getItem('session_id'); } catch (e) { return null; } })() });
-    } catch {}
-    setApiAccessToken(null);
+      await api.apiPost('/auth/logout', {}, { sessionId: (() => { try { return sessionStorage.getItem('session_id'); } catch (e) { return null; } })() });
+    } catch { }
+    api.setAccessToken(null);
     setUser(null);
     try { sessionStorage.removeItem('session_id'); } catch (e) { /* ignore */ }
     // Clear any pending auto-refresh so future mounts can attempt refresh again
@@ -85,7 +84,7 @@ export function AuthProvider({ children }) {
         if (data?.success && data?.user) {
           setUser(data.user);
           if (data?.accessToken) {
-            setApiAccessToken(data.accessToken);
+            api.setAccessToken(data.accessToken);
           }
           return { success: true, user: data.user };
         }
@@ -100,36 +99,36 @@ export function AuthProvider({ children }) {
       console.error('Failed to refetch user data:', err);
     } finally {
       _isRefreshing = false;
-      }
+    }
 
     return { success: false };
   }, []);
-  
+
   // --- MỚI: Hàm tải lại thông tin user từ Server ---
   const reloadUser = useCallback(async () => {
     try {
-        const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
-        // Thêm timestamp để tránh cache trình duyệt
-        const res = await fetch(`${API_BASE}/auth/refresh?t=${Date.now()}`, {
-          method: 'POST',
-          credentials: 'include',
-          headers: {
-              'Cache-Control': 'no-cache, no-store, must-revalidate',
-              'Pragma': 'no-cache',
-              'Expires': '0'
-          }
-        });
-        
-        if (res.ok) {
-          const data = await res.json();
-          if (data?.success && data?.user) {
-            console.log("User reloaded:", data.user); // Log kiểm tra
-            setUser(data.user); 
-            return true;
-          }
+      const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
+      // Thêm timestamp để tránh cache trình duyệt
+      const res = await fetch(`${API_BASE}/auth/refresh?t=${Date.now()}`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache',
+          'Expires': '0'
         }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.success && data?.user) {
+          console.log("User reloaded:", data.user); // Log kiểm tra
+          setUser(data.user);
+          return true;
+        }
+      }
     } catch (e) {
-        console.error("Reload user failed", e);
+      console.error("Reload user failed", e);
     }
     return false;
   }, []);
@@ -142,14 +141,10 @@ export function AuthProvider({ children }) {
       if (!_autoRefreshPromise) {
         _autoRefreshPromise = (async () => {
           try {
-            const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3000/api';
-            const res = await fetch(`${API_BASE}/auth/refresh`, {
-              method: 'POST',
-              credentials: 'include'
-            });
-            if (res.ok) {
-              const data = await res.json();
-              return data;
+            // Sử dụng apiPost để đảm bảo skipAuth: true
+            const res = await api.apiPost('/auth/refresh', null, { skipAuth: true, noThrow: true, showErrorModal: false });
+            if (res?.success && res?.accessToken) {
+              return res;
             }
           } catch (err) {
             return null;
@@ -162,7 +157,7 @@ export function AuthProvider({ children }) {
         const data = await _autoRefreshPromise;
         if (data?.success && data?.accessToken) {
           if (!mounted) return;
-          setApiAccessToken(data.accessToken);
+          api.setAccessToken(data.accessToken);
           setUser(data.user || null);
           // Tự động chuyển đến trang chính nếu đang ở trang login
           if (location.pathname === '/login') {
@@ -181,19 +176,19 @@ export function AuthProvider({ children }) {
     return () => { mounted = false; };
   }, []); // Chỉ chạy 1 lần khi mount
 
-  const value = useMemo(() => ({ 
-    user, 
-    ready, 
-    isAutoLoggingIn, 
-    login, 
-    logout, 
+  const value = useMemo(() => ({
+    user,
+    ready,
+    isAutoLoggingIn,
+    login,
+    logout,
     updateBalance,
     updateGems,
     updateUser,
     refetchUserData,
     reloadUser // Export hàm này
   }), [user, ready, isAutoLoggingIn, login, logout, updateBalance, updateGems, updateUser, reloadUser, refetchUserData]);
-  
+
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
@@ -206,13 +201,13 @@ export function useAuth() {
 export function RequireAuth({ children }) {
   const { user, ready } = useAuth();
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     if (ready && !user) {
       navigate('/login', { replace: true });
     }
   }, [ready, user, navigate]);
-  
+
   if (!ready) return null; // hoặc spinner
   if (!user) return null;
   return children;
