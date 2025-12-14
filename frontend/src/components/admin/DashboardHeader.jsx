@@ -8,7 +8,7 @@ export default function DashboardHeader({ tab, onChange }) {
         tabs={[
           { value: "overview", label: "Tổng quan" },
           { value: "publicTables", label: "Bàn public" },
-          { value: "bannedPlayers", label: "Banned Player" },
+          { value: "bannedPlayers", label: "Report" },
         ]}
         value={tab}
         onChange={onChange}

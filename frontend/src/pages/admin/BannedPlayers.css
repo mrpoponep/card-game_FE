@@ -64,6 +64,37 @@
   min-height: 80vh;
   font-family: 'Segoe UI', Arial, sans-serif;
 }
+
+/* Scrollable table container for report list */
+.table-container {
+  max-height: 70vh;
+  overflow: hidden;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+}
+.table-scroll-wrapper {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+.data-table th, .data-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.data-table th {
+  background: #f9fafb;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
 .banned-header {
   display: flex;
   align-items: center;

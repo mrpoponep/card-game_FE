@@ -30,7 +30,7 @@ const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false, is
       {/* Badge Tiền Cược */}
       {player && player.betThisRound > 0 && (
         <div className="player-bet-badge-floating">
-           <span className="chip-icon">🪙</span> {formatMoney(player.betThisRound)}
+           <span className="room-chip-icon">🪙</span> {formatMoney(player.betThisRound)}
         </div>
       )}
 
@@ -104,6 +104,11 @@ function Room() {
   const [showRaisePopup, setShowRaisePopup] = useState(false);
   const [raiseValue, setRaiseValue] = useState(0);
 
+  // Chat notification states
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [floatingMessage, setFloatingMessage] = useState(null);
+  const floatingMessageTimeoutRef = useRef(null);
+
   // Match result modal state
   const [showMatchResult, setShowMatchResult] = useState(false);
   const [matchResultData, setMatchResultData] = useState(null);
@@ -130,6 +135,44 @@ function Room() {
       socket.emit('playerAction', { action, amount });
       setShowRaisePopup(false);
   };
+
+  // Handle new chat message - show floating preview and increment unread
+  const handleNewChatMessage = (message) => {
+    // Only show notification if chat is closed and message is from others
+    if (!isChatOpen && message.userId !== user?.userId) {
+      setUnreadCount(prev => prev + 1);
+      setFloatingMessage(message);
+
+      // Clear existing timeout
+      if (floatingMessageTimeoutRef.current) {
+        clearTimeout(floatingMessageTimeoutRef.current);
+      }
+
+      // Hide floating message after 10 seconds
+      floatingMessageTimeoutRef.current = setTimeout(() => {
+        setFloatingMessage(null);
+      }, 10000);
+    }
+  };
+
+  // Handle opening chat - reset unread count
+  const handleOpenChat = () => {
+    setIsChatOpen(true);
+    setUnreadCount(0);
+    setFloatingMessage(null);
+    if (floatingMessageTimeoutRef.current) {
+      clearTimeout(floatingMessageTimeoutRef.current);
+    }
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (floatingMessageTimeoutRef.current) {
+        clearTimeout(floatingMessageTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Store seats ref for use in handleGameResult
   const seatsRef = useRef([]);
@@ -316,13 +359,38 @@ function Room() {
             </div>
         </div>
         <div className="right-controls">
-            <button className="chat-toggle-btn" onClick={() => setIsChatOpen(!isChatOpen)}>💬</button>
+            {/* Floating message preview */}
+            {floatingMessage && !isChatOpen && (
+              <div className="floating-message-preview">
+                <span className="floating-message-sender">{floatingMessage.username}:</span>
+                <span className="floating-message-text">{floatingMessage.text}</span>
+              </div>
+            )}
+            <button className="chat-toggle-btn" onClick={handleOpenChat}>
+              💬
+              {unreadCount > 0 && (
+                <span className="unread-badge">
+                  {unreadCount > 99 ? '99+' : unreadCount}
+                </span>
+              )}
+            </button>
         </div>
       </div>
 
       <div className="game-table">
         <div className="table-inner-border"></div>
         
+        {/* Pot Display with Image - Shows during active gameplay */}
+        {['playing', 'preflop', 'flop', 'turn', 'river', 'showdown'].includes(gameState.status) && gameState.pot > 0 && (
+          <div className="pot-display-container">
+            <img src="/assets/Room/Pot.png" alt="Pot" className="pot-image" />
+            <div className="pot-amount">
+              <span className="pot-label">POT</span>
+              <span className="pot-value">{formatMoney(gameState.pot)}</span>
+            </div>
+          </div>
+        )}
+
         <div className={`table-center-message ${gameState.status !== 'waiting' && gameState.status !== 'countdown' && gameState.status !== 'finished' ? 'transparent-msg' : ''}`}>
           <div className="main-message">{centerMsg.main}</div>
           <div className="sub-message">{centerMsg.sub}</div>
@@ -341,7 +409,7 @@ function Room() {
               <button className="game-btn fold-btn" onClick={() => handleAction('fold')}>BỎ BÀI</button>
               
               {currentCallAmount <= 0 ? (
-                  <button className="game-btn check-btn" onClick={() => handleAction('check')}>XEM</button>
+                  <button className="game-btn check-btn" onClick={() => handleAction('check')}>CHECK</button>
               ) : (
                   <button className="game-btn call-btn" onClick={() => handleAction('call')}>THEO {formatMoney(currentCallAmount)}</button>
               )}
@@ -404,7 +472,12 @@ function Room() {
         />
       )}
 
-      <RoomChat isOpen={isChatOpen} onClose={() => setIsChatOpen(false)} roomCode={roomCode} />
+      <RoomChat
+        isOpen={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        roomCode={roomCode}
+        onNewMessage={handleNewChatMessage}
+      />
     </div>
   );
 }

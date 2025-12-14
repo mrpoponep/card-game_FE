@@ -1,7 +1,17 @@
 import React, { useState, useCallback } from 'react';
 import { useModalAnimation } from '../../hooks/useModalAnimation';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
+import Card from '../Card/Card';
 import './PokerRules.css';
+
+// Helper component để render một dãy lá bài cho hand example
+const HandExample = ({ cards }) => (
+  <div className="hand-example-cards">
+    {cards.map((card, index) => (
+      <Card key={index} rank={card.rank} suit={card.suit} faceUp={true} size="mini" />
+    ))}
+  </div>
+);
 
 const PokerRules = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('rules');
@@ -64,38 +74,28 @@ const PokerRules = ({ isOpen, onClose }) => {
                 <h3>Giá trị lá bài (từ thấp đến cao):</h3>
                 <div className="card-sequence">
                   <div className="card-row">
-                    <div className="card">2</div>
-                    <div className="card">3</div>
-                    <div className="card">4</div>
-                    <div className="card">5</div>
-                    <div className="card">6</div>
-                    <div className="card">7</div>
-                    <div className="card">8</div>
-                    <div className="card">9</div>
-                    <div className="card">10</div>
-                    <div className="card">J</div>
-                    <div className="card">Q</div>
-                    <div className="card">K</div>
-                    <div className="card">A</div>
+                    {['2', '3', '4', '5', '6', '7', '8', '9', 'T', 'J', 'Q', 'K', 'A'].map(rank => (
+                      <Card key={rank} rank={rank} suit="S" faceUp={true} size="small" />
+                    ))}
                   </div>
                 </div>
 
                 <h4>Các chất bài:</h4>
                 <div className="suit-ranking">
                   <div className="suit-card">
-                    <div className="card suit-spades">♠</div>
+                    <Card rank="A" suit="S" faceUp={true} size="small" />
                     <span>Spades (Bích)</span>
                   </div>
                   <div className="suit-card">
-                    <div className="card suit-hearts">♥</div>
+                    <Card rank="A" suit="H" faceUp={true} size="small" />
                     <span>Hearts (Cơ)</span>
                   </div>
                   <div className="suit-card">
-                    <div className="card suit-diamonds">♦</div>
+                    <Card rank="A" suit="D" faceUp={true} size="small" />
                     <span>Diamonds (Rô)</span>
                   </div>
                   <div className="suit-card">
-                    <div className="card suit-clubs">♣</div>
+                    <Card rank="A" suit="C" faceUp={true} size="small" />
                     <span>Clubs (Chuồn)</span>
                   </div>
                 </div>
@@ -114,7 +114,10 @@ const PokerRules = ({ isOpen, onClose }) => {
                     <div className="rank-badge">#1</div>
                     <div className="hand-info">
                       <strong>Royal Flush (Thùng Phá Sảnh Rồng)</strong>
-                      <p className="hand-example">10<span className="suit-spades">♠</span> J<span className="suit-spades">♠</span> Q<span className="suit-spades">♠</span> K<span className="suit-spades">♠</span> A<span className="suit-spades">♠</span></p>
+                      <HandExample cards={[
+                        {rank: 'T', suit: 'S'}, {rank: 'J', suit: 'S'}, {rank: 'Q', suit: 'S'},
+                        {rank: 'K', suit: 'S'}, {rank: 'A', suit: 'S'}
+                      ]} />
                     </div>
                   </div>
 
@@ -122,7 +125,10 @@ const PokerRules = ({ isOpen, onClose }) => {
                     <div className="rank-badge">#6</div>
                     <div className="hand-info">
                       <strong>Straight (Sảnh)</strong>
-                      <p className="hand-example">6<span className="suit-spades">♠</span> 7<span className="suit-clubs">♣</span> 8<span className="suit-diamonds">♦</span> 9<span className="suit-hearts">♥</span> 10<span className="suit-spades">♠</span></p>
+                      <HandExample cards={[
+                        {rank: '6', suit: 'S'}, {rank: '7', suit: 'C'}, {rank: '8', suit: 'D'},
+                        {rank: '9', suit: 'H'}, {rank: 'T', suit: 'S'}
+                      ]} />
                     </div>
                   </div>
 
@@ -130,7 +136,10 @@ const PokerRules = ({ isOpen, onClose }) => {
                     <div className="rank-badge">#2</div>
                     <div className="hand-info">
                       <strong>Straight Flush (Thùng Phá Sảnh)</strong>
-                      <p className="hand-example">5<span className="suit-hearts">♥</span> 6<span className="suit-hearts">♥</span> 7<span className="suit-hearts">♥</span> 8<span className="suit-hearts">♥</span> 9<span className="suit-hearts">♥</span></p>
+                      <HandExample cards={[
+                        {rank: '5', suit: 'H'}, {rank: '6', suit: 'H'}, {rank: '7', suit: 'H'},
+                        {rank: '8', suit: 'H'}, {rank: '9', suit: 'H'}
+                      ]} />
                     </div>
                   </div>
 
@@ -138,7 +147,10 @@ const PokerRules = ({ isOpen, onClose }) => {
                     <div className="rank-badge">#7</div>
                     <div className="hand-info">
                       <strong>Three of a Kind (Sám Cô)</strong>
-                      <p className="hand-example">2<span className="suit-spades">♠</span> 7<span className="suit-spades">♠</span> 7<span className="suit-hearts">♥</span> 7<span className="suit-diamonds">♦</span> K<span className="suit-clubs">♣</span></p>
+                      <HandExample cards={[
+                        {rank: '2', suit: 'S'}, {rank: '7', suit: 'S'}, {rank: '7', suit: 'H'},
+                        {rank: '7', suit: 'D'}, {rank: 'K', suit: 'C'}
+                      ]} />
                     </div>
                   </div>
 
@@ -146,7 +158,10 @@ const PokerRules = ({ isOpen, onClose }) => {
                     <div className="rank-badge">#3</div>
                     <div className="hand-info">
                       <strong>Four of a Kind (Tứ Quý)</strong>
-                      <p className="hand-example">3<span className="suit-spades">♠</span> K<span className="suit-spades">♠</span> K<span className="suit-hearts">♥</span> K<span className="suit-diamonds">♦</span> K<span className="suit-clubs">♣</span></p>
+                      <HandExample cards={[
+                        {rank: '3', suit: 'S'}, {rank: 'K', suit: 'S'}, {rank: 'K', suit: 'H'},
+                        {rank: 'K', suit: 'D'}, {rank: 'K', suit: 'C'}
+                      ]} />
                     </div>
                   </div>
 
@@ -154,7 +169,10 @@ const PokerRules = ({ isOpen, onClose }) => {
                     <div className="rank-badge">#8</div>
                     <div className="hand-info">
                       <strong>Two Pair (Hai Đôi)</strong>
-                      <p className="hand-example">5<span className="suit-diamonds">♦</span> 5<span className="suit-clubs">♣</span> J<span className="suit-spades">♠</span> J<span className="suit-hearts">♥</span> A<span className="suit-spades">♠</span></p>
+                      <HandExample cards={[
+                        {rank: '5', suit: 'D'}, {rank: '5', suit: 'C'}, {rank: 'J', suit: 'S'},
+                        {rank: 'J', suit: 'H'}, {rank: 'A', suit: 'S'}
+                      ]} />
                     </div>
                   </div>
 
@@ -162,7 +180,10 @@ const PokerRules = ({ isOpen, onClose }) => {
                     <div className="rank-badge">#4</div>
                     <div className="hand-info">
                       <strong>Full House (Cù Lũ)</strong>
-                      <p className="hand-example">8<span className="suit-clubs">♣</span> 8<span className="suit-spades">♠</span> A<span className="suit-spades">♠</span> A<span className="suit-hearts">♥</span> A<span className="suit-diamonds">♦</span></p>
+                      <HandExample cards={[
+                        {rank: '8', suit: 'C'}, {rank: '8', suit: 'S'}, {rank: 'A', suit: 'S'},
+                        {rank: 'A', suit: 'H'}, {rank: 'A', suit: 'D'}
+                      ]} />
                     </div>
                   </div>
 
@@ -170,7 +191,10 @@ const PokerRules = ({ isOpen, onClose }) => {
                     <div className="rank-badge">#9</div>
                     <div className="hand-info">
                       <strong>One Pair (Một Đôi)</strong>
-                      <p className="hand-example">4<span className="suit-spades">♠</span> 9<span className="suit-spades">♠</span> 9<span className="suit-hearts">♥</span> J<span className="suit-clubs">♣</span> A<span className="suit-diamonds">♦</span></p>
+                      <HandExample cards={[
+                        {rank: '4', suit: 'S'}, {rank: '9', suit: 'S'}, {rank: '9', suit: 'H'},
+                        {rank: 'J', suit: 'C'}, {rank: 'A', suit: 'D'}
+                      ]} />
                     </div>
                   </div>
 
@@ -178,7 +202,10 @@ const PokerRules = ({ isOpen, onClose }) => {
                     <div className="rank-badge">#5</div>
                     <div className="hand-info">
                       <strong>Flush (Thùng)</strong>
-                      <p className="hand-example">3<span className="suit-diamonds">♦</span> 6<span className="suit-diamonds">♦</span> 9<span className="suit-diamonds">♦</span> J<span className="suit-diamonds">♦</span> K<span className="suit-diamonds">♦</span></p>
+                      <HandExample cards={[
+                        {rank: '3', suit: 'D'}, {rank: '6', suit: 'D'}, {rank: '9', suit: 'D'},
+                        {rank: 'J', suit: 'D'}, {rank: 'K', suit: 'D'}
+                      ]} />
                     </div>
                   </div>
 
@@ -186,7 +213,10 @@ const PokerRules = ({ isOpen, onClose }) => {
                     <div className="rank-badge">#10</div>
                     <div className="hand-info">
                       <strong>High Card (Mậu Thầu)</strong>
-                      <p className="hand-example">3<span className="suit-spades">♠</span> 7<span className="suit-clubs">♣</span> 10<span className="suit-hearts">♥</span> K<span className="suit-diamonds">♦</span> A<span className="suit-spades">♠</span></p>
+                      <HandExample cards={[
+                        {rank: '3', suit: 'S'}, {rank: '7', suit: 'C'}, {rank: 'T', suit: 'H'},
+                        {rank: 'K', suit: 'D'}, {rank: 'A', suit: 'S'}
+                      ]} />
                     </div>
                   </div>
                 </div>

@@ -5,7 +5,7 @@ import { useModalAnimation } from '../../hooks/useModalAnimation';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './GiftReward.css';
 
-export default function GiftReward({ isOpen, onClose }) {
+export default function GiftReward({ isOpen, onClose, onClaimed }) {
   const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
   useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
 
@@ -133,6 +133,12 @@ export default function GiftReward({ isOpen, onClose }) {
           canClaim: false,
           alreadyClaimed: true
         }));
+        
+        // Kiểm tra xem còn reward nào có thể claim không
+        // Nếu không còn thì xóa dấu chấm đỏ
+        if (!monthlyStatus?.canClaim && onClaimed) {
+          onClaimed();
+        }
       }
     } catch (err) {
       console.error('Error claiming weekly reward:', err);
@@ -160,6 +166,12 @@ export default function GiftReward({ isOpen, onClose }) {
           canClaim: false,
           alreadyClaimed: true
         }));
+        
+        // Kiểm tra xem còn reward nào có thể claim không
+        // Nếu không còn thì xóa dấu chấm đỏ
+        if (!weeklyStatus?.canClaim && onClaimed) {
+          onClaimed();
+        }
       }
     } catch (err) {
       console.error('Error claiming monthly reward:', err);
@@ -185,7 +197,7 @@ export default function GiftReward({ isOpen, onClose }) {
         <button className="modal-close-btn" onClick={handleClose}>✕</button>
         
         <div className="modal-header">
-          <h2 className="gift-reward-title">🎁 Quà Tặng</h2>
+          <h2 className="gift-reward-title">🎁 Thành tựu</h2>
         </div>
         
         <div className="modal-content gift-reward-content">
@@ -199,7 +211,7 @@ export default function GiftReward({ isOpen, onClose }) {
                 <div className="gift-card weekly-card">
                   <div className="gift-card-header">
                     <div className="gift-icon">📅</div>
-                    <h3 className="gift-card-title">Thưởng Tuần</h3>
+                    <h3 className="gift-card-title">Tuần</h3>
                   </div>
 
                   <div className="gift-card-body">
@@ -231,7 +243,7 @@ export default function GiftReward({ isOpen, onClose }) {
                 <div className="gift-card monthly-card">
                   <div className="gift-card-header">
                     <div className="gift-icon">🏆</div>
-                    <h3 className="gift-card-title">Thưởng Tháng</h3>
+                    <h3 className="gift-card-title">Tháng</h3>
                   </div>
 
                   <div className="gift-card-body">

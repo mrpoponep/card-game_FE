@@ -86,36 +86,25 @@
   display: flex;
   justify-content: center;
   margin: 20px 0;
+  overflow-x: auto;
 }
 
 .card-row {
   display: flex;
-  gap: 5px;
+  gap: 2px;
   flex-wrap: wrap;
   justify-content: center;
 }
 
-.card {
-  background: white;
-  color: black;
-  border: 2px solid #333;
-  border-radius: 8px;
-  padding: 8px 6px;
-  font-size: 14px;
-  font-weight: bold;
-  text-align: center;
-  min-width: 35px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+/* Override card margins for rules display */
+.card-ranking-section .card {
+  margin: 3px;
 }
 
 .suit-ranking {
   display: flex;
   justify-content: center;
-  gap: 30px;
+  gap: 20px;
   margin: 20px 0;
   flex-wrap: wrap;
 }
@@ -124,7 +113,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .suit-card span {
@@ -133,25 +122,8 @@
   font-size: 14px;
 }
 
-/* Màu cho các ký hiệu bài */
-.suit-spades,
-.suit-clubs {
-  color: #000 !important;
-}
-
-.suit-hearts,
-.suit-diamonds {
-  color: #dc143c !important;
-}
-
-.hand-example .suit-spades,
-.hand-example .suit-clubs {
-  color: #000;
-}
-
-.hand-example .suit-hearts,
-.hand-example .suit-diamonds {
-  color: #dc143c;
+.suit-card .card {
+  margin: 0;
 }
 
 .betting-section {
@@ -230,13 +202,15 @@
   text-overflow: ellipsis;
 }
 
-.hand-example {
-  font-size: 16px;
-  font-weight: bold;
-  color: white;
+/* Container cho 5 lá bài mini trong hand example */
+.hand-example-cards {
+  display: flex;
+  gap: 2px;
+  margin-top: 5px;
+}
+
+.hand-example-cards .card {
   margin: 0;
-  letter-spacing: 2px;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .hand-desc {

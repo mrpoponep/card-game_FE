@@ -1,0 +1,487 @@
+/* Overlay */
+.referral-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Container */
+.referral-container {
+    position: relative;
+    max-width: 450px;
+    width: 100%;
+    background: linear-gradient(145deg, #1e1e1e, #333333);
+    color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.9);
+    border: 2px solid #ffcc00;
+    animation: slideUp 0.3s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.referral-container.referral-redblackgold {
+    max-width: 600px;
+    background: linear-gradient(135deg, #1a0000 0%, #222 60%, #ffcc00 100%);
+    border: 3px solid #ff0000;
+    box-shadow: 0 8px 40px 0 rgba(255, 0, 0, 0.25), 0 0 0 8px #ffcc0033;
+    color: #fff;
+}
+
+.referral-container.referral-redblackgold .referral-header h2 {
+    color: #ff0000;
+    text-shadow: 0 2px 8px #ffcc0099, 0 0 2px #000;
+}
+
+.referral-container.referral-redblackgold .referral-header strong,
+.referral-container.referral-redblackgold .stat-value,
+.referral-container.referral-redblackgold .btn-claim-reward {
+    color: #ffcc00;
+}
+
+.referral-container.referral-redblackgold .stat-box {
+    border-left: 4px solid #ff0000;
+    background: linear-gradient(135deg, #2a0000 0%, #3a3a3a 80%);
+}
+
+.referral-container.referral-redblackgold .btn-copy {
+    background: #ff0000;
+    color: #fff;
+}
+
+.referral-container.referral-redblackgold .btn-copy:hover {
+    background: #b30000;
+}
+
+.referral-container.referral-redblackgold .btn-copy.success {
+    background: #ffcc00;
+    color: #222;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Custom Scrollbar */
+.referral-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.referral-container::-webkit-scrollbar-track {
+    background: #1e1e1e;
+    border-radius: 10px;
+}
+
+.referral-container::-webkit-scrollbar-thumb {
+    background: #ffcc00;
+    border-radius: 10px;
+}
+
+/* Close Button */
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: transparent;
+    border: none;
+    color: #ffcc00;
+    font-size: 28px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-btn:hover {
+    background: rgba(255, 204, 0, 0.2);
+    transform: rotate(90deg);
+}
+
+/* Header */
+.referral-header {
+    text-align: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px dashed #444;
+}
+
+.referral-header h2 {
+    color: #ffcc00;
+    margin: 0 0 10px;
+    font-size: 26px;
+    text-shadow: 0 2px 4px rgba(255, 204, 0, 0.3);
+}
+
+.referral-header p {
+    font-size: 14px;
+    color: #ccc;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.referral-header strong {
+    color: #ffcc00;
+    font-size: 16px;
+}
+
+/* Section */
+.referral-section {
+    margin: 20px 0;
+}
+
+.referral-section h3 {
+    color: #ffcc00;
+    font-size: 18px;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed #444;
+}
+
+/* Input Group */
+.share-input-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+#referralLink {
+    flex-grow: 1;
+    padding: 12px 15px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    background: #000;
+    color: #999;
+    font-size: 14px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: all 0.2s;
+}
+
+#referralLink:focus {
+    outline: none;
+    border-color: #ffcc00;
+    color: #fff;
+}
+
+.small-text {
+    font-size: 13px;
+    color: #aaa;
+    text-align: center;
+    margin: 5px 0 0;
+}
+
+.small-text strong {
+    color: #ffcc00;
+    font-size: 14px;
+}
+
+/* Buttons */
+.btn {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Copy Button */
+.btn-copy {
+    background: #007bff;
+    color: white;
+    flex-shrink: 0;
+}
+
+.btn-copy:hover {
+    background: #0056b3;
+}
+
+.btn-copy.success {
+    background: #28a745;
+}
+
+/* Red Copy Button */
+.btn-copy-red {
+    background: #e60000;
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.btn-copy-red:hover {
+    background: #b30000;
+}
+
+.btn-copy-red.success {
+    background: #ffcc00;
+    color: #222;
+}
+
+/* Share Buttons Grid */
+.share-channels h3 {
+    text-align: center;
+}
+
+.share-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.btn-facebook {
+    background: #3b5998;
+    color: white;
+}
+
+.btn-facebook:hover {
+    background: #2d4373;
+}
+
+.btn-messenger {
+    background: #0084ff;
+    color: white;
+}
+
+.btn-messenger:hover {
+    background: #006acc;
+}
+
+.btn-telegram {
+    background: #0088cc;
+    color: white;
+}
+
+.btn-telegram:hover {
+    background: #006699;
+}
+
+.btn-zalo {
+    background: #0068ff;
+    color: white;
+}
+
+.btn-zalo:hover {
+    background: #0052cc;
+}
+
+/* Statistics Section */
+.statistics-section {
+    text-align: center;
+}
+
+.stats-grid {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.stat-box {
+    background: linear-gradient(145deg, #2a2a2a, #3a3a3a);
+    padding: 18px 10px;
+    border-radius: 10px;
+    text-align: center;
+    flex: 1;
+    border-left: 4px solid #ffcc00;
+    box-shadow:
+        inset 0 0 10px rgba(255, 204, 0, 0.1),
+        0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s;
+}
+
+.stat-box:hover {
+    transform: translateY(-3px);
+    box-shadow:
+        inset 0 0 15px rgba(255, 204, 0, 0.2),
+        0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+.stat-value {
+    display: block;
+    font-size: 26px;
+    font-weight: bold;
+    color: #ffcc00;
+    margin-bottom: 5px;
+    text-shadow: 0 2px 4px rgba(255, 204, 0, 0.3);
+}
+
+.chip-icon::after {
+    content: ' 💰';
+    margin-left: 5px;
+    font-size: 20px;
+}
+
+.stat-label {
+    display: block;
+    font-size: 11px;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Claim Reward Button */
+.btn-claim-reward {
+    margin-top: 20px;
+    background: transparent;
+    color: #ffcc00;
+    border: 2px solid #ffcc00;
+    width: 100%;
+    font-size: 16px;
+    padding: 14px;
+}
+
+.btn-claim-reward:hover {
+    background: #ffcc00;
+    color: #000;
+}
+
+/* Divider */
+hr {
+    border: none;
+    border-top: 1px dashed #444;
+    margin: 25px 0;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #333;
+    border-top: 4px solid #ffcc00;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Error Message */
+.error-message {
+    background: rgba(220, 53, 69, 0.2);
+    border: 1px solid #dc3545;
+    color: #ff6b6b;
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 15px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .referral-container {
+        padding: 20px;
+        max-width: 100%;
+    }
+
+    .referral-header h2 {
+        font-size: 22px;
+    }
+
+    .stats-grid {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .share-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .share-input-group {
+        flex-direction: column;
+    }
+
+    .btn-copy {
+        width: 100%;
+    }
+}
+
+/* Animation for stats */
+@keyframes countUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.stat-value {
+    animation: countUp 0.5s ease;
+}

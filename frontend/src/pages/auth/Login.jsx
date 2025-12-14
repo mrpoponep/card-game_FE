@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { trackReferralClick } from '../../services/referral';
 import './Login.css';
 
 export default function Login() {
@@ -11,6 +12,27 @@ export default function Login() {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [loading, setLoading] = useState(false);
+
+  /**
+   * ✅ TRACK REFERRAL CLICK
+   * Chỉ chạy 1 lần khi user mở link có ?ref=
+   */
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const refCode = params.get('ref');
+    if (refCode) {
+      // Lưu refCode vào localStorage để Register.jsx có thể lấy lại nếu user chuyển trang
+      localStorage.setItem('refCode', refCode);
+      trackReferralClick(refCode)
+        .then(() => {
+          console.log('✅ Referral click tracked:', refCode);
+        })
+        .catch(() => {
+          // Không cần show error cho user
+          console.warn('⚠️ Failed to track referral click');
+        });
+    }
+  }, [location.search]);
 
   // Nếu đã đăng nhập, chuyển về trang chính
   useEffect(() => {
@@ -23,7 +45,6 @@ export default function Login() {
   useEffect(() => {
     if (location.state?.message) {
       setSuccessMessage(location.state.message);
-      // Clear state sau khi hiển thị
       window.history.replaceState({}, document.title);
     }
   }, [location]);
@@ -41,11 +62,7 @@ export default function Login() {
           onSubmit={async (e) => {
             e.preventDefault();
 
-            // 🔥 Guard: Nếu đang loading thì không submit
-            if (loading) {
-              console.log('⏳ Login already in progress, skipping...');
-              return;
-            }
+            if (loading) return;
 
             setError('');
             setLoading(true);
@@ -54,7 +71,9 @@ export default function Login() {
               const username = form.get('username');
               const password = form.get('password');
               const remember = form.get('remember') === 'on';
+
               const result = await login({ username, password, remember });
+
               if (result.ok) {
                 if (result.user?.role === 'Admin') {
                   navigate('/admin', { replace: true });
@@ -64,7 +83,7 @@ export default function Login() {
               } else {
                 setError(result.error || 'Đăng nhập thất bại');
               }
-            } catch (err) {
+            } catch {
               setError('Đã xảy ra lỗi khi đăng nhập');
             } finally {
               setLoading(false);
@@ -73,7 +92,14 @@ export default function Login() {
         >
           <div className="form-group">
             <label htmlFor="username">Tên đăng nhập hoặc Email</label>
-            <input id="username" name="username" type="text" placeholder="Nhập tên đăng nhập hoặc email" autoComplete="username" required />
+            <input
+              id="username"
+              name="username"
+              type="text"
+              placeholder="Nhập tên đăng nhập hoặc email"
+              autoComplete="username"
+              required
+            />
           </div>
 
           <div className="form-group">
@@ -91,7 +117,7 @@ export default function Login() {
                 type="button"
                 className="toggle-password"
                 aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
-                onClick={() => setShowPassword((v) => !v)}
+                onClick={() => setShowPassword(v => !v)}
               >
                 {showPassword ? '🙈' : '👁️'}
               </button>
@@ -110,11 +136,17 @@ export default function Login() {
             {loading ? 'Đang xử lý...' : 'Đăng nhập'}
           </button>
 
-          {successMessage && <div className="success-message" role="status">{successMessage}</div>}
-          {error && <div className="error" role="alert">{error}</div>}
+          {successMessage && <div className="success-message">{successMessage}</div>}
+          {error && <div className="error">{error}</div>}
 
           <p className="signup-text">
-            Mới tham gia? <Link to="/register" className="link">Tạo tài khoản</Link>
+            Mới tham gia? <Link to="/register" className="link" onClick={() => {
+              // Nếu có refCode trong localStorage, truyền sang Register qua state
+              const refCode = localStorage.getItem('refCode');
+              if (refCode) {
+                navigate('/register', { state: { refCode } });
+              }
+            }}>Tạo tài khoản</Link>
           </p>
         </form>
       </div>
