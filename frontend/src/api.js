@@ -140,12 +140,6 @@ export async function getBannedReportById(reportId) {
   return data; // single report object
 }
 
-/** Xóa báo cáo theo id */
-export async function deleteBannedReport(reportId) {
-  const data = await request(`/ban/${reportId}`, { method: 'DELETE' });
-  return data; // { message, deletedRows }
-}
-
 /**
  * Gọi AI để phân tích hội thoại và (nếu có vi phạm) lưu báo cáo
  * @param {{reportedId:number, conversation: Array}} payload
@@ -302,11 +296,23 @@ async function apiGetTransactionHistory() {
 }
 
 /** Lấy danh sách Report từ bảng Report (thay vì Banned_Player) */
-export async function listAllReports() {
+async function listAllReports() {
   const data = await apiGet('/reports/'); 
   // Lưu ý: route trong server.js của bạn có thể là app.use('/api/reports', reportRoutes)
   // Nếu chưa có, hãy đảm bảo server.js đã mount route này.
   return data.data; 
+}
+/** Cập nhật trạng thái đánh giá của báo cáo */
+async function updateReportVerdict(reportId, verdict) {
+  // verdict: 'violation_detected' | 'clean' | 'pending'
+  const data = await apiPatch(`/reports/${reportId}/verdict`, { verdict });
+  return data;
+}
+
+  async function deleteBannedReport(reportId) {
+  // Đổi endpoint từ `/ban/${reportId}` thành `/reports/${reportId}`
+  const data = await request(`/reports/${reportId}`, { method: 'DELETE' });
+  return data; 
 }
 
 export {
@@ -319,4 +325,7 @@ export {
   fetchActiveTablesSeries,
   fetchTotalActiveTables,
   apiGetTransactionHistory,
+  listAllReports,
+  updateReportVerdict,
+  deleteBannedReport
 }

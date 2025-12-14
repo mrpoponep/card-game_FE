@@ -3,17 +3,13 @@ import './ReportPlayer.css';
 import { apiPost } from '../../api';
 
 const ReportPlayer = ({ playerName, playerId, reporterId, roomCode, onClose, onSubmit }) => {
-    const [reportType, setReportType] = useState('');
+    // Loại tố cáo mặc định là "Lăng mạ"
+    const [reportType] = useState('Toxic Behavior');
     const [reason, setReason] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
 
-    const reportTypes = [
-        { value: 'Cheating', label: 'Gian lận' },
-        { value: 'Toxic Behavior', label: 'Lăng mạ' },
-        { value: 'Spam', label: 'Spam tin nhắn' },
-        { value: 'Other', label: 'Khác' }
-    ];
+    // Không cần mảng reportTypes nữa vì chỉ có một loại
 
     const showSuccessToast = () => {
         const toast = document.createElement('div');
@@ -107,21 +103,8 @@ const ReportPlayer = ({ playerName, playerId, reporterId, roomCode, onClose, onS
                         )}
 
                         <div className="form-group">
-                            <label htmlFor="reportType">Loại tố cáo *</label>
-                            <select
-                                id="reportType"
-                                value={reportType}
-                                onChange={(e) => setReportType(e.target.value)}
-                                required
-                                disabled={isSubmitting}
-                            >
-                                <option value="">-- Chọn loại tố cáo --</option>
-                                {reportTypes.map(type => (
-                                    <option key={type.value} value={type.value}>
-                                        {type.label}
-                                    </option>
-                                ))}
-                            </select>
+                            <label>Loại tố cáo *</label>
+                            <div className="report-type-static">Lăng mạ</div>
                         </div>
 
                         <div className="form-group">
@@ -152,7 +135,7 @@ const ReportPlayer = ({ playerName, playerId, reporterId, roomCode, onClose, onS
                             <button
                                 type="submit"
                                 className="btn-submit"
-                                disabled={!reportType || reason.trim().length === 0 || isSubmitting}
+                                disabled={reason.trim().length === 0 || isSubmitting}
                             >
                                 {isSubmitting ? 'Đang gửi...' : 'Gửi tố cáo'}
                             </button>

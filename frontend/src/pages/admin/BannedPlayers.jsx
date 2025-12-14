@@ -1,12 +1,11 @@
-// src/pages/admin/BannedPlayers.jsx
 import React, { useState, useEffect } from "react";
-// Đổi import từ listBannedReports thành listAllReports (API mới)
-import { listAllReports, deleteBannedReport } from "../../api"; 
+import { listAllReports, deleteBannedReport, updateReportVerdict } from "../../api"; 
 import "./BannedPlayers.css";
 
 export default function BannedPlayers() {
   const [reports, setReports] = useState([]);
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState(null); // Report đang xem chi tiết
+  const [editingId, setEditingId] = useState(null); // Report đang sửa
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -18,11 +17,9 @@ export default function BannedPlayers() {
     setLoading(true);
     setError("");
     try {
-      // Gọi API lấy từ bảng Report
       const data = await listAllReports();
       setReports(data || []);
     } catch (e) {
-      console.error(e);
       setError("Không thể tải danh sách báo cáo");
     }
     setLoading(false);
@@ -33,14 +30,22 @@ export default function BannedPlayers() {
       setSelected(null);
       return;
     }
-    setLoading(true);
+    // Ở danh sách này đã có đủ info, không cần fetch lại detail nếu muốn nhanh
+    const report = reports.find(r => r.report_id === id);
+    setSelected(report);
+  }
+
+  async function handleVerdictChange(reportId, newVerdict) {
+    if (!window.confirm(`Bạn có chắc muốn đổi trạng thái thành "${newVerdict}"? (User sẽ được tính lại điểm vi phạm ngay lập tức)`)) return;
+    
     try {
-      const data = await getBannedReportById(id);
-      setSelected(data);
+        await updateReportVerdict(reportId, newVerdict);
+        setEditingId(null);
+        fetchReports(); // Load lại để thấy violation_count cập nhật
+        alert("Cập nhật thành công!");
     } catch (e) {
-      alert("Không thể tải chi tiết báo cáo");
+        alert("Cập nhật thất bại: " + (e.message || "Lỗi server"));
     }
-    setLoading(false);
   }
 
   async function handleDelete(id) {
@@ -54,18 +59,37 @@ export default function BannedPlayers() {
     }
   }
 
-  // Render Badge trạng thái AI
-  const renderAiVerdict = (verdict) => {
-    if (verdict === 'violation_detected') return <span className="badge badge-danger">⚠️ Vi phạm</span>;
-    if (verdict === 'clean') return <span className="badge badge-success">✅ Sạch</span>;
-    if (verdict === 'error') return <span className="badge badge-warning">⚠️ Lỗi AI</span>;
+  // Render Badge trạng thái AI hoặc Dropdown khi đang sửa
+  const renderAiVerdictCell = (report) => {
+    // Nếu dòng này đang được sửa -> Hiện Dropdown
+    if (editingId === report.report_id) {
+        return (
+            <select 
+                defaultValue={report.ai_verdict} 
+                onChange={(e) => handleVerdictChange(report.report_id, e.target.value)}
+                className="status-select"
+                autoFocus
+                onBlur={() => setEditingId(null)} // Click ra ngoài thì hủy sửa
+                style={{padding: '4px', borderRadius: '4px', border: '2px solid #3182ce'}}
+            >
+                <option value="pending">⏳ Chờ xử lý</option>
+                <option value="violation_detected">⚠️ Vi phạm</option>
+                <option value="clean">✅ Sạch</option>
+            </select>
+        );
+    }
+
+    // Hiển thị Badge bình thường
+    if (report.ai_verdict === 'violation_detected') return <span className="badge badge-danger">⚠️ Vi phạm</span>;
+    if (report.ai_verdict === 'clean') return <span className="badge badge-success">✅ Không vi phạm</span>;
+    if (report.ai_verdict === 'error') return <span className="badge badge-warning">⚠️ Lỗi AI</span>;
     return <span className="badge badge-warning">⏳ Chờ xử lý</span>;
   };
 
   return (
     <div className="admin-banned-players-page">
       <div className="banned-header">
-        <h2>Quản lý Báo cáo (Report List)</h2>
+        <h2>Quản lý Báo cáo & Vi phạm</h2>
         <button className="button button--secondary" onClick={fetchReports}>Làm mới</button>
       </div>
 
@@ -77,13 +101,12 @@ export default function BannedPlayers() {
             <thead>
               <tr>
                 <th style={{width: 50}}>ID</th>
-                <th>Người báo cáo</th>
                 <th>Người bị báo cáo</th>
-                <th style={{width: 100, textAlign: 'center'}}>Vi phạm (Lần)</th>
+                <th style={{width: 120, textAlign: 'center'}}>Vi phạm (30 ngày)</th>
                 <th>Lý do</th>
-                <th style={{width: 110, textAlign: 'center'}}>AI Đánh giá</th>
+                <th style={{width: 140, textAlign: 'center'}}>Đánh giá (Sửa)</th>
                 <th>Thời gian</th>
-                <th style={{width: 100}}>Chi tiết</th>
+                <th style={{width: 140, textAlign: 'center'}}>Thao tác</th>
               </tr>
             </thead>
             <tbody>
@@ -91,7 +114,6 @@ export default function BannedPlayers() {
                 <React.Fragment key={r.report_id}>
                   <tr className={selected?.report_id === r.report_id ? "selected-row" : ""}>
                     <td>#{r.report_id}</td>
-                    <td>{r.reporter_name || `ID: ${r.reporter_id}`}</td>
                     <td style={{fontWeight: 'bold', color: '#dc2626'}}>
                         {r.reported_name || `ID: ${r.reported_id}`}
                     </td>
@@ -101,15 +123,40 @@ export default function BannedPlayers() {
                       </span>
                     </td>
                     <td className="truncate-cell" title={r.reason}>{r.reason}</td>
-                    <td style={{textAlign: 'center'}}>{renderAiVerdict(r.ai_verdict)}</td>
-                    <td>{new Date(r.created_at).toLocaleString('vi-VN')}</td>
+                    
+                    {/* Cột Đánh giá có chức năng Sửa */}
                     <td style={{textAlign: 'center'}}>
-                        <button 
-                          className="button button--secondary button--small"
-                          onClick={() => setSelected(selected?.report_id === r.report_id ? null : r)}
-                        >
-                          {selected?.report_id === r.report_id ? 'Đóng' : 'Xem'}
-                        </button>
+                        {renderAiVerdictCell(r)}
+                    </td>
+
+                    <td>{new Date(r.created_at).toLocaleString('vi-VN')}</td>
+                    
+                    <td style={{textAlign: 'center'}}>
+                        <div style={{display: 'flex', gap: 6, justifyContent: 'center'}}>
+                            <button 
+                              className="button button--secondary button--small"
+                              onClick={() => selectReport(r.report_id)}
+                            >
+                              {selected?.report_id === r.report_id ? 'Đóng' : 'Xem'}
+                            </button>
+
+                            {/* Nút Sửa */}
+                            <button 
+                              className="button button--primary button--small"
+                              onClick={() => setEditingId(r.report_id)}
+                              title="Sửa đánh giá"
+                            >
+                              ✏️
+                            </button>
+
+                            <button 
+                              className="button button--danger button--small"
+                              onClick={() => handleDelete(r.report_id)}
+                              title="Xóa báo cáo"
+                            >
+                              🗑️
+                            </button>
+                        </div>
                     </td>
                   </tr>
                   
