@@ -111,7 +111,7 @@
 }
 
 .seat-3 .player-hand {
-    bottom: -15px;
+    bottom: -45px;
     left: 50%;
     transform: translateX(-50%) scaleY(-1);
     gap: 8px;
@@ -296,7 +296,7 @@
 
 /* Định vị thông tin cho từng ghế - Giữ nguyên */
 .seat-1 .seat-player-info {
-    bottom: -20px;
+    bottom: -60px;
     left: 50%;
     transform: translateX(-50%);
 }
@@ -354,7 +354,7 @@
 .pot-display-container {
     position: absolute;
     top: 18%;
-    left: 50%;
+    left: 90%;
     transform: translate(-50%, -50%);
     z-index: 15;
     display: flex;
@@ -368,6 +368,7 @@
         opacity: 0;
         transform: translate(-50%, -50%) scale(0.8);
     }
+
     to {
         opacity: 1;
         transform: translate(-50%, -50%) scale(1);
@@ -382,9 +383,12 @@
 }
 
 @keyframes potGlow {
-    0%, 100% {
+
+    0%,
+    100% {
         filter: drop-shadow(0 4px 10px rgba(255, 215, 0, 0.3));
     }
+
     50% {
         filter: drop-shadow(0 4px 15px rgba(255, 215, 0, 0.6));
     }
@@ -1118,9 +1122,12 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 }
 
 @keyframes pulse-badge {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.1);
     }
@@ -1164,6 +1171,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
         opacity: 0;
         transform: translateY(-50%) translateX(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(-50%) translateX(0);
