@@ -954,7 +954,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 }
 
-.chip-icon {
+.room-chip-icon {
     font-size: 16px;
     font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji', sans-serif;
     line-height: 1;
@@ -1727,7 +1727,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
         font-size: 10px;
     }
 
-    .chip-icon {
+    .room-chip-icon {
         font-size: 12px;
     }
 

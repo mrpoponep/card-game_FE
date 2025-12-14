@@ -30,7 +30,7 @@ const PlayerSeat = ({ seatPosition, player, hand = [], isLocalPlayer = false, is
       {/* Badge Tiền Cược */}
       {player && player.betThisRound > 0 && (
         <div className="player-bet-badge-floating">
-           <span className="chip-icon">🪙</span> {formatMoney(player.betThisRound)}
+           <span className="room-chip-icon">🪙</span> {formatMoney(player.betThisRound)}
         </div>
       )}
 
