@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Room from './pages/room/Room';
+import RoomAI from './pages/roomAI/RoomAI';
 import Login from './pages/auth/Login';
 import Register from './pages/auth/Register';
 import LinkEmail from './pages/auth/LinkEmail';
@@ -37,6 +38,8 @@ function AppContent() {
         <Route path="/payment-result" element={<PaymentResult />} />
         {/* Room is a standalone page that replaces Home */}
         <Route path="/room/:roomCode" element={<RequireAuth><Room /></RequireAuth>} />
+        {/* AI Room */}
+        <Route path="/room-ai" element={<RequireAuth><RoomAI /></RequireAuth>} />
         <Route path="/admin/*" element={<RequireAuth><RequireAdmin><Admin /></RequireAdmin></RequireAuth>} />
       </Routes>
       <ErrorModal isOpen={isErrorOpen} onClose={closeError} message={errorMessage} />
