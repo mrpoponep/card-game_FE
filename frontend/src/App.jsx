@@ -6,6 +6,7 @@ import Register from './pages/auth/Register';
 import LinkEmail from './pages/auth/LinkEmail';
 import ForgotPassword from './pages/auth/ForgotPassword';
 import Home from './pages/home/Home';
+import Profile from './pages/profile/Profile';
 import PaymentResult from './pages/payment/PaymentResult';
 import { AuthProvider, RequireAuth } from './context/AuthContext';
 import { ErrorProvider, useError } from './context/ErrorContext';
@@ -28,6 +29,8 @@ function AppContent() {
         <Route path="/forgot-password" element={<ForgotPassword />} />
         {/* Home is the authenticated landing page */}
         <Route path="/" element={<RequireAuth><Home /></RequireAuth>} />
+        {/* Profile page */}
+        <Route path="/profile" element={<RequireAuth><Profile /></RequireAuth>} />
         {/* Payment result page - không cần auth vì redirect từ VNPay */}
         <Route path="/payment-result" element={<PaymentResult />} />
         {/* Room is a standalone page that replaces Home */}

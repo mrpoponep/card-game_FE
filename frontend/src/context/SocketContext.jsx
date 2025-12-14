@@ -25,6 +25,7 @@ export const SocketProvider = ({ children }) => {
   const { showError } = useError();
   const [isConnected, setIsConnected] = useState(socket.connected);
   const listenersAdded = useRef(false);
+  const rewardCallbacks = useRef(new Set());
 
   useEffect(() => {
     const tryConnect = () => {
@@ -89,6 +90,19 @@ export const SocketProvider = ({ children }) => {
       }, 300);
     });
 
+    // Lắng nghe thông báo phần thưởng mới
+    socket.on('newRewardAvailable', (data) => {
+      console.log('🎁 New reward notification received:', data);
+      // Gọi tất cả callbacks đã đăng ký
+      rewardCallbacks.current.forEach(callback => {
+        try {
+          callback(data);
+        } catch (error) {
+          console.error('Error in reward callback:', error);
+        }
+      });
+    });
+
     listenersAdded.current = true;
 
     return () => {
@@ -96,13 +110,23 @@ export const SocketProvider = ({ children }) => {
       socket.off('disconnect');
       socket.off('connect_error');
       socket.off('forceLogout');
+      socket.off('newRewardAvailable');
       socket.disconnect();
       listenersAdded.current = false;
     };
   }, []);
 
+  // Hàm để đăng ký callback cho reward notifications
+  const onRewardNotification = (callback) => {
+    rewardCallbacks.current.add(callback);
+    // Trả về hàm cleanup
+    return () => {
+      rewardCallbacks.current.delete(callback);
+    };
+  };
+
   return (
-    <SocketContext.Provider value={{ socket, isConnected }}>
+    <SocketContext.Provider value={{ socket, isConnected, onRewardNotification }}>
       {children}
     </SocketContext.Provider>
   );

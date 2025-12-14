@@ -5,7 +5,7 @@ import { useModalAnimation } from '../../hooks/useModalAnimation';
 import { useEscapeKey } from '../../hooks/useEscapeKey';
 import './DailyReward.css';
 
-export default function DailyReward({ isOpen, onClose }) {
+export default function DailyReward({ isOpen, onClose, onClaimed }) {
   const { isClosing, isAnimating, handleClose, shouldRender } = useModalAnimation(isOpen, onClose, 290);
   useEscapeKey(isOpen && !isClosing, handleClose, isAnimating);
 
@@ -71,13 +71,12 @@ export default function DailyReward({ isOpen, onClose }) {
     setClaiming(true);
     try {
       const result = await apiPost('/daily-reward/claim', {});
+      
       if (result.success) {
-        // Cập nhật số dư và gems
-        if (updateBalance) {
-          updateBalance(result.data.balance);
-        }
-        if (updateUser && result.data.gems !== undefined) {
-          updateUser({ gems: result.data.gems });
+        if (result.data && updateUser) {
+          if (result.data.reward) {
+            updateUser({ balance: user.balance + result.data.reward });
+          }
         }
 
         // Cập nhật trạng thái
@@ -88,7 +87,7 @@ export default function DailyReward({ isOpen, onClose }) {
         });
 
         // Thêm login_day_count vào danh sách đã nhận
-        const claimedLoginDay = result.data.loginDayCount;
+        const claimedLoginDay = result.data?.loginDayCount || loginDayCount;
         setClaimedDays(prev => new Set([...prev, claimedLoginDay]));
 
         // Animation success
@@ -98,6 +97,11 @@ export default function DailyReward({ isOpen, onClose }) {
           setTimeout(() => {
             claimButton.classList.remove('claim-success-animation');
           }, 500);
+        }
+
+        // Gọi callback để xóa dấu chấm đỏ
+        if (onClaimed) {
+          onClaimed();
         }
       }
     } catch (error) {
