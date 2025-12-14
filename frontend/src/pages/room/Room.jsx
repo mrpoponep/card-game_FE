@@ -380,6 +380,17 @@ function Room() {
       <div className="game-table">
         <div className="table-inner-border"></div>
         
+        {/* Pot Display with Image - Shows during active gameplay */}
+        {['playing', 'preflop', 'flop', 'turn', 'river', 'showdown'].includes(gameState.status) && gameState.pot > 0 && (
+          <div className="pot-display-container">
+            <img src="/assets/Room/Pot.png" alt="Pot" className="pot-image" />
+            <div className="pot-amount">
+              <span className="pot-label">POT</span>
+              <span className="pot-value">{formatMoney(gameState.pot)}</span>
+            </div>
+          </div>
+        )}
+
         <div className={`table-center-message ${gameState.status !== 'waiting' && gameState.status !== 'countdown' && gameState.status !== 'finished' ? 'transparent-msg' : ''}`}>
           <div className="main-message">{centerMsg.main}</div>
           <div className="sub-message">{centerMsg.sub}</div>
@@ -398,7 +409,7 @@ function Room() {
               <button className="game-btn fold-btn" onClick={() => handleAction('fold')}>BỎ BÀI</button>
               
               {currentCallAmount <= 0 ? (
-                  <button className="game-btn check-btn" onClick={() => handleAction('check')}>XEM</button>
+                  <button className="game-btn check-btn" onClick={() => handleAction('check')}>CHECK</button>
               ) : (
                   <button className="game-btn call-btn" onClick={() => handleAction('call')}>THEO {formatMoney(currentCallAmount)}</button>
               )}
