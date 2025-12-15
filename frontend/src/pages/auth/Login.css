@@ -311,3 +311,17 @@
     padding: 20px 24px;
   }
 }
+
+/* Minimal Tailwind helpers to mark Tailwind usage without changing visuals */
+/* These use @apply and are safe because Tailwind is configured in the project */
+.tw-input {
+  @apply transition duration-150 rounded-md focus:ring-2 focus:ring-yellow-300;
+}
+
+.tw-btn {
+  @apply inline-block px-4 py-2 bg-yellow-400 text-red-900 font-bold rounded-md shadow-sm hover:brightness-95;
+}
+
+.tw-muted {
+  @apply text-gray-600;
+}

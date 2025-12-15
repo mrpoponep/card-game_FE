@@ -103,6 +103,7 @@ function Register() {
               onChange={handleChange}
               placeholder="Nhập tên đăng nhập (tối thiểu 3 ký tự)"
               disabled={loading}
+              className="transition duration-150 focus:ring-2 focus:ring-yellow-300 rounded tw-input"
             />
           </div>
 
@@ -116,6 +117,7 @@ function Register() {
               onChange={handleChange}
               placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)"
               disabled={loading}
+              className="transition duration-150 focus:ring-2 focus:ring-yellow-300 rounded tw-input"
             />
           </div>
 
@@ -129,10 +131,11 @@ function Register() {
               onChange={handleChange}
               placeholder="Nhập lại mật khẩu"
               disabled={loading}
+              className="transition duration-150 focus:ring-2 focus:ring-yellow-300 rounded tw-input"
             />
           </div>
 
-          <button type="submit" className="register-button" disabled={loading}>
+          <button type="submit" className="register-button transition transform duration-150 tw-btn" disabled={loading}>
             {loading ? 'Đang xử lý...' : 'Đăng Ký'}
           </button>
 

@@ -91,14 +91,15 @@ export default function Login() {
           }}
         >
           <div className="form-group">
-            <label htmlFor="username">Tên đăng nhập hoặc Email</label>
+            <label htmlFor="username">Tên đăng nhập</label>
             <input
               id="username"
               name="username"
               type="text"
-              placeholder="Nhập tên đăng nhập hoặc email"
+              placeholder="Nhập tên đăng nhập"
               autoComplete="username"
               required
+              className="transition duration-150 focus:ring-2 focus:ring-yellow-300 rounded tw-input"
             />
           </div>
 
@@ -112,10 +113,11 @@ export default function Login() {
                 placeholder="Nhập mật khẩu"
                 autoComplete="current-password"
                 required
+                className="transition duration-150 focus:ring-2 focus:ring-yellow-300 rounded tw-input"
               />
               <button
                 type="button"
-                className="toggle-password"
+                className="toggle-password transition-colors duration-150"
                 aria-label={showPassword ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'}
                 onClick={() => setShowPassword(v => !v)}
               >
@@ -132,7 +134,7 @@ export default function Login() {
             <Link to="/forgot-password" className="link">Quên mật khẩu?</Link>
           </div>
 
-          <button type="submit" className="btn-primary" disabled={loading}>
+          <button type="submit" className="btn-primary transition transform duration-150 tw-btn" disabled={loading}>
             {loading ? 'Đang xử lý...' : 'Đăng nhập'}
           </button>
 

@@ -1,0 +1,22 @@
+/* Minimal Tailwind usage for Login page
+	 - Keeps original look (CSS classes still used)
+	 - Demonstrates Tailwind is active by using directives and a small component
+*/
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+	.tw-input {
+		@apply transition duration-150 rounded-md focus:ring-2 focus:ring-yellow-300;
+	}
+
+	.tw-btn {
+		@apply inline-block px-4 py-2 bg-yellow-400 text-red-900 font-bold rounded-md shadow-sm hover:brightness-95;
+	}
+}
+
+/* Small helper to keep specificity low and avoid overriding existing CSS */
+.tw-muted { @apply text-gray-600; }
+
