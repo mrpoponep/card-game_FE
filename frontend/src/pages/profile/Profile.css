@@ -226,7 +226,6 @@
   color: #3d0a0a;
   font-weight: bold;
   box-shadow: 0 5px 15px rgba(255, 215, 0, 0.4);
-  border-color: #FFD700;
 }
 
 .tab-icon {
@@ -242,9 +241,9 @@
   background: rgba(255, 255, 255, 0.95);
   border-radius: 20px;
   padding: 30px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-  min-height: calc(100vh - 100px);
-  max-height: calc(100vh - 100px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);;
+  min-height: calc(100vh - 175px);
+  max-height: calc(100vh - 175px);
   overflow-y: auto;
 }
 

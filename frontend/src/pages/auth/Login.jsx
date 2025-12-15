@@ -95,7 +95,7 @@ export default function Login() {
               id="username"
               name="username"
               type="text"
-              placeholder="Nhập tên đăng nhập hoặc email"
+              placeholder="Nhập tên đăng nhập"
               autoComplete="username"
               required
               className="w-full px-4 py-3 rounded-lg bg-black/40 border-2 border-[#FFD700]/30 text-white placeholder-white/40 focus:border-[#FFD700] focus:bg-black/60 focus:outline-none transition-all duration-300"

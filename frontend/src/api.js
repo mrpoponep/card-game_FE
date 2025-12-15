@@ -390,7 +390,8 @@ export {
   apiGetTransactionHistory,
   listAllReports,
   updateReportVerdict,
-  deleteBannedReport
+  deleteBannedReport,
+  request
 }
 
 

@@ -12,9 +12,9 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState('personal'); // personal, matches, rewards
 
   const tabs = [
-    { id: 'personal', label: '👤 Cá nhân', icon: '👤' },
-    { id: 'matches', label: '🎮 Lịch sử đấu', icon: '🎮' },
-    { id: 'rewards', label: '🎁 Lịch sử nhận thưởng', icon: '🎁' }
+    { id: 'personal', label: 'Cá nhân', icon: '👤' },
+    { id: 'matches', label: 'Lịch sử đấu', icon: '🎮' },
+    { id: 'rewards', label: 'Lịch sử nhận thưởng', icon: '🎁' }
   ];
 
   const handleBack = () => {
