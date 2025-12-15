@@ -263,7 +263,7 @@ function Home() {
       <div className="user-info">
         <div className="user-avatar" onClick={() => navigate('/profile')} style={{ cursor: 'pointer' }} title="Xem hồ sơ">
           <img
-            src={`${SERVER_URL}/avatar/${user.userId}`}
+            src={`${SERVER_URL}/avatar/${user.userId}${user?.avatarVersion ? '?t=' + user.avatarVersion : ''}`}
             alt="Avatar"
             className="avatar-placeholder"
             style={{ objectFit: 'cover' }}
