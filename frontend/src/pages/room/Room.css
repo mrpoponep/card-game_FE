@@ -1,13 +1,17 @@
 /* Trang Room.jsx mới */
 .room-page-container {
     width: 100vw;
-    height: 100vh;
+    /* Use dynamic viewport height to avoid mobile browser UI cropping */
+    min-height: 100vh;
+    min-height: 100dvh;
     background: linear-gradient(135deg, #2d1515 0%, #5a1515 50%, #2d1515 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     font-family: 'Arial', sans-serif;
     color: white;
+    /* Allow safe-area on devices with notches and avoid clipping */
+    padding-bottom: env(safe-area-inset-bottom);
     overflow: hidden;
     position: relative;
 }
@@ -353,8 +357,8 @@
 /* Pot Display Container with Image */
 .pot-display-container {
     position: absolute;
-    top: 18%;
-    left: 90%;
+    top: 33%;
+    left: 50%;
     transform: translate(-50%, -50%);
     z-index: 15;
     display: flex;
@@ -542,7 +546,7 @@
 /* --- NEW ACTION BAR (BOTTOM RIGHT) --- */
 .action-bar-container {
     position: absolute;
-    bottom: 30px;
+    bottom: max(14px, env(safe-area-inset-bottom));
     right: 30px;
     /* Góc phải */
     left: auto;
@@ -561,8 +565,8 @@
 /* Container cho các nút hành động */
 .action-buttons-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    /* 2 cột */
+    /* Auto-fit responsive buttons into columns */
+    grid-template-columns: repeat(auto-fit, minmax(min(42vw, 140px), 1fr));
     gap: 10px;
     background: rgba(0, 0, 0, 0.85);
     padding: 15px;
@@ -574,9 +578,10 @@
 
 /* Style chung cho nút */
 .game-btn {
-    padding: 12px 15px;
+    /* Responsive padding and font-size */
+    padding: clamp(8px, 1.3vw, 12px) clamp(10px, 1.6vw, 16px);
     border-radius: 12px;
-    font-size: 14px;
+    font-size: clamp(12px, 1.4vw, 14px);
     font-weight: 800;
     font-family: 'Arial', 'Segoe UI', sans-serif;
     cursor: pointer;
@@ -589,7 +594,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-width: 90px;
+    /* Allow grid to determine width */
+    min-width: 0;
+    width: 100%;
     position: relative;
     overflow: hidden;
 }
@@ -625,8 +632,7 @@
 .allin-btn {
     background: linear-gradient(to bottom, #9b59b6, #8e44ad);
     border-bottom: 4px solid #6c3483;
-    grid-column: span 2;
-    /* Nút All-in rộng bằng 2 cột */
+    /* Let grid auto-fit handle width */
 }
 
 /* --- RAISE SLIDER CONTAINER (POPUP) --- */
@@ -753,7 +759,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 /* --- NEW HORIZONTAL ACTION BAR (Bottom Right) --- */
 .action-bar-right {
     position: absolute;
-    bottom: 10px;
+    bottom: max(6px, env(safe-area-inset-bottom));
     right: 10px;
     z-index: 100;
     display: flex;
@@ -784,9 +790,9 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 
 /* Style chung cho nút */
 .game-btn {
-    padding: 10px 18px;
+    padding: clamp(6px, 1.1vw, 10px) clamp(10px, 1.6vw, 18px);
     border-radius: 8px;
-    font-size: 14px;
+    font-size: clamp(11px, 1.4vw, 14px);
     font-weight: 800;
     font-family: 'Arial', 'Segoe UI', sans-serif;
     cursor: pointer;
@@ -795,7 +801,8 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     color: white;
     text-transform: uppercase;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-    min-width: 90px;
+    min-width: 0;
+    width: auto;
     box-shadow: 0 4px 0 rgba(0, 0, 0, 0.2);
 }
 
@@ -1249,7 +1256,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .action-bar-container {
-        bottom: 20px;
+        bottom: max(10px, env(safe-area-inset-bottom));
         right: 20px;
     }
 
@@ -1312,7 +1319,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 
     /* Action bar responsive for tablet */
     .action-bar-right {
-        bottom: 12px;
+        bottom: max(8px, env(safe-area-inset-bottom));
         right: 12px;
         padding: 8px 12px;
         gap: 8px;
@@ -1407,7 +1414,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .action-bar-container {
-        bottom: 15px;
+        bottom: max(10px, env(safe-area-inset-bottom));
         right: 15px;
         gap: 10px;
     }
@@ -1515,7 +1522,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 
     /* Action bar responsive for tablet portrait */
     .action-bar-right {
-        bottom: 8px;
+        bottom: max(8px, env(safe-area-inset-bottom));
         right: 8px;
         left: 8px;
         padding: 6px 10px;
@@ -1618,7 +1625,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .action-bar-container {
-        bottom: 10px;
+        bottom: max(8px, env(safe-area-inset-bottom));
         right: 10px;
         left: 10px;
         align-items: center;
@@ -1751,7 +1758,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
 
     /* Action bar responsive for mobile */
     .action-bar-right {
-        bottom: 6px;
+        bottom: max(6px, env(safe-area-inset-bottom));
         right: 6px;
         left: 6px;
         padding: 5px 8px;
@@ -1870,7 +1877,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .action-bar-right {
-        bottom: 5px;
+        bottom: max(5px, env(safe-area-inset-bottom));
         right: 5px;
         left: 5px;
         padding: 4px 6px;
@@ -1945,7 +1952,7 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
     }
 
     .action-bar-right {
-        bottom: 5px;
+        bottom: max(5px, env(safe-area-inset-bottom));
         right: 5px;
         left: auto;
         padding: 4px 8px;

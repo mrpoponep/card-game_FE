@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { apiPost } from '../../api';
 import { useAuth } from '../../context/AuthContext';
-import './LinkEmail.css';
+// Không cần import './LinkEmail.css';
 
 function LinkEmail() {
   const navigate = useNavigate();
@@ -80,16 +80,12 @@ function LinkEmail() {
       });
 
       if (data.success) {
-        // Tự động đăng nhập sau khi verify email thành công
         const loginResult = await login({ username, password, remember: true });
         if (loginResult.ok) {
           navigate('/', { replace: true });
         } else {
-          // Nếu đăng nhập thất bại (không thể xảy ra), chuyển về login
           navigate('/login', { 
-            state: { 
-              message: 'Xác thực thành công! Vui lòng đăng nhập'
-            } 
+            state: { message: 'Xác thực thành công! Vui lòng đăng nhập' } 
           });
         }
       } else {
@@ -105,23 +101,17 @@ function LinkEmail() {
   const handleSkip = async () => {
     setLoading(true);
     try {
-      // Tự động đăng nhập khi bỏ qua liên kết email
       const loginResult = await login({ username, password, remember: true });
       if (loginResult.ok) {
         navigate('/', { replace: true });
       } else {
-        // Nếu đăng nhập thất bại, chuyển về login
         navigate('/login', { 
-          state: { 
-            message: 'Đăng ký thành công! Vui lòng đăng nhập'
-          } 
+          state: { message: 'Đăng ký thành công! Vui lòng đăng nhập' } 
         });
       }
     } catch (err) {
       navigate('/login', { 
-        state: { 
-          message: 'Đăng ký thành công! Vui lòng đăng nhập'
-        } 
+        state: { message: 'Đăng ký thành công! Vui lòng đăng nhập' } 
       });
     } finally {
       setLoading(false);
@@ -129,30 +119,44 @@ function LinkEmail() {
   };
 
   return (
-    <div className="link-email-container">
-      <div className="link-email-modal">
-        <div className="link-email-header">
-          <h1>📧 Liên Kết Email</h1>
-          <p className="link-email-subtitle">
-            Xin chào <strong>{username}</strong>!
+    // Container Style Casino
+    <div className="min-h-screen w-full flex items-center justify-center p-4 bg-[#0a0000] relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#3d0000] via-[#1a0000] to-black z-0"></div>
+
+      {/* Card */}
+      <div className="relative w-full max-w-md bg-gradient-to-br from-[#8b1a1a]/95 to-[#5e0b0b]/95 border-[3px] border-[#FFD700] rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.6)] backdrop-blur-md text-white z-10 overflow-hidden">
+        
+        {/* Header */}
+        <div className="text-center py-6 px-6 border-b border-[#FFD700]/30 bg-black/20">
+          <h1 className="text-3xl font-bold text-[#FFD700] mb-2 drop-shadow-[2px_2px_4px_rgba(0,0,0,0.8)] uppercase">
+             Liên Kết Email
+          </h1>
+          <p className="text-sm text-gray-200">
+            Xin chào <strong className="text-[#FFD700]">{username}</strong>!
           </p>
         </div>
 
         {step === 1 ? (
-          <form className="link-email-form" onSubmit={handleSendOTP}>
-            {error && <div className="error-message">{error}</div>}
+          <form className="p-8 space-y-6" onSubmit={handleSendOTP}>
+            {error && (
+              <div className="p-3 rounded-lg bg-red-900/40 border border-red-500 text-red-200 text-sm text-center animate-pulse">
+                {error}
+              </div>
+            )}
 
-            <div className="info-box">
-              <p>
-                <strong>💡 Tại sao cần liên kết email?</strong>
-              </p>
-              <p>Email được sử dụng để khôi phục tài khoản khi bạn quên mật khẩu.</p>
-              <p>Một email có thể liên kết tối đa 5 tài khoản.</p>
-              <p>Bạn có thể bỏ qua bước này và liên kết sau.</p>
+            {/* Info Box */}
+            <div className="bg-black/30 border border-[#FFD700]/20 rounded-lg p-4 text-sm text-gray-300 space-y-2">
+              <p className="text-[#FFD700] font-bold">💡 Tại sao cần liên kết email?</p>
+              <ul className="list-disc list-inside space-y-1 opacity-90">
+                <li>Khôi phục tài khoản khi quên mật khẩu.</li>
+                <li>Một email có thể liên kết tối đa 5 tài khoản.</li>
+              </ul>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="email">Địa chỉ Email</label>
+            <div className="space-y-2">
+              <label htmlFor="email" className="block text-sm font-bold text-[#FFD700] uppercase tracking-wider drop-shadow-sm">
+                Địa chỉ Email
+              </label>
               <input
                 type="email"
                 id="email"
@@ -164,37 +168,46 @@ function LinkEmail() {
                 placeholder="Nhập địa chỉ email của bạn"
                 disabled={loading}
                 autoComplete="email"
+                className="w-full px-4 py-3 rounded-lg bg-black/40 border-2 border-[#FFD700]/30 text-white placeholder-white/40 focus:border-[#FFD700] focus:bg-black/60 focus:outline-none transition-all duration-300"
               />
             </div>
 
-            <button 
-              type="submit" 
-              className="link-email-button primary"
-              disabled={loading}
-            >
-              {loading ? 'Đang gửi...' : 'Gửi Mã Xác Thực'}
-            </button>
+            <div className="space-y-3 pt-2">
+              <button 
+                type="submit" 
+                disabled={loading}
+                className={`w-full py-3 px-4 bg-gradient-to-br from-[#FFD700] to-[#FFA500] hover:from-[#FFA500] hover:to-[#FFD700] text-[#4a2500] font-bold text-base uppercase tracking-wider rounded-lg border-2 border-[#FFE14A] shadow-[0_4px_14px_rgba(255,215,0,0.35)] active:scale-[0.98] transition-all duration-200 ${loading ? 'opacity-70 cursor-not-allowed grayscale-[0.5]' : ''}`}
+              >
+                {loading ? 'Đang gửi...' : 'Gửi Mã Xác Thực'}
+              </button>
 
-            <button 
-              type="button" 
-              className="link-email-button secondary"
-              onClick={handleSkip}
-              disabled={loading}
-            >
-              Bỏ Qua
-            </button>
+              <button 
+                type="button" 
+                onClick={handleSkip}
+                disabled={loading}
+                className="w-full py-3 px-4 bg-transparent border-2 border-[#FFD700]/40 text-[#FFD700] font-bold text-base uppercase tracking-wider rounded-lg hover:bg-[#FFD700]/10 hover:border-[#FFD700] transition-all duration-200"
+              >
+                Bỏ Qua
+              </button>
+            </div>
           </form>
         ) : (
-          <form className="link-email-form" onSubmit={handleVerifyOTP}>
-            {error && <div className="error-message">{error}</div>}
+          <form className="p-8 space-y-6" onSubmit={handleVerifyOTP}>
+            {error && (
+              <div className="p-3 rounded-lg bg-red-900/40 border border-red-500 text-red-200 text-sm text-center animate-pulse">
+                {error}
+              </div>
+            )}
 
-            <div className="success-box">
-              <p>✅ Mã xác thực đã được gửi đến email: <strong>{email}</strong></p>
-              <p>Vui lòng kiểm tra hộp thư đến (hoặc thư rác).</p>
+            <div className="bg-green-900/30 border border-green-500/30 rounded-lg p-4 text-sm text-green-200 text-center">
+              <p> Mã xác thực đã gửi đến: <strong className="text-white">{email}</strong></p>
+              <p className="text-xs mt-1 opacity-80">Vui lòng kiểm tra hộp thư đến (hoặc thư rác).</p>
             </div>
 
-            <div className="form-group">
-              <label htmlFor="otp">Mã Xác Thực (6 chữ số)</label>
+            <div className="space-y-2">
+              <label htmlFor="otp" className="block text-sm font-bold text-[#FFD700] uppercase tracking-wider drop-shadow-sm">
+                Mã Xác Thực (6 chữ số)
+              </label>
               <input
                 type="text"
                 id="otp"
@@ -203,29 +216,32 @@ function LinkEmail() {
                   setOtp(e.target.value.replace(/\D/g, '').slice(0, 6));
                   setError('');
                 }}
-                placeholder="Nhập mã 6 chữ số"
+                placeholder="000000"
                 disabled={loading}
                 maxLength="6"
                 autoComplete="off"
+                className="w-full px-4 py-3 text-center text-2xl tracking-[0.5em] font-bold rounded-lg bg-black/40 border-2 border-[#FFD700]/30 text-[#FFD700] placeholder-white/20 focus:border-[#FFD700] focus:bg-black/60 focus:outline-none transition-all duration-300"
               />
             </div>
 
-            <button 
-              type="submit" 
-              className="link-email-button primary"
-              disabled={loading}
-            >
-              {loading ? 'Đang xác thực...' : 'Xác Thực'}
-            </button>
+            <div className="space-y-3 pt-2">
+              <button 
+                type="submit" 
+                disabled={loading}
+                className={`w-full py-3 px-4 bg-gradient-to-br from-[#FFD700] to-[#FFA500] hover:from-[#FFA500] hover:to-[#FFD700] text-[#4a2500] font-bold text-base uppercase tracking-wider rounded-lg border-2 border-[#FFE14A] shadow-[0_4px_14px_rgba(255,215,0,0.35)] active:scale-[0.98] transition-all duration-200 ${loading ? 'opacity-70 cursor-not-allowed grayscale-[0.5]' : ''}`}
+              >
+                {loading ? 'Đang xác thực...' : 'Xác Thực'}
+              </button>
 
-            <button 
-              type="button" 
-              className="link-email-button secondary"
-              onClick={() => setStep(1)}
-              disabled={loading}
-            >
-              Quay Lại
-            </button>
+              <button 
+                type="button" 
+                onClick={() => setStep(1)}
+                disabled={loading}
+                className="w-full py-3 px-4 bg-transparent border-2 border-[#FFD700]/40 text-[#FFD700] font-bold text-base uppercase tracking-wider rounded-lg hover:bg-[#FFD700]/10 hover:border-[#FFD700] transition-all duration-200"
+              >
+                Quay Lại
+              </button>
+            </div>
           </form>
         )}
       </div>

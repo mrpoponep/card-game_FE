@@ -26,8 +26,8 @@
   position: relative;
   max-width: 900px;
   width: 90%;
-  height: 90vh;
-  max-height: 90vh;
+  height: 90dvh;
+  max-height: 90dvh;
   background: linear-gradient(135deg, #2d1515 0%, #4a1a1a 25%, #5a1515 50%, #4a1a1a 75%, #2d1515 100%);
   border: 3px solid #FFD700;
   border-radius: 12px;
@@ -99,6 +99,8 @@
   padding: 24px;
   overflow-y: auto;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  /* Respect safe area at bottom for devices with home indicator */
+  padding-bottom: calc(24px + env(safe-area-inset-bottom));
 }
 
 /* ========================================
@@ -106,32 +108,44 @@
    ======================================== */
 
 @keyframes modal-fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes modal-fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes modal-slideIn {
-  from { 
+  from {
     transform: translateY(-50px);
     opacity: 0;
   }
-  to { 
+
+  to {
     transform: translateY(0);
     opacity: 1;
   }
 }
 
 @keyframes modal-slideOut {
-  from { 
+  from {
     transform: translateY(0);
     opacity: 1;
   }
-  to { 
+
+  to {
     transform: translateY(-50px);
     opacity: 0;
   }
@@ -143,22 +157,24 @@
 
 /* Scale animation */
 @keyframes modal-scaleIn {
-  from { 
+  from {
     transform: scale(0.8);
     opacity: 0;
   }
-  to { 
+
+  to {
     transform: scale(1);
     opacity: 1;
   }
 }
 
 @keyframes modal-scaleOut {
-  from { 
+  from {
     transform: scale(1);
     opacity: 1;
   }
-  to { 
+
+  to {
     transform: scale(0.8);
     opacity: 0;
   }
@@ -166,22 +182,24 @@
 
 /* Slide from right */
 @keyframes modal-slideInRight {
-  from { 
+  from {
     transform: translateX(100%);
     opacity: 0;
   }
-  to { 
+
+  to {
     transform: translateX(0);
     opacity: 1;
   }
 }
 
 @keyframes modal-slideOutRight {
-  from { 
+  from {
     transform: translateX(0);
     opacity: 1;
   }
-  to { 
+
+  to {
     transform: translateX(100%);
     opacity: 0;
   }
@@ -201,8 +219,8 @@
   .modal-container {
     max-width: 800px;
     width: 92%;
-    height: 88vh;
-    max-height: 88vh;
+    height: 88dvh;
+    max-height: 88dvh;
   }
 
   .modal-header {
@@ -221,6 +239,7 @@
 
   .modal-content {
     padding: 20px;
+    padding-bottom: calc(20px + env(safe-area-inset-bottom));
   }
 }
 
@@ -233,8 +252,8 @@
   .modal-container {
     max-width: 100%;
     width: 95%;
-    height: 92vh;
-    max-height: 92vh;
+    height: 92dvh;
+    max-height: 92dvh;
     border-width: 2px;
     border-radius: 10px;
   }
@@ -257,6 +276,7 @@
 
   .modal-content {
     padding: 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
   }
 }
 
@@ -268,8 +288,8 @@
 
   .modal-container {
     width: 100%;
-    height: 100vh;
-    max-height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
     border-radius: 0;
     border: none;
   }
@@ -292,5 +312,6 @@
 
   .modal-content {
     padding: 12px;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
   }
 }

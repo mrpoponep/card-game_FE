@@ -36,7 +36,7 @@
 /* Nút help và history - góc dưới phải */
 .modal-bottom-buttons {
   position: absolute;
-  bottom: 15px;
+  bottom: max(12px, env(safe-area-inset-bottom));
   right: 15px;
   display: flex;
   gap: 10px;
@@ -48,7 +48,7 @@
   background: rgba(255, 215, 0, 0.2);
   border: 2px solid #FFD700;
   color: #FFD700;
-  padding: 8px 12px;
+  padding: clamp(6px, 1.2vw, 10px) clamp(8px, 1.6vw, 12px);
   border-radius: 20px;
   cursor: pointer;
   display: flex;
@@ -56,7 +56,7 @@
   gap: 6px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  font-size: 14px;
+  font-size: clamp(12px, 1.6vw, 14px);
   font-weight: 600;
 }
 
@@ -67,7 +67,7 @@
 }
 
 .btn-text {
-  font-size: 13px;
+  font-size: clamp(11px, 1.5vw, 13px);
   white-space: nowrap;
 }
 
@@ -94,13 +94,15 @@
   border: 2px solid rgba(255, 215, 0, 0.3);
 }
 
-.user-gems, .spin-cost {
+.user-gems,
+.spin-cost {
   color: white;
   font-size: 14px;
   font-weight: 600;
 }
 
-.gems-amount, .cost-amount {
+.gems-amount,
+.cost-amount {
   color: #FFD700;
   font-size: 16px;
   font-weight: bold;
@@ -133,8 +135,8 @@
   border-radius: 50%;
   position: relative;
   box-shadow: 0 0 0 12px rgba(255, 215, 0, 0.3),
-              0 0 0 16px rgba(255, 215, 0, 0.2),
-              0 10px 30px rgba(0, 0, 0, 0.5);
+    0 0 0 16px rgba(255, 215, 0, 0.2),
+    0 10px 30px rgba(0, 0, 0, 0.5);
   overflow: hidden;
 }
 
@@ -183,7 +185,7 @@
   align-items: center;
   justify-content: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
-              inset 0 2px 8px rgba(255, 255, 255, 0.3);
+    inset 0 2px 8px rgba(255, 255, 255, 0.3);
   z-index: 5;
 }
 
@@ -253,17 +255,18 @@
   display: flex;
   gap: 6px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .quick-btn {
-  flex: 0 0 auto;
-  width: 130px;
-  padding: 10px 6px;
+  flex: 1 1 120px;
+  width: clamp(96px, 35vw, 130px);
+  padding: clamp(8px, 1.2vw, 10px) 6px;
   background: rgba(0, 0, 0, 0.3);
   border: 2px solid rgba(255, 215, 0, 0.5);
   border-radius: 8px;
   color: white;
-  font-size: 14px;
+  font-size: clamp(12px, 1.6vw, 14px);
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -294,17 +297,18 @@
 /* Nút quay */
 .spin-button {
   width: 100%;
-  padding: 12px;
+  padding: clamp(10px, 2.5vw, 14px);
   background: linear-gradient(135deg, #FFD700, #FFA500);
   border: none;
   border-radius: 10px;
   color: #8B1A1A;
-  font-size: 18px;
+  font-size: clamp(16px, 2.2vw, 18px);
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
   margin-bottom: 4px;
+  min-height: 44px;
 }
 
 .spin-button:hover:not(.disabled) {
@@ -464,15 +468,19 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
 
 @keyframes bounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateX(-50%) translateY(0);
   }
+
   50% {
     transform: translateX(-50%) translateY(-10px);
   }
@@ -483,12 +491,15 @@
     transform: scale(0.3);
     opacity: 0;
   }
+
   50% {
     transform: scale(1.05);
   }
+
   70% {
     transform: scale(0.9);
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
