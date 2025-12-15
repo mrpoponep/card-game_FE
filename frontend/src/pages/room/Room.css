@@ -12,7 +12,7 @@
     color: white;
     /* Allow safe-area on devices with notches and avoid clipping */
     padding-bottom: env(safe-area-inset-bottom);
-    overflow: hidden;
+    overflow: auto;
     position: relative;
 }
 
@@ -1999,4 +1999,47 @@ input[type=range].vertical-slider::-webkit-slider-thumb:hover {
         height: 32px;
         font-size: 14px;
     }
+}
+/* ========================================
+   CUSTOM SCROLLBAR (LUXURY CASINO THEME)
+   ======================================== */
+
+/* Webkit browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px; /* For horizontal scrolling if needed */
+}
+
+/* Track (The background of the scrollbar) */
+::-webkit-scrollbar-track {
+    background: rgba(20, 10, 10, 0.6); /* Very dark semi-transparent brown */
+    border-radius: 4px;
+    margin: 4px 0;
+}
+
+/* Thumb (The moving part) */
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, #b8860b, #cd853f); /* Bronze/Dark Gold Gradient */
+    border-radius: 4px;
+    border: 1px solid #5e3b18; /* Dark border to define edges */
+    box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+/* Thumb Hover State */
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, #FFD700, #FFA500); /* Bright Gold on interaction */
+    border: 1px solid #8B4513;
+    cursor: pointer;
+    box-shadow: 0 0 5px rgba(255, 215, 0, 0.5); /* Glowing effect */
+}
+
+/* Firefox Support */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #cd853f rgba(20, 10, 10, 0.6);
+}
+
+/* Optional: Smooth scrolling for the whole page */
+html {
+    scroll-behavior: smooth;
 }
