@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import LinkEmailModal from './LinkEmailModal';
 
 const PersonalTab = () => {
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const infoRow1 = [
     { label: 'Email', value: user?.email || 'Chưa liên kết', icon: '📧', hasButton: true },
@@ -14,8 +15,22 @@ const PersonalTab = () => {
     { label: 'Số dư Gems', value: user?.gems?.toLocaleString() || '0', icon: '💎' },
   ];
   const handleLinkEmail = () => {
-    // TODO: Implement email linking functionality
-    alert('Chức năng liên kết email sẽ được cập nhật sau');
+    setShowLinkModal(true);
+  };
+
+  const [showLinkModal, setShowLinkModal] = useState(false);
+
+  const handleCloseModal = () => {
+    setShowLinkModal(false);
+  };
+
+  const handleLinkedSuccess = (payload) => {
+    // Update user in-place without reloading the page
+    const newEmail = payload?.email || payload?.user?.email;
+    if (newEmail && updateUser) {
+      updateUser({ email: newEmail });
+    }
+    
   };
 
   return (
@@ -25,7 +40,7 @@ const PersonalTab = () => {
         <div className="profile-avatar-section">
           <div className="profile-avatar-container">
             <img 
-              src={`${import.meta.env.VITE_SERVER_URL || 'http://localhost:3000'}/avatar/${user?.userId}`}
+              src={`${import.meta.env.VITE_SERVER_URL || 'http://localhost:3000'}/avatar/${user?.userId}${user?.avatarVersion ? '?t=' + user.avatarVersion : ''}`}
               // Lếu không load được ảnh thì hiển thị ảnh mặc định tại import.meta.env.VITE_SERVER_URL + '/avatar/default.png'
               onError={(e) => {
                 e.target.onerror = null;
@@ -54,7 +69,11 @@ const PersonalTab = () => {
                         });
                         const data = await response.json();
                         if (response.ok) {
-                          // Lấy thẻ img avatar và cập nhật src để tránh cache
+                          // Update auth user so other pages use cache-busted URL
+                          try {
+                            if (updateUser) updateUser({ avatarVersion: Date.now() });
+                          } catch (e) {}
+                          // Also update the local img immediately as a fallback
                           const avatarImg = document.querySelector('.profile-avatar');
                           if (avatarImg) {
                             const oldSrc = avatarImg.src.split('?')[0];
@@ -108,7 +127,15 @@ const PersonalTab = () => {
                   </div>
                 ))}
               </div>
-            </div>
+                    </div>
+                    {showLinkModal && (
+                      <LinkEmailModal
+                        userId={user?.userId}
+                        username={user?.username}
+                        onClose={handleCloseModal}
+                        onSuccess={handleLinkedSuccess}
+                      />
+                    )}
           </div>
         </div>
       </div>
