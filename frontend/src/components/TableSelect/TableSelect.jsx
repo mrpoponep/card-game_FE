@@ -104,11 +104,9 @@ const TableSelect = ({ isOpen, onClose }) => {
                 navigate(`/room/${roomCode}`);
             } else {
                 console.error('❌ Join failed:', data?.message);
-                alert(data?.message || 'Không thể tham gia bàn');
             }
         } catch (err) {
             console.error('💥 Error joining table:', err);
-            alert('Lỗi khi tham gia bàn chơi: ' + (err.message || 'Unknown error'));
         } finally {
             setJoining(false);
         }
