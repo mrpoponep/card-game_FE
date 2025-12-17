@@ -8,7 +8,8 @@ import { getAccessToken } from '../api';
 // (Đảm bảo trỏ đúng port 3000 của server)
 const SERVER_URL = import.meta.env.VITE_SERVER_URL || 'http://localhost:3000';
 const socket = io(SERVER_URL, {
-  autoConnect: false // Chỉ kết nối khi có AuthProvider
+  autoConnect: false, // Chỉ kết nối khi có AuthProvider,
+  withCredentials: true
 });
 
 const SocketContext = createContext(null);
