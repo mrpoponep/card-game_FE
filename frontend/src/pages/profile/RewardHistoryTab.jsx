@@ -144,7 +144,7 @@ const RewardHistoryTab = () => {
               }
 
               return (
-                <div key={index} className="reward-card" style={{ borderLeftColor: typeInfo.color }}>
+                <div key={index} className={`reward-card ${currency === 'Coin' ? 'coin' : currency === 'Gems' ? 'gem' : ''}`} style={{ borderLeftColor: typeInfo.color }}>
                   <div className="reward-header">
                     <div className="reward-type-badge" style={{ backgroundColor: typeInfo.color }}>
                       <span className="reward-type-icon">{typeInfo.icon}</span>
