@@ -6,10 +6,17 @@ import './TableSelect.css';
 
 // Sub-component: TableListItem
 const TableListItem = ({ table, onJoin, isJoining }) => {
+    // Đảm bảo dữ liệu là số trước khi format, loại bỏ các ký tự không phải số nếu cần
+    const formatNumber = (val) => {
+        if (!val) return "0";
+        // Nếu val là chuỗi "50.000", ta bỏ dấu chấm đi rồi mới chuyển thành Number
+        const cleanVal = typeof val === 'string' ? val.replace(/\./g, '') : val;
+        return Number(cleanVal).toLocaleString('vi-VN');
+    };
+
     const { roomCode, betLevel, currentPlayers, maxPlayers, minBuyIn } = table;
     
-    // Hiển thị tim dựa trên số người hiện tại/tổng số
-    const hearts = Array.from({ length: maxPlayers }, (_, index) => (
+    const hearts = Array.from({ length: maxPlayers || 0 }, (_, index) => (
         <span key={index} className={`heart ${index < currentPlayers ? 'heart-full' : 'heart-empty'}`}>
             {index < currentPlayers ? '❤️' : '🤍'}
         </span>
@@ -19,23 +26,14 @@ const TableListItem = ({ table, onJoin, isJoining }) => {
 
     return (
         <div className="table-row">
-            {/* 1. Cột Phòng */}
             <div className="table-cell room-code">{roomCode}</div>
-            
-            {/* 2. Cột Mức cược */}
-            <div className="table-cell">{Number(betLevel).toLocaleString('vi-VN')}</div>
-            
-            {/* 3. Cột Số người (Tim) */}
+            <div className="table-cell">{formatNumber(betLevel)}</div>
             <div className="table-cell">
                 <div className="hearts-container">
                     {hearts}
                 </div>
             </div>
-            
-            {/* 4. Cột Tối thiểu */}
-            <div className="table-cell">{Number(minBuyIn).toLocaleString('vi-VN')}</div>
-            
-            {/* 5. Cột Trạng thái */}
+            <div className="table-cell">{formatNumber(minBuyIn)}</div>
             <div className="table-cell">
                 <button
                     className="join-btn"

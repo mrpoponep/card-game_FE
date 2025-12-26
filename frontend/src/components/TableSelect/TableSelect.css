@@ -77,67 +77,68 @@
     cursor: pointer;
 }
 
-/* =========================
-   TABLE HEADER & ROW (Sửa lại Grid)
-========================= */
-.table-header,
+/* Đảm bảo Container bao ngoài phải có display: block hoặc flex */
+.table-container {
+    flex: 1;
+    margin: 0.75rem;
+    background: var(--bg-dark);
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid rgba(255, 213, 79, 0.2);
+}
+
+.table-scroll {
+    flex: 1;
+    overflow-y: auto;
+    background: var(--bg-main);
+    min-height: 300px; /* Đảm bảo có chiều cao để hiển thị */
+}
+
+/* ÉP GRID HOẠT ĐỘNG */
+.table-header, 
 .table-row {
-    display: grid;
-    /* Chia 5 cột với tỷ lệ: 1.2 (Phòng), 1.2 (Cược), 1fr (Người), 1.2 (Tối thiểu), 1fr (Nút) */
-    grid-template-columns: 1.2fr 1.2fr 1fr 1.2fr 1fr;
-    align-items: center;
+    display: grid !important; /* Dùng !important để tránh bị đè bởi library khác */
+    grid-template-columns: 1.2fr 1.2fr 1fr 1.2fr 1fr !important;
     width: 100%;
+    align-items: center;
 }
 
-.table-header {
-    background: linear-gradient(180deg, #5a0000, #3a0000);
-    color: var(--gold);
-    font-weight: 700;
-    font-size: 0.9rem;
-    padding: 10px 0;
-    text-transform: uppercase;
+.table-row {
+    background: var(--bg-row); /* Màu đỏ tối #2a0000 */
+    border-bottom: 1px solid rgba(255, 213, 79, 0.1);
+    min-height: 50px;
 }
 
-/* =========================
-   TABLE CELL (Quan trọng)
-========================= */
+.table-row:hover {
+    background: var(--bg-row-hover);
+}
+
 .table-cell {
-    /* Xóa flex: 1 1 20% cũ */
-    text-align: center;
+    padding: 10px 5px;
     color: var(--text-main);
-    font-size: 1.1rem; /* Giảm nhẹ để không bị tràn dòng */
     font-weight: 700;
-    padding: 8px 4px;
+    font-size: 1rem;
+    text-align: center;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: hidden;
-    white-space: nowrap;
 }
 
-/* Tùy chỉnh riêng cho cột phòng để nổi bật */
-.table-cell.room-code {
-    color: var(--gold);
-    font-family: monospace;
-    font-size: 1.2rem;
-}
-
-/* =========================
-   HEARTS (Số người)
-========================= */
+/* Sửa lỗi trái tim bị dồn cục */
 .hearts-container {
     display: flex;
-    flex-wrap: wrap; /* Cho phép rớt dòng nếu quá nhiều tim */
+    flex-wrap: wrap;
     justify-content: center;
     gap: 2px;
-    max-width: 80px; /* Giới hạn độ rộng để không lấn sang cột khác */
+    line-height: 1;
 }
 
 .heart {
-    font-size: 0.75rem;
-    color: #ff4d4d;
+    font-size: 0.8rem;
+    filter: drop-shadow(0 0 2px rgba(0,0,0,0.5));
 }
-
 /* =========================
    JOIN BUTTON
 ========================= */
