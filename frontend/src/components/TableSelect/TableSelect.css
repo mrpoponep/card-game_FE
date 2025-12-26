@@ -1,45 +1,47 @@
 /* =========================
-   ROOT VARIABLES
+    ROOT VARIABLES
 ========================= */
 :root {
-    --bg-main: #120000;
-    --bg-dark: #1a0000;
-    --bg-row: #2a0000;
+    --bg-main: #0d0000;
+    --bg-panel: #1b0000;
+    --bg-header: #4a0000;
+    --bg-row: #260000;
     --bg-row-hover: #3a0000;
 
     --gold: #ffd54f;
-    --gold-dark: #d4af37;
-
-    --text-main: #f9fafb;
-    --text-muted: rgba(255, 255, 255, 0.65);
+    --gold-dark: #c9a227;
+    --text: #ffffff;
+    --text-muted: rgba(255,255,255,.7);
 
     --btn-blue: #3b82f6;
 }
 
+
 /* =========================
-   OVERLAY
+    OVERLAY
 ========================= */
 .lobby-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.88);
+    background: rgba(0,0,0,.9);
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 0.5rem;
-    z-index: 1000;
+    padding: .5rem;
+    z-index: 999;
 }
 
+
 /* =========================
-   MAIN CONTAINER
+    MAIN WRAPPER
 ========================= */
 .lobby-container {
     width: 100%;
-    max-width: 960px;
-    min-height: 90vh;
+    max-width: 980px;
     max-height: 96vh;
+    min-height: 88vh;
 
-    background: linear-gradient(180deg, #2a0000, #120000);
+    background: linear-gradient(180deg,#2a0000,#0d0000);
     border-radius: 18px;
     border: 2px solid var(--gold-dark);
 
@@ -48,15 +50,15 @@
     overflow: hidden;
 }
 
+
 /* =========================
-   HEADER
+    HEADER
 ========================= */
 .header-nav {
     display: flex;
     justify-content: space-between;
     align-items: center;
-
-    padding: 0.8rem 1rem;
+    padding: .8rem 1rem;
     border-bottom: 2px solid var(--gold-dark);
 }
 
@@ -68,113 +70,133 @@
 }
 
 .home-icon {
-    background: rgba(220, 38, 38, 0.6);
-    color: white;
-    border: 2px solid #ef4444;
+    background: rgba(220, 38, 38, .7);
+    border: 2px solid #ff4d4d;
     border-radius: 10px;
-    padding: 0.3rem 0.8rem;
+    padding: .3rem .9rem;
     font-size: 1.3rem;
+    color: white;
     cursor: pointer;
 }
 
+
 /* =========================
-   TABLE CONTAINER
+    TABLE AREA
 ========================= */
 .table-container {
     flex: 1;
-    margin: 0.75rem;
-    background: var(--bg-dark);
-    border-radius: 14px;
-    overflow: hidden;
+    margin: .8rem;
+    background: var(--bg-panel);
+    border-radius: 12px;
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
+
 
 /* HEADER ROW */
 .table-header {
     display: grid;
-    grid-template-columns: 1fr 1fr 1.2fr 1fr 1fr;
+    grid-template-columns: 
+        1.2fr    /* Phòng */
+        .9fr     /* Mức cược */
+        1fr      /* Người */
+        1fr      /* Tối thiểu */
+        .9fr;    /* Trạng thái */
 
-    background: linear-gradient(180deg, #5a0000, #3a0000);
+    background: linear-gradient(180deg,#680000,#3a0000);
     color: var(--gold);
-    font-weight: 700;
-    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: .5px;
 
-    padding: 0.6rem 0.4rem;
+    padding: .6rem .4rem;
 }
 
-/* SCROLL AREA */
+
+/* LIST AREA */
 .table-scroll {
     flex: 1;
     overflow-y: auto;
     background: var(--bg-main);
 }
 
+
 /* =========================
-   TABLE ROW
+    ROW
 ========================= */
 .table-row {
     display: grid;
-    grid-template-columns: 1fr 1fr 1.2fr 1fr 1fr;
+    grid-template-columns: 
+        1.2fr .9fr 1fr 1fr .9fr;
 
-    padding: 0.7rem 0.4rem;
+    padding: .7rem .4rem;
     background: var(--bg-row);
-    border-bottom: 1px solid rgba(255, 213, 79, 0.2);
+    border-bottom: 1px solid rgba(255,213,79,.25);
 }
 
 .table-row:hover {
     background: var(--bg-row-hover);
 }
 
-.table-cell {
-    flex: 1 1 20%;
-    text-align: center;
-    color: var(--text-main);
-    font-size: 1.35rem;
-    /* tăng size chữ phòng chơi */
-    font-weight: 800;
-    letter-spacing: 0.5px;
-}
 
 /* =========================
-   HEARTS
+    CELL
+========================= */
+.table-cell {
+    min-width: 0;
+    color: var(--text);
+    font-weight: 800;
+    font-size: 1rem;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+
+/* =========================
+    HEARTS
 ========================= */
 .hearts-container {
     display: flex;
     justify-content: center;
-    gap: 0.1rem;
+    gap: .1rem;
 }
 
 .heart {
-    font-size: 1rem;
     color: #ff4d4d;
+    font-size: 1.1rem;
 }
 
+
 /* =========================
-   JOIN BUTTON
+    JOIN BUTTON
 ========================= */
 .join-btn {
     background: var(--btn-blue);
     border: none;
     color: white;
-    font-weight: 800;
-    border-radius: 8px;
-    padding: 0.35rem 0.6rem;
-    font-size: 0.85rem;
+    font-weight: 900;
+    border-radius: 10px;
+    padding: .35rem .6rem;
+    font-size: .9rem;
+    cursor: pointer;
 }
 
 .join-btn:disabled {
-    background: #4b5563;
+    background: #555b66;
 }
 
+
 /* =========================
-   FOOTER
+    FOOTER
 ========================= */
 .footer {
-    padding: 0.8rem;
-    background: linear-gradient(180deg, #2a0000, #120000);
+    padding: .8rem;
+    background: linear-gradient(180deg,#2a0000,#0d0000);
     border-top: 2px solid var(--gold-dark);
 }
+
 
 /* PLAYER INFO */
 .player-info-section {
@@ -182,116 +204,79 @@
     justify-content: space-between;
     align-items: center;
 
-    padding: 0.7rem 1rem;
-    background: linear-gradient(180deg, #2a0000, #1a0000);
+    padding: .7rem 1rem;
     border-radius: 14px;
-    border: 1px solid rgba(255, 213, 79, 0.4);
-}
-
-.player-stat-label {
-    font-size: 1.05rem;
-    /* tăng size label */
-    color: var(--gold);
-    letter-spacing: 1.5px;
-    margin-bottom: 0.25rem;
-    font-weight: 700;
-}
-
-.player-stat-value {
-    font-size: 1.5rem;
-    /* tăng size nội dung */
-    font-weight: 900;
-    color: white;
-    margin-left: 1.2rem;
-    /* tạo khoảng cách giữa label và value */
-}
-
-.player-chips-value {
-    font-size: 1.5rem;
-    /* tăng size số chip */
-    font-weight: 900;
-    color: var(--gold);
-    margin-left: 1.2rem;
-    /* tạo khoảng cách giữa label và value */
+    background: linear-gradient(180deg,#2c0000,#160000);
+    border: 1px solid rgba(255,213,79,.4);
 }
 
 .player-stat {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 0.7rem;
+    gap: .6rem;
 }
 
+.player-stat-label {
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 1px;
+    font-weight: 800;
+}
+
+.player-stat-value {
+    font-size: 1.5rem;
+    color: white;
+    font-weight: 900;
+}
+
+.player-chips-value {
+    font-size: 1.5rem;
+    color: var(--gold);
+    font-weight: 900;
+}
+
+
 /* =========================
-   LEVEL TABS
+    LEVEL TABS
 ========================= */
 .level-tabs {
     display: flex;
-    gap: 0.5rem;
-    margin-top: 0.8rem;
+    gap: .5rem;
+    margin-top: .8rem;
 }
 
 .tab-btn {
     flex: 1;
-    padding: 0.5rem 0;
-    background: linear-gradient(180deg, #3a0000, #1a0000);
-    border: 1px solid rgba(255, 213, 79, 0.4);
-    color: white;
-    font-weight: 800;
+    padding: .5rem 0;
     border-radius: 12px;
+    background: linear-gradient(180deg,#3a0000,#1a0000);
+    border: 1px solid rgba(255,213,79,.4);
+    color: white;
+    font-weight: 900;
 }
 
 .tab-btn.active {
-    background: linear-gradient(180deg, #ffd54f, #e0a800);
+    background: linear-gradient(180deg,#ffd54f,#e0a800);
     color: #2a0000;
 }
 
+
 /* =========================
-   MOBILE OPTIMIZATION
+    RESPONSIVE
 ========================= */
-@media (max-width: 640px) {
-
-    .lobby-title {
-        font-size: 1.05rem;
-    }
-
+@media(max-width: 640px){
     .table-header,
     .table-row {
-        grid-template-columns: 1fr 0.9fr 1.1fr 1fr 1fr;
-        font-size: 0.8rem;
+        grid-template-columns: 
+            1.2fr .9fr 1fr .9fr .9fr;
     }
 
-    .join-btn {
-        font-size: 0.75rem;
-        padding: 0.3rem 0.5rem;
+    .table-cell {
+        font-size: .85rem;
     }
 
     .player-info-section {
         flex-direction: column;
-        gap: 0.4rem;
-        text-align: center;
-    }
-
-    .tab-btn {
-        font-size: 0.75rem;
-    }
-}
-
-/* =========================
-   VERY SMALL DEVICES
-========================= */
-@media (max-width: 380px) {
-
-    .table-header,
-    .table-row {
-        grid-template-columns: 1fr 0.8fr 1fr 0.9fr 1fr;
-    }
-
-    .table-cell {
-        font-size: 0.75rem;
-    }
-
-    .lobby-container {
-        border-radius: 12px;
+        gap: .4rem;
     }
 }
