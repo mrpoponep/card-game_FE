@@ -27,13 +27,13 @@ const TableListItem = ({ table, onJoin, isJoining }) => {
     return (
         <div className="table-row">
             <div className="table-cell room-code">{roomCode}</div>
-            <div className="table-cell">{formatNumber(betLevel)}</div>
+            <div className="table-cell">{betLevel}</div>
             <div className="table-cell">
                 <div className="hearts-container">
                     {hearts}
                 </div>
             </div>
-            <div className="table-cell">{formatNumber(minBuyIn)}</div>
+            <div className="table-cell">{minBuyIn}</div>
             <div className="table-cell">
                 <button
                     className="join-btn"
