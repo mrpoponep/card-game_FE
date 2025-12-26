@@ -7,9 +7,11 @@ import './TableSelect.css';
 // Sub-component: TableListItem
 const TableListItem = ({ table, onJoin, isJoining }) => {
     const { roomCode, betLevel, currentPlayers, maxPlayers, minBuyIn } = table;
+    
+    // Hiển thị tim dựa trên số người hiện tại/tổng số
     const hearts = Array.from({ length: maxPlayers }, (_, index) => (
-        <span key={index} className="heart heart-full">
-            ♥
+        <span key={index} className={`heart ${index < currentPlayers ? 'heart-full' : 'heart-empty'}`}>
+            {index < currentPlayers ? '❤️' : '🤍'}
         </span>
     ));
 
@@ -17,17 +19,30 @@ const TableListItem = ({ table, onJoin, isJoining }) => {
 
     return (
         <div className="table-row">
-            <div className="table-cell">{roomCode}</div>
-            <div className="table-cell bet-level">{betLevel}</div>
-            <div className="table-cell hearts-container">{hearts}</div>
+            {/* 1. Cột Phòng */}
+            <div className="table-cell room-code">{roomCode}</div>
+            
+            {/* 2. Cột Mức cược */}
+            <div className="table-cell">{Number(betLevel).toLocaleString('vi-VN')}</div>
+            
+            {/* 3. Cột Số người (Tim) */}
+            <div className="table-cell">
+                <div className="hearts-container">
+                    {hearts}
+                </div>
+            </div>
+            
+            {/* 4. Cột Tối thiểu */}
             <div className="table-cell">{Number(minBuyIn).toLocaleString('vi-VN')}</div>
+            
+            {/* 5. Cột Trạng thái */}
             <div className="table-cell">
                 <button
                     className="join-btn"
                     onClick={() => onJoin(roomCode)}
                     disabled={isFull || isJoining}
                 >
-                    {isFull ? 'Đầy' : isJoining ? '...' : 'Tham gia'}
+                    {isFull ? 'Đầy' : isJoining ? '...' : 'Vào'}
                 </button>
             </div>
         </div>

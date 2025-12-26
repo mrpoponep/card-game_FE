@@ -1,46 +1,51 @@
 /* =========================
-    ROOT VARIABLES
+   ROOT VARIABLES
 ========================= */
 :root {
-    --bg-main: #0d0000;
-    --bg-panel: #1b0000;
-    --bg-header: #4a0000;
-    --bg-row: #260000;
+    --bg-main: #120000;
+    --bg-dark: #1a0000;
+    --bg-row: #2a0000;
     --bg-row-hover: #3a0000;
 
     --gold: #ffd54f;
-    --gold-dark: #c9a227;
-    --text: #ffffff;
-    --text-muted: rgba(255,255,255,.7);
+    --gold-dark: #d4af37;
+
+    --text-main: #f9fafb;
+    --text-muted: rgba(255, 255, 255, 0.65);
 
     --btn-blue: #3b82f6;
 }
 
-
 /* =========================
-   OVERLAY + CONTAINER
+   OVERLAY
 ========================= */
 .lobby-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,.6);
+    inset: 0;
+    background: rgba(0, 0, 0, 0.88);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    padding: 0.5rem;
+    z-index: 1000;
 }
 
+/* =========================
+   MAIN CONTAINER
+========================= */
 .lobby-container {
-    width: 1000px;
-    height: 620px;
-    background: #190000;
-    border: 2px solid #d6aa00;
-    border-radius: 12px;
+    width: 100%;
+    max-width: 960px;
+    min-height: 90vh;
+    max-height: 96vh;
+
+    background: linear-gradient(180deg, #2a0000, #120000);
+    border-radius: 18px;
+    border: 2px solid var(--gold-dark);
+
     display: flex;
     flex-direction: column;
+    overflow: hidden;
 }
 
 /* =========================
@@ -50,169 +55,231 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 12px 16px;
-    border-bottom: 1px solid #d6aa00;
+
+    padding: 0.8rem 1rem;
+    border-bottom: 2px solid var(--gold-dark);
 }
 
 .lobby-title {
-    color: #ffd640;
-    font-size: 26px;
+    font-size: 1.3rem;
     font-weight: 900;
-    letter-spacing: 1px;
+    color: var(--gold);
+    letter-spacing: 2px;
 }
 
 .home-icon {
-    background: #b51515;
+    background: rgba(220, 38, 38, 0.6);
     color: white;
-    border: none;
-    width: 40px;
-    height: 40px;
+    border: 2px solid #ef4444;
     border-radius: 10px;
+    padding: 0.3rem 0.8rem;
+    font-size: 1.3rem;
     cursor: pointer;
-    font-size: 20px;
 }
 
 /* =========================
-   TABLE AREA
+   TABLE HEADER & ROW (Sửa lại Grid)
 ========================= */
-
-.table-container {
-    margin: 10px;
-    flex: 1;
-    border: 2px solid #d6aa00;
-    border-radius: 10px;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-/* HEADER ROW */
-.table-header {
-    display: grid;
-    grid-template-columns:
-        1.5fr   /* Phòng */
-        1fr     /* Mức cược */
-        1fr     /* Số người */
-        1fr     /* Tối thiểu */
-        1fr;    /* Trạng thái */
-    padding: 10px 6px;
-    color: #ffd640;
-    font-weight: 900;
-    font-size: 18px;
-}
-
-/* SCROLL LIST */
-.table-scroll {
-    flex: 1;
-    overflow-y: auto;
-}
-
-/* ROOM ROW */
+.table-header,
 .table-row {
     display: grid;
-    grid-template-columns:
-        1.5fr 1fr 1fr 1fr 1fr;
+    /* Chia 5 cột với tỷ lệ: 1.2 (Phòng), 1.2 (Cược), 1fr (Người), 1.2 (Tối thiểu), 1fr (Nút) */
+    grid-template-columns: 1.2fr 1.2fr 1fr 1.2fr 1fr;
     align-items: center;
-    padding: 10px 6px;
-    color: #fff;
+    width: 100%;
 }
 
-/* EACH CELL */
+.table-header {
+    background: linear-gradient(180deg, #5a0000, #3a0000);
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 0.9rem;
+    padding: 10px 0;
+    text-transform: uppercase;
+}
+
+/* =========================
+   TABLE CELL (Quan trọng)
+========================= */
 .table-cell {
+    /* Xóa flex: 1 1 20% cũ */
+    text-align: center;
+    color: var(--text-main);
+    font-size: 1.1rem; /* Giảm nhẹ để không bị tràn dòng */
+    font-weight: 700;
+    padding: 8px 4px;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-width: 0;
-    font-weight: bold;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
-/* ROOM NAME LEFT ALIGNED */
-.room-col {
-    justify-content: flex-start;
-}
-
-/* HEARTS */
-.hearts-container {
-    display: inline-flex;
-    gap: 2px;
-}
-
-.heart {
-    color: red;
-    font-size: 16px;
-}
-
-/* JOIN BUTTON */
-.join-btn {
-    background: #4da3ff;
-    border: none;
-    padding: 6px 14px;
-    border-radius: 10px;
-    font-weight: bold;
-    cursor: pointer;
-}
-
-.join-btn:disabled {
-    background: gray;
+/* Tùy chỉnh riêng cho cột phòng để nổi bật */
+.table-cell.room-code {
+    color: var(--gold);
+    font-family: monospace;
+    font-size: 1.2rem;
 }
 
 /* =========================
-   EMPTY / LOAD STATE
+   HEARTS (Số người)
 ========================= */
+.hearts-container {
+    display: flex;
+    flex-wrap: wrap; /* Cho phép rớt dòng nếu quá nhiều tim */
+    justify-content: center;
+    gap: 2px;
+    max-width: 80px; /* Giới hạn độ rộng để không lấn sang cột khác */
+}
 
-.loading-message,
-.error-message,
-.empty-state {
-    text-align: center;
-    color: white;
-    padding: 40px 0;
+.heart {
+    font-size: 0.75rem;
+    color: #ff4d4d;
+}
+
+/* =========================
+   JOIN BUTTON
+========================= */
+.join-btn {
+    width: 90%;
+    max-width: 80px;
+    background: var(--btn-blue);
+    padding: 6px 0;
+    border-radius: 6px;
+    transition: transform 0.2s;
+}
+
+.join-btn:hover:not(:disabled) {
+    transform: scale(1.05);
+    filter: brightness(1.2);
 }
 
 /* =========================
    FOOTER
 ========================= */
-
 .footer {
-    border-top: 1px solid #d6aa00;
-    padding: 10px;
+    padding: 0.8rem;
+    background: linear-gradient(180deg, #2a0000, #120000);
+    border-top: 2px solid var(--gold-dark);
 }
 
+/* PLAYER INFO */
 .player-info-section {
     display: flex;
     justify-content: space-between;
-    padding: 4px 14px;
+    align-items: center;
+
+    padding: 0.7rem 1rem;
+    background: linear-gradient(180deg, #2a0000, #1a0000);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 213, 79, 0.4);
 }
 
 .player-stat-label {
-    color: #ffd640;
-    font-weight: 900;
+    font-size: 1.05rem;
+    /* tăng size label */
+    color: var(--gold);
+    letter-spacing: 1.5px;
+    margin-bottom: 0.25rem;
+    font-weight: 700;
 }
 
-.player-stat-value,
+.player-stat-value {
+    font-size: 1.5rem;
+    /* tăng size nội dung */
+    font-weight: 900;
+    color: white;
+    margin-left: 1.2rem;
+    /* tạo khoảng cách giữa label và value */
+}
+
 .player-chips-value {
-    font-size: 22px;
+    font-size: 1.5rem;
+    /* tăng size số chip */
     font-weight: 900;
+    color: var(--gold);
+    margin-left: 1.2rem;
+    /* tạo khoảng cách giữa label và value */
 }
 
-/* LEVEL TABS */
+.player-stat {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.7rem;
+}
+
+/* =========================
+   LEVEL TABS
+========================= */
 .level-tabs {
     display: flex;
-    justify-content: center;
-    gap: 12px;
-    margin-top: 10px;
+    gap: 0.5rem;
+    margin-top: 0.8rem;
 }
 
 .tab-btn {
-    width: 180px;
-    height: 55px;
-    border-radius: 14px;
-    font-weight: 900;
-    border: 2px solid #3c1c18;
-    background: #1c0000;
+    flex: 1;
+    padding: 0.5rem 0;
+    background: linear-gradient(180deg, #3a0000, #1a0000);
+    border: 1px solid rgba(255, 213, 79, 0.4);
     color: white;
-    cursor: pointer;
+    font-weight: 800;
+    border-radius: 12px;
 }
 
 .tab-btn.active {
-    background: #b62c2c;
+    background: linear-gradient(180deg, #ffd54f, #e0a800);
+    color: #2a0000;
+}
+
+/* =========================
+   MOBILE OPTIMIZATION
+========================= */
+@media (max-width: 640px) {
+
+    .lobby-title {
+        font-size: 1.05rem;
+    }
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr 0.9fr 1.1fr 1fr 1fr;
+        font-size: 0.8rem;
+    }
+
+    .join-btn {
+        font-size: 0.75rem;
+        padding: 0.3rem 0.5rem;
+    }
+
+    .player-info-section {
+        flex-direction: column;
+        gap: 0.4rem;
+        text-align: center;
+    }
+
+    .tab-btn {
+        font-size: 0.75rem;
+    }
+}
+
+/* =========================
+   VERY SMALL DEVICES
+========================= */
+@media (max-width: 380px) {
+
+    .table-header,
+    .table-row {
+        grid-template-columns: 1fr 0.8fr 1fr 0.9fr 1fr;
+    }
+
+    .table-cell {
+        font-size: 0.75rem;
+    }
+
+    .lobby-container {
+        border-radius: 12px;
+    }
 }
