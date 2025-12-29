@@ -50,7 +50,7 @@ export default function Login() {
         {/* Header */}
         <div className="flex flex-col items-center justify-center py-6 px-8 bg-black/20 border-b border-[#FFD700]/30 relative">
           <h1 className="text-3xl font-bold text-[#FFD700] mb-1 drop-shadow-[2px_2px_4px_rgba(0,0,0,0.8)] uppercase tracking-wide">
-            Đăng nhập
+            Login test cicd
           </h1>
           <p className="text-sm text-[#FFE27A] drop-shadow-md">Vui lòng đăng nhập để tiếp tục</p>
         </div>
