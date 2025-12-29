@@ -16,6 +16,7 @@
     --btn-blue: #3b82f6;
 }
 
+
 /* =========================
    OVERLAY
 ========================= */
@@ -29,6 +30,7 @@
     padding: 0.5rem;
     z-index: 1000;
 }
+
 
 /* =========================
    MAIN CONTAINER
@@ -51,7 +53,9 @@
     display: flex;
     flex-direction: column;
     overflow: hidden;
+    overflow: hidden;
 }
+
 
 /* =========================
    HEADER
@@ -66,6 +70,9 @@
 }
 
 .lobby-title {
+    font-size: 1.3rem;
+    font-weight: 900;
+    color: var(--gold);
     font-size: 1.3rem;
     font-weight: 900;
     color: var(--gold);
@@ -94,7 +101,10 @@
     border: 1px solid rgba(255, 213, 79, 0.2);
 }
 
+
+/* LIST AREA */
 .table-scroll {
+    flex: 1;
     flex: 1;
     overflow-y: auto;
     background: var(--bg-main);
